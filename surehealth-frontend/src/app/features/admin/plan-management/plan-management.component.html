@@ -1,0 +1,85 @@
+<div class="fade-in-up">
+  <div class="page-header">
+    <h1>Insurance Plans</h1>
+    <p>Manage available insurance plans for corporate clients</p>
+  </div>
+
+  <mat-card class="form-card">
+    <h3>Create New Plan</h3>
+    <form [formGroup]="planForm" (ngSubmit)="createPlan()" class="plan-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Plan Name</mat-label>
+        <input matInput formControlName="planName" placeholder="e.g. Premium Health Gold">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" placeholder="e.g. Comprehensive coverage with OPD" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="form-row" style="display: flex; gap: 16px;">
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>Duration (Months)</mat-label>
+          <input matInput type="number" formControlName="durationMonths" placeholder="e.g. 12">
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>Coverage Amount (₹)</mat-label>
+          <input matInput type="number" formControlName="coverageAmount">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>Premium Per Employee (₹)</mat-label>
+          <input matInput type="number" formControlName="premiumPerEmployee">
+        </mat-form-field>
+      </div>
+      <button mat-flat-button color="primary" type="submit" [disabled]="planForm.invalid">
+        <mat-icon>add</mat-icon> Create Plan
+      </button>
+    </form>
+  </mat-card>
+
+  <div class="table-container" style="margin-top:24px">
+    <div class="table-header">
+      <h3>All Plans ({{ plans.length }})</h3>
+    </div>
+    @if (loading) {
+      <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
+    }
+    @if (!loading && plans.length > 0) {
+      <table mat-table [dataSource]="plans" class="full-width">
+        <ng-container matColumnDef="planName">
+          <th mat-header-cell *matHeaderCellDef>Plan Name</th>
+          <td mat-cell *matCellDef="let p">{{ p.planName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="coverage">
+          <th mat-header-cell *matHeaderCellDef>Coverage</th>
+          <td mat-cell *matCellDef="let p" class="amount">₹{{ p.coverageAmount | number }}</td>
+        </ng-container>
+        <ng-container matColumnDef="premium">
+          <th mat-header-cell *matHeaderCellDef>Premium/Employee</th>
+          <td mat-cell *matCellDef="let p" class="amount">₹{{ p.premiumPerEmployee | number }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let p">
+            <span class="status-badge" [ngClass]="p.active ? 'active' : 'rejected'">{{ p.active ? 'Active' : 'Inactive' }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let p">
+            @if (p.active) {
+              <button mat-stroked-button (click)="deactivate(p.id)" class="action-btn">Deactivate</button>
+            }
+            @if (!p.active) {
+              <button mat-flat-button color="primary" (click)="activate(p.id)" class="action-btn">Activate</button>
+            }
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    }
+  </div>
+</div>

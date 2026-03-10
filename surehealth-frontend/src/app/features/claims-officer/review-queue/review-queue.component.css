@@ -1,0 +1,19 @@
+.claims-list { display: flex; flex-direction: column; gap: 16px; }
+    .claim-card { padding: 24px !important; }
+    .claim-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; }
+    .claim-number { font-size: 16px; font-weight: 600; color: var(--primary-navy); display: block; margin-bottom: 6px; }
+    .claim-amount { font-size: 24px; font-weight: 800; color: var(--primary-navy); }
+    .claim-details { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border-light); }
+    .claim-details .label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .claim-details span { font-size: 13px; color: var(--text-primary); }
+    .claim-actions { padding-top: 16px; border-top: 1px solid var(--border-light); }
+    .action-btn mat-icon { margin-right: 4px; }
+    .review-actions { display: flex; flex-direction: column; gap: 12px; }
+    .approve-section, .reject-section { display: flex; gap: 12px; align-items: start; }
+    .amount-field, .reason-field { flex: 1; }
+    .approve-btn { background: var(--success) !important; color: white !important; height: 56px !important; }
+    .approve-section button, .reject-section button { height: 56px !important; }
+    .empty-state { text-align: center; padding: 64px 24px; }
+    .empty-state mat-icon { font-size: 56px; width: 56px; height: 56px; color: var(--text-muted); margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .empty-state p { color: var(--text-secondary); }

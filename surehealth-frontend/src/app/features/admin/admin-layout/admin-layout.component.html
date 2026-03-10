@@ -1,0 +1,61 @@
+<div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="12" fill="#C8A951"/>
+              <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#1B2A4A"/>
+            </svg>
+            <div>
+              <span class="brand">SureHealth</span>
+              <span class="role-badge">Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a routerLink="/admin/policies" routerLinkActive="active" class="nav-item">
+            <mat-icon>policy</mat-icon><span>Policies</span>
+          </a>
+          <a routerLink="/admin/corporates" routerLinkActive="active" class="nav-item">
+            <mat-icon>business</mat-icon><span>Corporate Clients</span>
+          </a>
+          <!-- <a routerLink="/admin/invoices" routerLinkActive="active" class="nav-item">
+            <mat-icon>receipt_long</mat-icon><span>Invoices</span>
+          </a> -->
+          <a routerLink="/admin/plans" routerLinkActive="active" class="nav-item">
+            <mat-icon>health_and_safety</mat-icon><span>Insurance Plans</span>
+          </a>
+          <a routerLink="/admin/officers" routerLinkActive="active" class="nav-item">
+            <mat-icon>support_agent</mat-icon><span>Claims Officers</span>
+          </a>
+          <a routerLink="/admin/underwriters" routerLinkActive="active" class="nav-item">
+            <mat-icon>assignment_ind</mat-icon><span>Underwriters</span>
+          </a>
+          <a routerLink="/admin/invoices" routerLinkActive="active" class="nav-item">
+            <mat-icon>receipt_long</mat-icon><span>Invoices</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="nav-item logout" (click)="logout()">
+            <mat-icon>logout</mat-icon><span>Log Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-bar">
+          <div class="page-info">
+            <h2>Admin Dashboard</h2>
+          </div>
+          <div class="user-info">
+            <div class="user-avatar">{{ getInitial() }}</div>
+            <span class="user-name">{{ authService.getUsername() }}</span>
+          </div>
+        </header>
+        <div class="content-area">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>

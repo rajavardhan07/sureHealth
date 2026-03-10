@@ -1,0 +1,8 @@
+.form-card { padding: 32px !important; max-width: 600px; }
+    .form-card h3 { font-size: 16px; font-weight: 600; color: var(--primary-navy); margin-bottom: 20px; }
+    .officer-form { display: flex; flex-direction: column; gap: 4px; }
+    .submit-btn { height: 46px !important; margin-top: 8px; }
+    .success-card { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--success-bg); border-radius: 12px; margin-top: 20px; }
+    .success-card mat-icon { color: var(--success); font-size: 28px; width: 28px; height: 28px; }
+    .success-card strong { color: var(--success); display: block; }
+    .success-card p { color: var(--text-secondary); font-size: 13px; margin-top: 2px; }

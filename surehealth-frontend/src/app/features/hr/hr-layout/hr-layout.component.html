@@ -1,0 +1,45 @@
+<div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="12" fill="#C8A951"/>
+              <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#1B2A4A"/>
+            </svg>
+            <div>
+              <span class="brand">SureHealth</span>
+              <span class="role-badge">HR Manager</span>
+            </div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <!-- <a routerLink="/hr/register" routerLinkActive="active" class="nav-item">
+            <mat-icon>business</mat-icon><span>Register Corporate</span>
+          </a> -->
+          <a routerLink="/hr/policies" routerLinkActive="active" class="nav-item">
+            <mat-icon>policy</mat-icon><span>Policies</span>
+          </a>
+          <a routerLink="/hr/employees" routerLinkActive="active" class="nav-item">
+            <mat-icon>people</mat-icon><span>Employees</span>
+          </a>
+          <a routerLink="/hr/invoices" routerLinkActive="active" class="nav-item">
+            <mat-icon>receipt_long</mat-icon><span>Invoices & Payments</span>
+          </a>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="nav-item logout" (click)="logout()">
+            <mat-icon>logout</mat-icon><span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+      <main class="main-content">
+        <header class="top-bar">
+          <h2>HR Dashboard</h2>
+          <div class="user-info">
+            <div class="user-avatar">{{ getInitial() }}</div>
+            <span class="user-name">{{ authService.getUsername() }}</span>
+          </div>
+        </header>
+        <div class="content-area"><router-outlet></router-outlet></div>
+      </main>
+    </div>

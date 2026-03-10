@@ -1,0 +1,53 @@
+<div class="fade-in-up">
+  <div class="page-header">
+    <h1>Invoices & Payments</h1>
+    <p>View invoices and make payments for your policies</p>
+  </div>
+
+  @if (loading) {
+    <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
+  }
+
+  @if (!loading && invoices.length === 0) {
+    <div class="empty-state content-card">
+      <mat-icon>receipt_long</mat-icon><h3>No Invoices</h3><p>No invoices have been generated for your policies yet</p>
+    </div>
+  }
+
+  @if (!loading && invoices.length > 0) {
+    <div>
+      <div class="invoice-grid">
+        @for (inv of invoices; track inv.id) {
+          <mat-card class="invoice-card">
+            <div class="invoice-top">
+              <div>
+                <span class="inv-number">{{ inv.invoiceNumber }}</span>
+                <span class="status-badge" [ngClass]="getStatusClass(inv.status)">{{ formatStatus(inv.status) }}</span>
+              </div>
+              <span class="inv-amount">₹{{ inv.totalAmount | number }}</span>
+            </div>
+            <div class="invoice-details">
+              <div><span class="label">Policy</span><span>{{ inv.groupPolicy.policyNumber || '—' }}</span></div>
+              <div><span class="label">Due Date</span><span>{{ inv.dueDate }}</span></div>
+            </div>
+            @if (inv.status === 'UNPAID' || inv.status === 'OVERDUE') {
+              <div class="pay-section">
+                <mat-form-field appearance="outline" class="pay-mode">
+                  <mat-label>Payment Mode</mat-label>
+                  <mat-select [(ngModel)]="paymentModes[inv.id]">
+                    <mat-option value="UPI">UPI</mat-option>
+                    <mat-option value="BANK_TRANSFER">Bank Transfer</mat-option>
+                    <mat-option value="CARD">Card</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-flat-button color="primary" (click)="pay(inv)" [disabled]="!paymentModes[inv.id]" class="pay-btn">
+                  <mat-icon>payment</mat-icon> Pay Now
+                </button>
+              </div>
+            }
+          </mat-card>
+        }
+      </div>
+    </div>
+  }
+</div>

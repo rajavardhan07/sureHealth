@@ -1,0 +1,6 @@
+.form-card { padding: 24px !important; }
+    .form-card h3 { font-size: 16px; font-weight: 600; color: var(--primary-navy); margin-bottom: 16px; }
+    .plan-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 16px; align-items: start; }
+    .full-width { width: 100%; }
+    .amount { font-weight: 600; color: var(--primary-navy); }
+    .action-btn { font-size: 12px !important; height: 34px !important; }

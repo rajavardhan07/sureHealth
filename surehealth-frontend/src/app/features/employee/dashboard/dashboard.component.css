@@ -1,0 +1,5 @@
+.action-card { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-light); text-decoration: none; color: var(--text-primary); transition: all 0.2s ease; cursor: pointer; }
+    .action-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--stag-gold); }
+    .action-card mat-icon { font-size: 28px; width: 28px; height: 28px; color: var(--accent-blue); }
+    .action-card strong { display: block; font-size: 15px; }
+    .action-card p { color: var(--text-secondary); font-size: 13px; margin-top: 2px; }

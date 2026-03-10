@@ -1,0 +1,6 @@
+.full-width { width: 100%; }
+    .amount { font-weight: 600; color: var(--primary-navy); }
+    .empty-state { text-align: center; padding: 64px 24px; }
+    .empty-state mat-icon { font-size: 56px; width: 56px; height: 56px; color: var(--text-muted); margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .empty-state p { color: var(--text-secondary); }

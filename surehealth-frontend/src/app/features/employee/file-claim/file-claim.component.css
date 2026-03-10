@@ -1,0 +1,5 @@
+.form-card { padding: 32px !important; max-width: 700px; }
+    .form-card h3 { font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 20px 0 12px; }
+    .form-card h3:first-child { margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .submit-btn { height: 46px !important; margin-top: 8px; }

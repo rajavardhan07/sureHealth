@@ -1,0 +1,15 @@
+.form-card { padding: 28px !important; }
+    .form-card h3 { font-size: 16px; font-weight: 600; color: var(--primary-navy); margin-bottom: 16px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 16px; }
+    .submit-btn { height: 44px !important; }
+    .full-width { width: 100%; }
+    .amount { font-weight: 600; color: var(--primary-navy); }
+    .success-card { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--success-bg); border-radius: 12px; margin-top: 20px; }
+    .success-card mat-icon { color: var(--success); font-size: 28px; width: 28px; height: 28px; }
+    .success-card strong { color: var(--success); display: block; }
+    .success-card p { color: var(--text-secondary); font-size: 13px; margin-top: 2px; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    
+    .file-upload { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .file-upload label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+    .file-upload input { font-size: 13px; }

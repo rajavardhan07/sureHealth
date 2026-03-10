@@ -1,0 +1,140 @@
+<div class="register-page">
+  <div class="register-bg-pattern"></div>
+
+  <div class="register-container fade-in-up">
+    <div class="register-branding">
+      <div class="logo-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
+          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
+        </svg>
+      </div>
+      <h1>SureHealth</h1>
+      <p class="tagline">Corporate Registration Portal</p>
+    </div>
+
+    <mat-card class="register-card">
+      <mat-card-content>
+        <h2>Register Your Company</h2>
+        <p class="subtitle">Create your corporate HR account to get started</p>
+
+        <form [formGroup]="form" (ngSubmit)="register()">
+          <div class="section-label">Company Information</div>
+          <mat-form-field appearance="outline">
+            <mat-label>Company Name</mat-label>
+            <input matInput formControlName="companyName" placeholder="e.g. TechCorp Solutions">
+            @if (form.get('companyName')?.hasError('required')) {
+              <mat-error>Company name is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Registration Number</mat-label>
+            <input matInput formControlName="registrationNumber" placeholder="e.g. REG123456">
+            @if (form.get('registrationNumber')?.hasError('required')) {
+              <mat-error>Registration number is required</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="section-label">Contact Details</div>
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Person</mat-label>
+            <input matInput formControlName="contactPerson" placeholder="Full name of HR contact">
+            @if (form.get('contactPerson')?.hasError('required')) {
+              <mat-error>Contact person is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" formControlName="contactEmail" placeholder="hr&#64;company.com">
+            @if (form.get('contactEmail')?.hasError('required')) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('contactEmail')?.hasError('email')) {
+              <mat-error>Enter a valid email address</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="contactPhone" placeholder="e.g. 9876543210">
+            @if (form.get('contactPhone')?.hasError('required')) {
+              <mat-error>Phone number is required</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="section-label">Demographics & Risk Profile</div>
+          <mat-form-field appearance="outline">
+            <mat-label>Number of Employees</mat-label>
+            <mat-select formControlName="numberOfEmployees">
+              <mat-option [value]="25">Below 50</mat-option>
+              <mat-option [value]="75">50 to 100</mat-option>
+              <mat-option [value]="250">100 to 500</mat-option>
+              <mat-option [value]="600">500 and above</mat-option>
+            </mat-select>
+            @if (form.get('numberOfEmployees')?.hasError('required')) {
+              <mat-error>Number of employees is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Industry Type</mat-label>
+            <mat-select formControlName="industryType">
+              <mat-option value="IT">IT & Software</mat-option>
+              <mat-option value="Banking">Banking & Finance</mat-option>
+              <mat-option value="Manufacturing">Manufacturing</mat-option>
+              <mat-option value="Construction">Construction</mat-option>
+              <mat-option value="Mining">Mining & Heavy Duty</mat-option>
+            </mat-select>
+            @if (form.get('industryType')?.hasError('required')) {
+              <mat-error>Industry type is required</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="section-label">Login Credentials</div>
+          <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" placeholder="Choose a username">
+            @if (form.get('username')?.hasError('required')) {
+              <mat-error>Username is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Minimum 4 characters">
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" tabindex="-1">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            @if (form.get('password')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
+            @if (form.get('password')?.hasError('minlength')) {
+              <mat-error>Minimum 4 characters</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" id="register-button"
+            [disabled]="form.invalid || loading" class="register-btn">
+            @if (loading) {
+              <mat-spinner diameter="20"></mat-spinner>
+            }
+            @if (!loading) {
+              <span>Register Company</span>
+            }
+          </button>
+        </form>
+
+        @if (success) {
+          <div class="success-msg">
+            <mat-icon>check_circle</mat-icon>
+            <span>Registration successful! You can now <a routerLink="/login">sign in</a> with your credentials.</span>
+          </div>
+        }
+
+        <p class="switch-link">Already have an account? <a routerLink="/login">Sign In</a></p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

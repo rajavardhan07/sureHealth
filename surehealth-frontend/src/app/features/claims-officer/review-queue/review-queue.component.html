@@ -1,0 +1,67 @@
+<div class="fade-in-up">
+  <div class="page-header">
+    <h1>Claim Review Queue</h1>
+    <p>Review and process submitted insurance claims</p>
+  </div>
+
+  @if (loading) {
+    <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
+  }
+
+  @if (!loading && claims.length === 0) {
+    <div class="empty-state content-card">
+      <mat-icon>inbox</mat-icon><h3>Queue Empty</h3><p>No claims pending review</p>
+    </div>
+  }
+
+  @if (!loading && claims.length > 0) {
+    <div class="claims-list">
+      @for (claim of claims; track claim) {
+        <mat-card class="claim-card">
+          <div class="claim-header">
+            <div>
+              <span class="claim-number">{{ claim.claimNumber || 'CLAIM-' + claim.id }}</span>
+              <span class="status-badge" [ngClass]="claim.status === 'UNDER_REVIEW' ? 'under_review' : 'submitted'">{{ claim.status.replace('_', ' ') }}</span>
+            </div>
+            <span class="claim-amount">₹{{ claim.billAmount | number }}</span>
+          </div>
+          <div class="claim-details">
+            <div><span class="label">Patient</span><span>{{ claim.employee?.fullName }}</span></div>
+            <div><span class="label">Hospital</span><span>{{ claim.hospitalName }}</span></div>
+            <div><span class="label">Diagnosis</span><span>{{ claim.diagnosis }}</span></div>
+            <div><span class="label">Treatment</span><span>{{ claim.treatmentDate || '—' }}</span></div>
+          </div>
+          @if (claim.status === 'SUBMITTED') {
+            <div class="claim-actions">
+              <button mat-flat-button color="primary" (click)="startReview(claim)" class="action-btn">
+                <mat-icon>visibility</mat-icon> Start Review
+              </button>
+            </div>
+          }
+          @if (claim.status === 'UNDER_REVIEW') {
+            <div class="claim-actions review-actions">
+              <div class="approve-section">
+                <mat-form-field appearance="outline" class="amount-field">
+                  <mat-label>Approved Amount (₹)</mat-label>
+                  <input matInput type="number" [(ngModel)]="approvedAmounts[claim.id]" [placeholder]="claim.billAmount.toString()">
+                </mat-form-field>
+                <button mat-flat-button class="approve-btn" (click)="approve(claim)" [disabled]="!approvedAmounts[claim.id]">
+                  <mat-icon>check</mat-icon> Approve
+                </button>
+              </div>
+              <div class="reject-section">
+                <mat-form-field appearance="outline" class="reason-field">
+                  <mat-label>Rejection Reason</mat-label>
+                  <input matInput [(ngModel)]="rejectionReasons[claim.id]">
+                </mat-form-field>
+                <button mat-stroked-button color="warn" (click)="reject(claim)" [disabled]="!rejectionReasons[claim.id]">
+                  <mat-icon>close</mat-icon> Reject
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card>
+      }
+    </div>
+  }
+</div>

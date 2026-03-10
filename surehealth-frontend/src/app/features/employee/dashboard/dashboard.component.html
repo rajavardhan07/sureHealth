@@ -1,0 +1,43 @@
+@if (!loading) {
+  <div class="fade-in-up">
+    <div class="page-header">
+      <h1>Welcome, {{ profile?.fullName || 'Employee' }}</h1>
+      <p>Your health insurance dashboard</p>
+    </div>
+    @if (profile) {
+      <div class="grid-3">
+        <div class="stat-card">
+          <div class="stat-icon navy"><mat-icon>health_and_safety</mat-icon></div>
+          <div class="stat-value">₹{{ profile.coverageAmount | number }}</div>
+          <div class="stat-label">Total Coverage</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><mat-icon>account_balance_wallet</mat-icon></div>
+          <div class="stat-value">₹{{ profile.remainingCoverage | number }}</div>
+          <div class="stat-label">Remaining Coverage</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><mat-icon>assignment</mat-icon></div>
+          <div class="stat-value">{{ claims.length }}</div>
+          <div class="stat-label">Total Claims</div>
+        </div>
+      </div>
+    }
+    <div class="quick-actions" style="margin-top:28px">
+      <h3 style="font-size:16px;font-weight:600;color:var(--primary-navy);margin-bottom:16px">Quick Actions</h3>
+      <div class="grid-2">
+        <a routerLink="/employee/file-claim" class="action-card">
+          <mat-icon>add_circle_outline</mat-icon>
+          <div><strong>File a Claim</strong><p>Submit a new insurance claim</p></div>
+        </a>
+        <a routerLink="/employee/my-claims" class="action-card">
+          <mat-icon>list_alt</mat-icon>
+          <div><strong>View My Claims</strong><p>Track claim statuses</p></div>
+        </a>
+      </div>
+    </div>
+  </div>
+}
+@if (loading) {
+  <div style="text-align:center;padding:80px"><mat-spinner diameter="40"></mat-spinner></div>
+}

@@ -1,0 +1,35 @@
+@if (!loading) {
+  <div class="fade-in-up">
+    <div class="page-header">
+      <h1>Claims Officer Dashboard</h1>
+      <p>Overview of claims processing activity</p>
+    </div>
+    @if (data) {
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-icon navy"><mat-icon>assignment</mat-icon></div>
+          <div class="stat-value">{{ data.totalClaims }}</div>
+          <div class="stat-label">Total Claims</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><mat-icon>pending_actions</mat-icon></div>
+          <div class="stat-value">{{ data.pendingClaims }}</div>
+          <div class="stat-label">Pending Review</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><mat-icon>check_circle</mat-icon></div>
+          <div class="stat-value">{{ data.approvedToday }}</div>
+          <div class="stat-label">Approved Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><mat-icon>cancel</mat-icon></div>
+          <div class="stat-value">{{ data.rejectedToday }}</div>
+          <div class="stat-label">Rejected Today</div>
+        </div>
+      </div>
+    }
+  </div>
+}
+@if (loading) {
+  <div style="text-align:center;padding:80px"><mat-spinner diameter="40"></mat-spinner></div>
+}

@@ -1,0 +1,15 @@
+.invoice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+    .invoice-card { padding: 24px !important; }
+    .invoice-top { display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; }
+    .inv-number { font-size: 15px; font-weight: 600; color: var(--primary-navy); display: block; margin-bottom: 6px; }
+    .inv-amount { font-size: 24px; font-weight: 800; color: var(--primary-navy); }
+    .invoice-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border-light); }
+    .invoice-details .label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .invoice-details span { font-size: 13px; color: var(--text-primary); }
+    .pay-section { display: flex; gap: 12px; align-items: start; padding-top: 16px; border-top: 1px solid var(--border-light); }
+    .pay-mode { flex: 1; }
+    .pay-btn { height: 56px !important; }
+    .empty-state { text-align: center; padding: 64px 24px; }
+    .empty-state mat-icon { font-size: 56px; width: 56px; height: 56px; color: var(--text-muted); margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .empty-state p { color: var(--text-secondary); }

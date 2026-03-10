@@ -1,0 +1,91 @@
+<div class="management-container fade-in-up">
+  <div class="header-actions">
+    <div class="page-title">
+      <mat-icon class="title-icon">business</mat-icon>
+      <div>
+        <h2>Corporate Clients</h2>
+        <p class="subtitle">Manage and monitor registered companies</p>
+      </div>
+    </div>
+  </div>
+
+  <mat-card class="table-card">
+    @if (loading) {
+      <div class="loading-shade">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    <mat-table [dataSource]="corporates" class="custom-table">
+      <!-- Company Name Column -->
+      <ng-container matColumnDef="companyName">
+        <mat-header-cell *matHeaderCellDef> Company Name </mat-header-cell>
+        <mat-cell *matCellDef="let corp">
+          <div class="corp-info">
+            <span class="corp-name">{{ corp.companyName }}</span>
+            <!-- <span class="corp-contact">{{ corp.contactPerson }}</span> -->
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Registration Number Column -->
+      <ng-container matColumnDef="registrationNumber">
+        <mat-header-cell *matHeaderCellDef> Reg. Number </mat-header-cell>
+        <mat-cell *matCellDef="let corp"> {{ corp.registrationNumber }} </mat-cell>
+      </ng-container>
+
+      <!-- Industry Type Column -->
+      <ng-container matColumnDef="industryType">
+        <mat-header-cell *matHeaderCellDef> Industry </mat-header-cell>
+        <mat-cell *matCellDef="let corp">
+          <mat-chip-set>
+            <mat-chip class="industry-chip">{{ corp.industryType }}</mat-chip>
+          </mat-chip-set>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Employees Column -->
+      <ng-container matColumnDef="employees">
+        <mat-header-cell *matHeaderCellDef> Employees </mat-header-cell>
+        <mat-cell *matCellDef="let corp"> {{ corp.numberOfEmployees }} </mat-cell>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let corp">
+          <span class="status-badge" [class]="corp.status.toLowerCase()">
+            {{ corp.status }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let corp">
+          @if (corp.status === 'ACTIVE') {
+            <button mat-flat-button color="warn" class="action-btn suspend-btn" (click)="suspend(corp.id, corp.companyName)">
+              <mat-icon>block</mat-icon> Suspend
+            </button>
+          } @else {
+            <span class="suspended-text">Suspended</span>
+          }
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+
+      <!-- Empty State -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell empty-state" [attr.colspan]="columns.length">
+          <div class="empty-content">
+            <mat-icon>business_center</mat-icon>
+            <p>No corporate clients found</p>
+          </div>
+        </td>
+      </tr>
+    </mat-table>
+  </mat-card>
+</div>

@@ -1,0 +1,160 @@
+<div class="fade-in-up">
+  <div class="page-header">
+    <h1>Policy Management</h1>
+    <p>Request new policies and view existing ones</p>
+  </div>
+
+  <div class="table-container" style="margin-top:24px">
+    <div class="table-header"><h3>My Policies</h3></div>
+    @if (loadingPolicies) {
+      <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
+    }
+    @if (!loadingPolicies && policies.length > 0) {
+      <table mat-table [dataSource]="policies" class="full-width">
+        <ng-container matColumnDef="policyNumber">
+          <th mat-header-cell *matHeaderCellDef>Policy #</th>
+          <td mat-cell *matCellDef="let p">{{ p.policyNumber || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="plan">
+          <th mat-header-cell *matHeaderCellDef>Plan</th>
+          <td mat-cell *matCellDef="let p">{{ p.insurancePlan.planName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="underwriter">
+          <th mat-header-cell *matHeaderCellDef>Underwriter</th>
+          <td mat-cell *matCellDef="let p">{{ p.assignedUnderwriter?.username || 'System Assigned' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef>Start</th>
+          <td mat-cell *matCellDef="let p">{{ p.startDate || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="endDate">
+          <th mat-header-cell *matHeaderCellDef>End</th>
+          <td mat-cell *matCellDef="let p">{{ p.endDate || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let p">
+            <span class="status-badge" [ngClass]="getStatusClass(p.status)">{{ formatStatus(p.status) }}</span>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    }
+    @if (!loadingPolicies && policies.length === 0) {
+      <div class="empty-state">
+        <mat-icon>policy</mat-icon><h3>No Policies Yet</h3><p>Request your first group policy above</p>
+      </div>
+    }
+  </div>
+  @if (corporate) {
+    <div class="plans-header">
+      <br/>
+      <h3>1. Select an Insurance Plan</h3>
+      <p class="subtitle">Your chosen employees will be covered under this plan upon approval.</p>
+    </div>
+    
+    <div class="plans-grid">
+      @for (plan of plans; track plan.id) {
+        <mat-card class="plan-card fade-in-up">
+          <div class="plan-header">
+            <h4>{{ plan.planName }}</h4>
+            <div class="coverage-badge">₹{{ plan.coverageAmount | number }} Coverage</div>
+          </div>
+          <p class="plan-description">{{ plan.description }}</p>
+          
+          <div class="plan-details">
+            <div class="detail-row">
+              <mat-icon>timer</mat-icon>
+              <span class="duration-text">{{ plan.durationMonths }} Month Policy Duration</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>group</mat-icon>
+              <span>Base Premium: ₹{{ plan.premiumPerEmployee | number }}/employee</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>support_agent</mat-icon>
+              <span>24/7 dedicated corporate account manager</span>
+            </div>
+            
+            @if (quotes[plan.id]) {
+              <div class="quote-result slide-down">
+                <div class="quote-price">
+                  <span class="label">Expected Premium Rate</span>
+                  <span class="amount">₹{{ quotes[plan.id].calculatedPremiumPerEmployee | number }}<small>/employee</small></span>
+                </div>
+                <!-- Optional: Show risk factor -->
+                <!-- <div class="risk-info" [class.high-risk]="quotes[plan.id].riskMultiplier > 1" [class.low-risk]="quotes[plan.id].riskMultiplier < 1">
+                  Risk Multiplier: {{ quotes[plan.id].riskMultiplier }}x
+                </div> -->
+              </div>
+            }
+          </div>
+          
+          <div class="plan-actions">
+            @if (!quotes[plan.id]) {
+              <button mat-stroked-button color="primary" class="full-width" (click)="getQuote(plan.id)" [disabled]="fetchingQuote === plan.id">
+                @if (fetchingQuote === plan.id) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <ng-container><mat-icon>calculate</mat-icon> Get Quote</ng-container>
+                }
+              </button>
+            } @else {
+              <button mat-flat-button color="primary" class="full-width" (click)="requestPolicy(plan.id)">
+                <mat-icon>send</mat-icon> Request Policy
+              </button>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+  <div class="selection-section" style="margin-top: 32px">
+    <div class="section-header">
+      <div>
+        <h3>1. Select Employees for Coverage</h3>
+        <p class="subtitle">Only employees not currently assigned to a policy are shown here.</p>
+      </div>
+      <button mat-stroked-button color="primary" (click)="openAddEmployeeDialog()">
+        <mat-icon>person_add</mat-icon> Add New Employee
+      </button>
+    </div>
+    
+    <mat-card class="employee-selection-card">
+      @if (loadingEmployees) {
+        <div style="text-align:center;padding:24px"><mat-spinner diameter="30"></mat-spinner></div>
+      } @else if (unassignedEmployees.length > 0) {
+        <table mat-table [dataSource]="unassignedEmployees" class="full-width">
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="toggleAll()" [checked]="isAllSelected()"></mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let e">
+              <mat-checkbox (change)="toggleEmployee(e.id)" [checked]="selectedEmployeeIds.has(e.id)"></mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let e">{{ e.fullName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef>Department</th>
+            <td mat-cell *matCellDef="let e">{{ e.department }}</td>
+          </ng-container>
+          <ng-container matColumnDef="age">
+            <th mat-header-cell *matHeaderCellDef>Age</th>
+            <td mat-cell *matCellDef="let e">{{ e.age }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="empColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: empColumns;"></tr>
+        </table>
+      } @else {
+        <div class="empty-selection">
+          <mat-icon>group_off</mat-icon>
+          <p>No unassigned employees found. Please add employees first.</p>
+        </div>
+      }
+    </mat-card>
+  </div>
+</div>
