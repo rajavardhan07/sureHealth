@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User, ClaimsOfficerCreateDTO, UnderwriterCreateDTO, ClaimsOfficerDashboardDTO, CorporateClient } from '../../shared/models';
+import { User, ClaimsOfficerCreateDTO, UnderwriterCreateDTO, ClaimsOfficerDashboardDTO, CorporateClient, AdminDashboardDTO } from '../../shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -27,5 +27,17 @@ export class AdminService {
 
   suspendCorporateClient(id: number): Observable<CorporateClient> {
     return this.http.put<CorporateClient>(`${this.apiUrl}/corporate/${id}/suspend`, {});
+  }
+
+  getAdminStats(): Observable<AdminDashboardDTO> {
+    return this.http.get<AdminDashboardDTO>(`${this.apiUrl}/dashboard/admin`);
+  }
+
+  getClaimsOfficers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/admin/claims-officers`);
+  }
+
+  getUnderwriters(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/admin/underwriters`);
   }
 }

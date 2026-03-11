@@ -55,6 +55,14 @@ public class Claim {
     private LocalDateTime reviewDate;
 
     private String rejectionReason;
+
+    @Lob
+    @Column(length = 20971520) // 20MB
+    private byte[] claimReportFile;
+    private String claimReportFileName;
+
+    private String claimType;
+    private LocalDateTime submissionDate = LocalDateTime.now();
 }
 
 

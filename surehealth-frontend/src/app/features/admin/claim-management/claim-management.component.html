@@ -1,0 +1,73 @@
+<div class="management-container">
+  <div class="header-row">
+    <div>
+      <h1>Claim Management</h1>
+      <p class="subtitle">Monitor all insurance claims across the organization</p>
+    </div>
+    <!-- <button mat-stroked-button (click)="loadAllClaims()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button> -->
+  </div>
+
+  <div class="table-card">
+    @if (loading) {
+      <div class="loading-shade">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    <table mat-table [dataSource]="claims">
+      <ng-container matColumnDef="claimNumber">
+        <th mat-header-cell *matHeaderCellDef> Claim # </th>
+        <td mat-cell *matCellDef="let claim"> {{claim.claimNumber}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="employee">
+        <th mat-header-cell *matHeaderCellDef> Employee </th>
+        <td mat-cell *matCellDef="let claim"> 
+          <div class="emp-info">
+            <span class="emp-name">{{claim.employee?.fullName}}</span>
+            <span class="emp-id">{{claim.employee?.employeeId}}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="corporate">
+        <th mat-header-cell *matHeaderCellDef> Corporate </th>
+        <td mat-cell *matCellDef="let claim"> {{claim.employee?.corporateClient?.companyName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef> Amount </th>
+        <td mat-cell *matCellDef="let claim"> Rs {{claim.billAmount | number}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> Claim Officer </th>
+        <td mat-cell *matCellDef="let claim"> {{claim.assignedOfficer.username}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let claim">
+          <span class="status-badge" [ngClass]="getStatusClass(claim.status)">
+            {{claim.status | titlecase}}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Filed On </th>
+        <td mat-cell *matCellDef="let claim"> {{claim.reviewDate | date:'mediumDate'}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell empty-cell" colspan="7">
+          @if (!loading) { No claims found. }
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

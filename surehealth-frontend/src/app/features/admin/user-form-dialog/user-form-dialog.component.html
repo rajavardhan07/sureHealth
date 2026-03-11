@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="user-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullName" placeholder="e.g. John Doe">
+        @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+          <mat-error>Full Name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" placeholder="e.g. +1 234 567 890">
+        @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
+          <mat-error>Phone Number is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>License Number</mat-label>
+        <input matInput formControlName="licenseNumber" placeholder="e.g. LIC-123456">
+        @if (form.get('licenseNumber')?.invalid && form.get('licenseNumber')?.touched) {
+          <mat-error>License Number is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Commission %</mat-label>
+        <input matInput type="number" formControlName="commissionPercentage" placeholder="0-100">
+        <span matSuffix>%</span>
+        @if (form.get('commissionPercentage')?.invalid && form.get('commissionPercentage')?.touched) {
+          <mat-error>Must be between 0 and 100</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="e.g. john.doe">
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <mat-error>Username is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Min 4 characters">
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <mat-error>Password must be at least 4 characters</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">Save User</button>
+</mat-dialog-actions>

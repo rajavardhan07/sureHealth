@@ -98,5 +98,11 @@ public class PolicyService {
         }
         employeeRepository.saveAll(employees);
     }
+
+    public void suspendPolicy(Long policyId) {
+        GroupPolicy policy = policyRepository.findById(policyId).orElseThrow();
+        policy.setStatus(PolicyStatus.SUSPENDED);
+        policyRepository.save(policy);
+    }
 }
 

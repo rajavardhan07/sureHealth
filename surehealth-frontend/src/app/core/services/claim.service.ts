@@ -9,8 +9,8 @@ export class ClaimService {
 
   constructor(private http: HttpClient) {}
 
-  fileClaim(dto: ClaimCreateDTO): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/file`, dto);
+  fileClaim(formData: FormData): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/file`, formData);
   }
 
   getMyClaims(): Observable<Claim[]> {
@@ -35,5 +35,13 @@ export class ClaimService {
 
   getClaimById(id: number): Observable<Claim> {
     return this.http.get<Claim>(`${this.apiUrl}/${id}`);
+  }
+
+  getAllClaims(): Observable<Claim[]> {
+    return this.http.get<Claim[]>(`${this.apiUrl}/all`);
+  }
+
+  suspendClaim(id: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/suspend`, {});
   }
 }

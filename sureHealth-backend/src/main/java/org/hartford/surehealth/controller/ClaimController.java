@@ -13,11 +13,12 @@ import org.hartford.surehealth.service.ClaimService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/claims")
 @RequiredArgsConstructor
 public class ClaimController {
@@ -26,10 +27,12 @@ public class ClaimController {
     private final ClaimRepository claimRepository;
     private final UserRepository userRepository;
 
-    @PostMapping("/file")
+    @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public Claim file(@RequestBody ClaimCreateDTO dto){
-        return claimService.fileClaim(dto);
+    public Claim file(@ModelAttribute ClaimCreateDTO dto, @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
+        System.out.println("ENTRY: ClaimController.file - DTO: " + dto);
+        System.out.println("ENTRY: ClaimController.file - File: " + (file != null ? file.getOriginalFilename() : "null"));
+        return claimService.fileClaim(dto, file);
     }
 
     @GetMapping("/me")
@@ -68,6 +71,18 @@ public class ClaimController {
     @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'CLAIMS_OFFICER')")
     public Claim getClaimById(@PathVariable Long id) {
         return claimRepository.findById(id).orElseThrow();
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Claim> getAllClaims() {
+        return claimRepository.findAll();
+    }
+
+    @PutMapping("/{id}/suspend")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void suspend(@PathVariable Long id) {
+        claimService.suspendClaim(id);
     }
 }
 

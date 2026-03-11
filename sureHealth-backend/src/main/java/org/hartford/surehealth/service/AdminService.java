@@ -25,6 +25,10 @@ public class AdminService {
         User claimsOfficer = new User();
         claimsOfficer.setUsername(dto.getUsername());
         claimsOfficer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        claimsOfficer.setFullName(dto.getFullName());
+        claimsOfficer.setPhoneNumber(dto.getPhoneNumber());
+        claimsOfficer.setLicenseNumber(dto.getLicenseNumber());
+        claimsOfficer.setCommissionPercentage(dto.getCommissionPercentage());
         claimsOfficer.setRole(Role.CLAIMS_OFFICER);
         claimsOfficer.setFirstLogin(false);
 
@@ -40,9 +44,17 @@ public class AdminService {
         User underwriter = new User();
         underwriter.setUsername(dto.getUsername());
         underwriter.setPassword(passwordEncoder.encode(dto.getPassword()));
+        underwriter.setFullName(dto.getFullName());
+        underwriter.setPhoneNumber(dto.getPhoneNumber());
+        underwriter.setLicenseNumber(dto.getLicenseNumber());
+        underwriter.setCommissionPercentage(dto.getCommissionPercentage());
         underwriter.setRole(Role.UNDERWRITER);
         underwriter.setFirstLogin(false);
 
         return userRepository.save(underwriter);
+    }
+
+    public java.util.List<User> getUsersByRole(Role role) {
+        return userRepository.findByRole(role);
     }
 }

@@ -3,7 +3,8 @@ export enum Role {
   ADMIN = 'ADMIN',
   HR = 'HR',
   EMPLOYEE = 'EMPLOYEE',
-  CLAIMS_OFFICER = 'CLAIMS_OFFICER'
+  CLAIMS_OFFICER = 'CLAIMS_OFFICER',
+  UNDERWRITER = 'UNDERWRITER'
 }
 
 export enum PolicyStatus {
@@ -84,6 +85,7 @@ export interface ClaimCreateDTO {
   diagnosis: string;
   treatmentDate: string;
   billNumber: string;
+  claimType: string;
 }
 
 export interface ClaimApprovalDTO {
@@ -109,12 +111,18 @@ export interface ClaimsOfficerCreateDTO {
   username: string;
   password: string;
   fullName: string;
+  phoneNumber?: string;
+  licenseNumber?: string;
+  commissionPercentage?: number;
 }
 
 export interface UnderwriterCreateDTO {
   username: string;
   password: string;
   fullName: string;
+  phoneNumber?: string;
+  licenseNumber?: string;
+  commissionPercentage?: number;
 }
 
 export interface ClaimsOfficerDashboardDTO {
@@ -122,6 +130,16 @@ export interface ClaimsOfficerDashboardDTO {
   pendingClaims: number;
   approvedToday: number;
   rejectedToday: number;
+}
+
+export interface AdminDashboardDTO {
+  totalClients: number;
+  totalUnderwriters: number;
+  totalClaimsOfficers: number;
+  totalPlans: number;
+  activePolicies: number;
+  totalEmployees: number;
+  pendingClaims: number;
 }
 
 // Entities
@@ -175,6 +193,10 @@ export interface User {
   id: number;
   username: string;
   role: Role;
+  fullName: string;
+  phoneNumber: string;
+  licenseNumber: string;
+  commissionPercentage: number;
   firstLogin: boolean;
   createdAt: string;
   employee?: Employee;
@@ -197,6 +219,8 @@ export interface Claim {
   reviewedBy?: User;
   reviewDate?: string;
   rejectionReason?: string;
+  claimType: string;
+  submissionDate: string;
 }
 
 export interface PremiumInvoice {

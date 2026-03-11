@@ -19,7 +19,7 @@ public interface ClaimRepository extends JpaRepository<Claim,Long> {
     @Query("SELECT c FROM Claim c WHERE c.employee.corporateClient.id = :corporateId")
     long countByCorporateId(Long corporateId);
     
-    @Query("SELECT COUNT(c) FROM Claim c WHERE c.status = :status AND DATE(c.reviewDate) = :date")
+    @Query("SELECT COUNT(c) FROM Claim c WHERE c.status = :status AND CAST(c.reviewDate as date) = :date")
     long countByStatusAndReviewDate(ClaimStatus status, LocalDate date);
 }
 

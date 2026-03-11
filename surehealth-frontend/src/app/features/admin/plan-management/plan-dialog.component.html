@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Create New Insurance Plan</h2>
+<mat-dialog-content>
+  <form [formGroup]="planForm" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Plan Name</mat-label>
+      <input matInput formControlName="planName" placeholder="e.g. Premium Health Gold">
+      <mat-error *ngIf="planForm.get('planName')?.hasError('required')">Plan name is required</mat-error>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Duration (Months)</mat-label>
+        <input matInput type="number" formControlName="durationMonths" placeholder="12">
+        <mat-error *ngIf="planForm.get('durationMonths')?.hasError('required')">Duration is required</mat-error>
+        <mat-error *ngIf="planForm.get('durationMonths')?.hasError('min')">Duration must be at least 1 month</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Coverage Amount (₹)</mat-label>
+        <input matInput type="number" formControlName="coverageAmount" placeholder="500000">
+        <mat-error *ngIf="planForm.get('coverageAmount')?.hasError('required')">Coverage amount is required</mat-error>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Premium Per Employee (₹)</mat-label>
+      <input matInput type="number" formControlName="premiumPerEmployee" placeholder="1500">
+      <mat-error *ngIf="planForm.get('premiumPerEmployee')?.hasError('required')">Premium is required</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Describe the plan coverage and benefits" rows="3"></textarea>
+      <mat-error *ngIf="planForm.get('description')?.hasError('required')">Description is required</mat-error>
+    </mat-form-field>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" [disabled]="planForm.invalid" (click)="onSubmit()">
+    <mat-icon>save</mat-icon> Create Plan
+  </button>
+</mat-dialog-actions>

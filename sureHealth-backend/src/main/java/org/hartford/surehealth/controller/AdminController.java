@@ -26,4 +26,16 @@ public class AdminController {
     public User createUnderwriter(@RequestBody org.hartford.surehealth.dto.UnderwriterCreateDTO dto) {
         return adminService.createUnderwriter(dto);
     }
+
+    @GetMapping("/claims-officers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public java.util.List<User> getClaimsOfficers() {
+        return adminService.getUsersByRole(org.hartford.surehealth.entity.Role.CLAIMS_OFFICER);
+    }
+
+    @GetMapping("/underwriters")
+    @PreAuthorize("hasRole('ADMIN')")
+    public java.util.List<User> getUnderwriters() {
+        return adminService.getUsersByRole(org.hartford.surehealth.entity.Role.UNDERWRITER);
+    }
 }

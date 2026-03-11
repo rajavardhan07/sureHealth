@@ -14,8 +14,14 @@
         </div>
 
         <nav class="sidebar-nav">
+          <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+            <mat-icon>dashboard</mat-icon><span>Overview</span>
+          </a>
           <a routerLink="/admin/policies" routerLinkActive="active" class="nav-item">
-            <mat-icon>policy</mat-icon><span>Policies</span>
+            <mat-icon>policy</mat-icon><span>All Policies</span>
+          </a>
+          <a routerLink="/admin/claims" routerLinkActive="active" class="nav-item">
+            <mat-icon>assignment</mat-icon><span>Claims</span>
           </a>
           <a routerLink="/admin/corporates" routerLinkActive="active" class="nav-item">
             <mat-icon>business</mat-icon><span>Corporate Clients</span>

@@ -1,7 +1,4 @@
-<div class="landing-login-wrapper">
-  <div class="login-hero">
-    <div class="login-bg-pattern"></div>
-
+<div class="login-page-wrapper">
   <div class="login-container fade-in-up">
     <div class="login-branding">
       <div class="logo-icon">
@@ -58,77 +55,8 @@
         </form>
 
         <p class="register-link">New corporate client? <a routerLink="/register">Register your company</a></p>
+        <p class="back-link"><a routerLink="/">Back to Home</a></p>
       </mat-card-content>
     </mat-card>
-
-    <!-- <p class="footer-text">Powered by The Hartford &bull; Secure Portal</p> -->
   </div>
-  </div>
-
-  <!-- Educational Section -->
-  <section id="what-is" class="public-section bg-light">
-    <div class="section-container">
-      <div class="section-header">
-        <h2>What is Corporate Health Insurance?</h2>
-        <p>A group health insurance policy acts as a safety net designed specifically for businesses to cover the medical expenses of their employees.</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-blue"><mat-icon>group_add</mat-icon></div>
-          <h3>Group Coverage</h3>
-          <p>One master policy covers all active employees, significantly reducing administrative overhead and complexity.</p>
-        </div>
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-gold"><mat-icon>savings</mat-icon></div>
-          <h3>Cost Effective</h3>
-          <p>Risk is distributed across a large pool of employees, resulting in exponentially lower premiums per person.</p>
-        </div>
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-navy"><mat-icon>favorite</mat-icon></div>
-          <h3>Employee Retention</h3>
-          <p>Offering comprehensive health benefits is proven to increase employee satisfaction and reduce turnover rates.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Plans Display Section -->
-  <section id="plans" class="public-section">
-    <div class="section-container">
-      <div class="section-header">
-        <h2>Our Active Policy Tiers</h2>
-        <p>We offer flexible, risk-adjusted plans tailored to your company's demographic profile.</p>
-      </div>
-      
-      <div class="plans-grid">
-        @for (plan of publicPlans; track plan.id) {
-          <mat-card class="policy-card hover-lift">
-            <div class="card-top-bar"></div>
-            <div class="plan-header">
-              <mat-icon class="plan-icon">verified_user</mat-icon>
-              <h3>{{ plan.planName }}</h3>
-              <div class="coverage-badge">Up to  Rs{{ plan.coverageAmount| number}}</div>
-              <br/>
-              <div class="coverage-badge">  Base Premium per employee: Rs{{ plan.premiumPerEmployee| number}}</div>
-
-            </div>
-            <mat-card-content>
-              <p class="plan-desc">{{plan.description}}</p>
-              <div class="features-container">
-                <p><strong>Highlights:</strong></p>
-                <p class = "feature-item"><mat-icon class="check-icon">check_circle</mat-icon> Plan Duration : {{plan.durationMonths}} months</p>
-                <p class="feature-item"><mat-icon class="check-icon">check_circle</mat-icon> Cashless Network Access</p>
-                <p class="feature-item"><mat-icon class="check-icon">check_circle</mat-icon> Fast Claim Settlement(24-48 hours)</p>
-                <p class="feature-item"><mat-icon class="check-icon">check_circle</mat-icon> 24/7 Customer Support</p>
-              </div>
-            </mat-card-content>
-            <mat-card-actions>
-              <a mat-stroked-button class="full-width-btn" routerLink="/register">Register to Request</a>
-            </mat-card-actions>
-          </mat-card>
-        }
-      </div>
-    </div>
-  </section>
-
 </div>

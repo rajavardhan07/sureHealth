@@ -36,6 +36,23 @@
             </mat-form-field>
           </div>
 
+          <h3>Supporting Documents</h3>
+          <div class="file-upload-container">
+            <p class="file-label">Medical Report/Bill Copy (Required)</p>
+            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png" #fileInput style="display: none">
+            <div class="file-input-wrapper">
+              <button mat-stroked-button type="button" (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon> Choose File
+              </button>
+              @if (selectedFile) {
+                <span class="file-name">{{ selectedFile.name }}</span>
+              } @else {
+                <span class="file-name no-file">No file chosen</span>
+              }
+            </div>
+            <p class="file-hint">Accepted formats: PDF, JPG, PNG (Max 5MB)</p>
+          </div>
+
           <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
             <mat-icon>send</mat-icon> Submit Claim
           </button>

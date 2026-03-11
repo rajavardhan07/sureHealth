@@ -1,0 +1,23 @@
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  min-width: 500px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+h2[mat-dialog-title] {
+  margin: 0;
+  font-weight: 600;
+  color: var(--primary-navy);
+}

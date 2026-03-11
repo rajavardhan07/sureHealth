@@ -1,43 +1,13 @@
 <div class="fade-in-up">
-  <div class="page-header">
-    <h1>Insurance Plans</h1>
-    <p>Manage available insurance plans for corporate clients</p>
+  <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>Insurance Plans</h1>
+      <p>Manage available insurance plans for corporate clients</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreatePlanDialog()">
+      <mat-icon>add</mat-icon> Create New Plan
+    </button>
   </div>
-
-  <mat-card class="form-card">
-    <h3>Create New Plan</h3>
-    <form [formGroup]="planForm" (ngSubmit)="createPlan()" class="plan-form">
-      <mat-form-field appearance="outline">
-        <mat-label>Plan Name</mat-label>
-        <input matInput formControlName="planName" placeholder="e.g. Premium Health Gold">
-      </mat-form-field>
-      
-      <mat-form-field appearance="outline">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description" placeholder="e.g. Comprehensive coverage with OPD" rows="3"></textarea>
-      </mat-form-field>
-
-      <div class="form-row" style="display: flex; gap: 16px;">
-        <mat-form-field appearance="outline" style="flex: 1;">
-          <mat-label>Duration (Months)</mat-label>
-          <input matInput type="number" formControlName="durationMonths" placeholder="e.g. 12">
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline" style="flex: 1;">
-          <mat-label>Coverage Amount (₹)</mat-label>
-          <input matInput type="number" formControlName="coverageAmount">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" style="flex: 1;">
-          <mat-label>Premium Per Employee (₹)</mat-label>
-          <input matInput type="number" formControlName="premiumPerEmployee">
-        </mat-form-field>
-      </div>
-      <button mat-flat-button color="primary" type="submit" [disabled]="planForm.invalid">
-        <mat-icon>add</mat-icon> Create Plan
-      </button>
-    </form>
-  </mat-card>
 
   <div class="table-container" style="margin-top:24px">
     <div class="table-header">

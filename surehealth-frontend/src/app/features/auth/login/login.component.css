@@ -1,8 +1,4 @@
-.landing-login-wrapper {
-  width: 100%;
-}
-
-.login-hero {
+.login-page-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -10,6 +6,21 @@
   background: linear-gradient(135deg, #0F1B33 0%, #1B2A4A 40%, #2E5C9A 100%);
   position: relative;
   overflow: hidden;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.back-link a {
+  color: #5A6A7E;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
 }
 
 .login-bg-pattern {

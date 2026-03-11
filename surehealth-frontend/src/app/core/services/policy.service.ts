@@ -48,4 +48,12 @@ export class PolicyService {
   underwritePolicy(id: number): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/underwrite`, {});
   }
+
+  getAllPolicies(): Observable<GroupPolicy[]> {
+    return this.http.get<GroupPolicy[]>(`${this.apiUrl}/all`);
+  }
+
+  suspendPolicy(id: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/suspend`, {});
+  }
 }

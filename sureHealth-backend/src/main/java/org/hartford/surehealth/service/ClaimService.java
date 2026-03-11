@@ -11,6 +11,7 @@ import org.hartford.surehealth.repository.GroupPolicyRepository;
 import org.hartford.surehealth.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class ClaimService {
     private final UserRepository userRepository;
     private final Random random = new Random();
 
-    public Claim fileClaim(ClaimCreateDTO dto){
+    public Claim fileClaim(ClaimCreateDTO dto, MultipartFile file) throws Exception {
 
         Employee emp = employeeRepository.findById(dto.employeeId).orElseThrow();
         GroupPolicy policy = policyRepository.findById(dto.policyId).orElseThrow();
@@ -48,9 +49,15 @@ public class ClaimService {
         claim.setDiagnosis(dto.diagnosis);
         claim.setTreatmentDate(dto.treatmentDate);
         claim.setBillNumber(dto.billNumber);
+        claim.setClaimType(dto.claimType);
         claim.setEmployee(emp);
         claim.setGroupPolicy(policy);
         claim.setAssignedOfficer(assignedOfficer);
+
+        if (file != null && !file.isEmpty()) {
+            claim.setClaimReportFile(file.getBytes());
+            claim.setClaimReportFileName(file.getOriginalFilename());
+        }
 
         return claimRepository.save(claim);
     }
@@ -141,6 +148,14 @@ public class ClaimService {
         claim.setRejectionReason(dto.getRejectionReason());
         claim.setReviewedBy(reviewer);
         claim.setReviewDate(LocalDateTime.now());
+        claimRepository.save(claim);
+    }
+
+    @Transactional
+    public void suspendClaim(Long claimId) {
+        Claim claim = claimRepository.findById(claimId)
+            .orElseThrow(() -> new RuntimeException("Claim not found"));
+        claim.setStatus(ClaimStatus.SUSPENDED);
         claimRepository.save(claim);
     }
 }

@@ -38,6 +38,12 @@ public class PolicyController {
         return policyRepository.findByStatus(PolicyStatus.PENDING_ADMIN_APPROVAL);
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<GroupPolicy> getAllPolicies() {
+        return policyRepository.findAll();
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public GroupPolicy getPolicyById(@PathVariable Long id) {
@@ -84,6 +90,12 @@ public class PolicyController {
     @PreAuthorize("hasRole('UNDERWRITER')")
     public void underwritePolicy(@PathVariable Long id) {
         policyService.approveUnderwriterPolicy(id);
+    }
+
+    @PutMapping("/{id}/suspend")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void suspend(@PathVariable Long id) {
+        policyService.suspendPolicy(id);
     }
 }
 

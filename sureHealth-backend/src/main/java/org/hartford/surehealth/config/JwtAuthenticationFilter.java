@@ -28,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
+        System.out.println("JWT Trace: Path " + request.getServletPath() + " - Header: " + (authHeader != null ? "Present" : "Missing"));
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -37,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = authHeader.substring(7);
             final String username = jwtUtil.extractUsername(jwt);
+            System.out.println("JWT Trace: Username extracted: " + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -46,14 +48,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("JWT Trace: Authentication set for " + username + " with authorities: " + userDetails.getAuthorities());
+                } else {
+                    System.out.println("JWT Trace: Token invalid for " + username);
                 }
             }
         } catch (Exception e) {
-            System.out.println("JWT Error: " + e.getMessage());
+            System.out.println("JWT Trace Error: " + e.getMessage());
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);
     }
 }
-
-

@@ -1,0 +1,163 @@
+<div class="landing-page">
+  <!-- Header -->
+  <header class="landing-header">
+    <div class="header-container">
+      <div class="logo">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
+          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
+        </svg>
+        <span class="brand-name">SureHealth</span>
+      </div>
+      <div class="header-actions">
+        <a mat-button routerLink="/login" class="nav-btn">Sign In</a>
+        <a mat-flat-button color="primary" routerLink="/register" class="register-btn">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content fade-in-up">
+      <h1>Insurance for a <br><span class="highlight">Healthier Workforce</span></h1>
+      <p class="hero-subtitle">Comprehensive corporate health coverage designed for modern businesses and their employees.</p>
+      <div class="hero-btns">
+        <a mat-flat-button color="primary" routerLink="/register" class="cta-btn">Get Started</a>
+        <a mat-stroked-button href="#how-it-works" class="cta-btn secondary">How it Works</a>
+      </div>
+    </div>
+    <div class="hero-bg-pattern"></div>
+  </section>
+
+  <!-- Educational Section -->
+  <section id="what-is" class="public-section bg-light">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Overview</span>
+        <h2>What is Corporate Health Insurance?</h2>
+        <p>A group health insurance policy acts as a safety net designed specifically for businesses to cover the medical expenses of their employees.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card hover-lift">
+          <div class="feature-icon icon-blue"><mat-icon>group_add</mat-icon></div>
+          <h3>Group Coverage</h3>
+          <p>One master policy covers all active employees, significantly reducing administrative overhead and complexity.</p>
+        </div>
+        <div class="feature-card hover-lift">
+          <div class="feature-icon icon-gold"><mat-icon>savings</mat-icon></div>
+          <h3>Cost Effective</h3>
+          <p>Risk is distributed across a large pool of employees, resulting in exponentially lower premiums per person.</p>
+        </div>
+        <div class="feature-card hover-lift">
+          <div class="feature-icon icon-navy"><mat-icon>favorite</mat-icon></div>
+          <h3>Employee Retention</h3>
+          <p>Offering comprehensive health benefits is proven to increase employee satisfaction and reduce turnover rates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works (5-Point Flow) -->
+  <section id="how-it-works" class="public-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">The Process</span>
+        <h2>From Registration to Claims</h2>
+        <p>A seamless, digitally-native experience for HR teams and employees alike.</p>
+      </div>
+      
+      <div class="flow-container">
+        <div class="flow-item">
+          <div class="flow-number">1</div>
+          <div class="flow-content">
+            <h3>HR Registration</h3>
+            <p>Corporate HR teams register their company and provide basic organizational details to get started.</p>
+          </div>
+        </div>
+        <div class="flow-line"></div>
+        <div class="flow-item">
+          <div class="flow-number">2</div>
+          <div class="flow-content">
+            <h3>Policy Selection</h3>
+            <p>HR selects from tailored insurance tiers. Our underwriters then review and approve the policy request.</p>
+          </div>
+        </div>
+        <div class="flow-line"></div>
+        <div class="flow-item">
+          <div class="flow-number">3</div>
+          <div class="flow-content">
+            <h3>Employee Onboarding</h3>
+            <p>Once active, employees are added to the portal and can immediately access their insurance details.</p>
+          </div>
+        </div>
+        <div class="flow-line"></div>
+        <div class="flow-item">
+          <div class="flow-number">4</div>
+          <div class="flow-content">
+            <h3>Seamless Filing</h3>
+            <p>Employees can file claims directly via their dashboard by uploading necessary medical documents.</p>
+          </div>
+        </div>
+        <div class="flow-line"></div>
+        <div class="flow-item">
+          <div class="flow-number">5</div>
+          <div class="flow-content">
+            <h3>Fast Settlement</h3>
+            <p>Our claims officers review and process claims within 24-48 hours for swift reimbursement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans Display Section -->
+  <section id="plans" class="public-section bg-light">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Our Plans</span>
+        <h2>Active Policy Tiers</h2>
+        <p>We offer flexible, risk-adjusted plans tailored to your company's demographic profile.</p>
+      </div>
+      
+      <div class="plans-grid">
+        @for (plan of publicPlans; track plan.id) {
+          <mat-card class="policy-card hover-lift">
+            <div class="card-top-bar"></div>
+            <div class="plan-header">
+              <mat-icon class="plan-icon">verified_user</mat-icon>
+              <h3>{{ plan.planName }}</h3>
+              <div class="coverage-amount">Rs {{ plan.coverageAmount | number }}</div>
+              <div class="premium-note">Starting Rs {{ plan.premiumPerEmployee | number }} / employee</div>
+            </div>
+            <mat-card-content>
+              <p class="plan-desc">{{plan.description}}</p>
+              <div class="features-list">
+                <div class="feature-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{plan.durationMonths}} months duration</span>
+                </div>
+                <div class="feature-item">
+                  <mat-icon>payments</mat-icon>
+                  <span>Cashless Network Access</span>
+                </div>
+                <div class="feature-item">
+                  <mat-icon>bolt</mat-icon>
+                  <span>Fast Settlement (24-48h)</span>
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <a mat-flat-button color="primary" class="full-width-btn" routerLink="/register">Get a Quote</a>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 SureHealth &bull; Powered by The Hartford</p>
+    </div>
+  </footer>
+</div>

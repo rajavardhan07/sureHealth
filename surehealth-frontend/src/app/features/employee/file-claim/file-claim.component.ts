@@ -24,6 +24,8 @@ export class FileClaimComponent implements OnInit {
   form: FormGroup;
   profile: Employee | null = null;
 
+  selectedFile: File | null = null;
+
   constructor(
     private claimService: ClaimService,
     private employeeService: EmployeeService,
@@ -44,19 +46,39 @@ export class FileClaimComponent implements OnInit {
     this.employeeService.getMyProfile().subscribe(p => this.profile = p);
   }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        this.snackBar.open('File size exceeds 5MB limit', 'OK', { duration: 3000 });
+        return;
+      }
+      this.selectedFile = file;
+    }
+  }
+
   submit() {
-    if (this.form.invalid || !this.profile) return;
+    if (this.form.invalid || !this.profile || !this.selectedFile) {
+      if (!this.selectedFile) {
+        this.snackBar.open('Please attach a medical report', 'OK', { duration: 3000 });
+      }
+      return;
+    }
+
     const val = this.form.value;
     const date = val.treatmentDate instanceof Date ? val.treatmentDate.toISOString().split('T')[0] : val.treatmentDate;
-    this.claimService.fileClaim({
-      employeeId: this.profile.id,
-      policyId: this.profile.groupPolicy?.id,
-      billAmount: val.billAmount,
-      hospitalName: val.hospitalName,
-      diagnosis: val.diagnosis,
-      treatmentDate: date,
-      billNumber: val.billNumber
-    }).subscribe({
+    
+    const formData = new FormData();
+    formData.append('employeeId', this.profile.id.toString());
+    formData.append('policyId', this.profile.groupPolicy?.id.toString() || '');
+    formData.append('billAmount', val.billAmount.toString());
+    formData.append('hospitalName', val.hospitalName);
+    formData.append('diagnosis', val.diagnosis);
+    formData.append('treatmentDate', date);
+    formData.append('billNumber', val.billNumber);
+    formData.append('file', this.selectedFile);
+
+    this.claimService.fileClaim(formData).subscribe({
       next: () => {
         this.snackBar.open('Claim submitted successfully!', 'OK', { duration: 3000 });
         this.router.navigate(['/employee/my-claims']);

@@ -1,0 +1,114 @@
+<div class="dashboard-container fade-in">
+  <div class="dashboard-header">
+    <h1>Admin Overview</h1>
+    <!-- <p>Real-time system statistics and key performance indicators</p> -->
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading your dashboard...</p>
+    </div>
+  } @else if (stats) {
+    <div class="stats-grid">
+      <!-- Clients Card -->
+      <mat-card class="stat-card clients-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Total Clients</span>
+            <h2 class="value">{{ stats.totalClients }}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Policies Card -->
+      <mat-card class="stat-card policies-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>verified_user</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Active Policies</span>
+            <h2 class="value">{{ stats.activePolicies }}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Employees Card -->
+      <mat-card class="stat-card employees-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>people_alt</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Total Employees</span>
+            <h2 class="value">{{ stats.totalEmployees}}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Underwriters Card -->
+      <mat-card class="stat-card underwriters-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>engineering</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Underwriters</span>
+            <h2 class="value">{{ stats.totalUnderwriters }}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Claims Officers Card -->
+      <mat-card class="stat-card officers-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>assignment_ind</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Claims Officers</span>
+            <h2 class="value">{{ stats.totalClaimsOfficers }}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Plans Card -->
+      <mat-card class="stat-card plans-card">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>layers</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Active Plans</span>
+            <h2 class="value">{{ stats.totalPlans }}</h2>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Urgent Card: Pending Claims -->
+      <mat-card class="stat-card claims-card" [class.urgent]="stats.pendingClaims > 0">
+        <div class="card-content">
+          <div class="icon-box">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="label">Pending Claims</span>
+            <h2 class="value">{{ stats.pendingClaims }}</h2>
+          </div>
+        </div>
+        @if (stats.pendingClaims > 0) {
+          <div class="urgent-badge">Needs Attention</div>
+        }
+      </mat-card>
+    </div>
+  } @else {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>Failed to load dashboard data. Please try again later.</p>
+    </div>
+  }
+</div>

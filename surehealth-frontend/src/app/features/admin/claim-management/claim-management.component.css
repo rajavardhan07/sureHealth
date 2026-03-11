@@ -1,0 +1,79 @@
+.management-container {
+  padding: 24px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1B2A4A;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #64748b;
+  margin: 0;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  position: relative;
+  min-height: 200px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-claimNumber { padding-left: 24px !important; font-weight: 600; color: #1B2A4A; }
+
+.emp-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.emp-name { font-weight: 500; color: #1e293b; }
+.emp-id { font-size: 12px; color: #64748b; }
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-pending { background: #FEF3C7; color: #92400E; }
+.status-review { background: #DBEAFE; color: #1E40AF; }
+.status-approved { background: #D1FAE5; color: #065F46; }
+.status-rejected { background: #FEE2E2; color: #991B1B; }
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.empty-cell {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+}
+
+tr.mat-header-row { height: 56px; background: #f8fafc; }
+tr.mat-row { height: 64px; }
+tr.mat-row:hover { background-color: #f1f5f9; }
