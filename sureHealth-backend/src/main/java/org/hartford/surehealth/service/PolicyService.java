@@ -5,7 +5,8 @@ import org.hartford.surehealth.dto.PolicyRequestDTO;
 import org.hartford.surehealth.entity.CorporateClient;
 import org.hartford.surehealth.entity.GroupPolicy;
 import org.hartford.surehealth.entity.InsurancePlan;
-import org.hartford.surehealth.entity.PolicyStatus;
+import org.hartford.surehealth.enums.PolicyStatus;
+import org.hartford.surehealth.exceptions.ResourceNotFoundException;
 import org.hartford.surehealth.repository.CorporateRepository;
 import org.hartford.surehealth.repository.GroupPolicyRepository;
 import org.hartford.surehealth.repository.InsurancePlanRepository;
@@ -13,7 +14,7 @@ import org.hartford.surehealth.repository.UserRepository;
 import org.hartford.surehealth.repository.EmployeeRepository;
 import org.hartford.surehealth.entity.User;
 import org.hartford.surehealth.entity.Employee;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.Role;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,13 +34,15 @@ public class PolicyService {
 
     public void requestPolicy(PolicyRequestDTO dto){
 
-        CorporateClient corp = corporateRepository.findById(dto.corporateId).orElseThrow();
-        InsurancePlan plan = planRepository.findById(dto.planId).orElseThrow();
+        CorporateClient corp = corporateRepository.findById(dto.corporateId)
+            .orElseThrow(() -> new ResourceNotFoundException("Corporate client not found with ID: " + dto.corporateId));
+        InsurancePlan plan = planRepository.findById(dto.planId)
+            .orElseThrow(() -> new ResourceNotFoundException("Insurance plan not found with ID: " + dto.planId));
 
         // Find all underwriters and pick one randomly
         List<User> underwriters = userRepository.findByRole(Role.UNDERWRITER);
         if (underwriters.isEmpty()) {
-            throw new RuntimeException("No Underwriters available in the system!");
+            throw new ResourceNotFoundException("No underwriters available in the system");
         }
         User randomUnderwriter = underwriters.get(new Random().nextInt(underwriters.size()));
 
@@ -63,7 +66,8 @@ public class PolicyService {
     }
 
     public void approvePolicy(Long policyId){
-        GroupPolicy policy = policyRepository.findById(policyId).orElseThrow();
+        GroupPolicy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new ResourceNotFoundException("Policy not found with ID: " + policyId));
         policy.setStatus(PolicyStatus.APPROVED);
         policy.setStartDate(LocalDate.now());
         policy.setEndDate(LocalDate.now().plusYears(1));
@@ -75,13 +79,15 @@ public class PolicyService {
     }
 
     public void rejectPolicy(Long policyId){
-        GroupPolicy policy = policyRepository.findById(policyId).orElseThrow();
+        GroupPolicy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new ResourceNotFoundException("Policy not found with ID: " + policyId));
         policy.setStatus(PolicyStatus.REJECTED);
         policyRepository.save(policy);
     }
 
     public void approveUnderwriterPolicy(Long policyId) {
-        GroupPolicy policy = policyRepository.findById(policyId).orElseThrow();
+        GroupPolicy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new ResourceNotFoundException("Policy not found with ID: " + policyId));
         policy.setStatus(PolicyStatus.APPROVED);
         policy.setStartDate(LocalDate.now());
         policy.setEndDate(LocalDate.now().plusYears(1));
@@ -100,9 +106,11 @@ public class PolicyService {
     }
 
     public void suspendPolicy(Long policyId) {
-        GroupPolicy policy = policyRepository.findById(policyId).orElseThrow();
+        GroupPolicy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new ResourceNotFoundException("Policy not found with ID: " + policyId));
         policy.setStatus(PolicyStatus.SUSPENDED);
         policyRepository.save(policy);
     }
 }
+
 

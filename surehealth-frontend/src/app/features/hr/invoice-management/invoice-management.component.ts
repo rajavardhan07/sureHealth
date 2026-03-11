@@ -42,7 +42,7 @@ export class HrInvoiceManagementComponent implements OnInit {
         this.snackBar.open('Payment successful!', 'OK', { duration: 3000 });
         inv.status = 'PAID' as any;
       },
-      error: () => { this.snackBar.open('Payment failed', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 

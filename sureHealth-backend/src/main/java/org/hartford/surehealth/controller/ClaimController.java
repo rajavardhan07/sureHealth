@@ -1,11 +1,12 @@
 package org.hartford.surehealth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.ClaimApprovalDTO;
 import org.hartford.surehealth.dto.ClaimCreateDTO;
 import org.hartford.surehealth.dto.ClaimRejectionDTO;
 import org.hartford.surehealth.entity.Claim;
-import org.hartford.surehealth.entity.ClaimStatus;
+import org.hartford.surehealth.enums.ClaimStatus;
 import org.hartford.surehealth.entity.User;
 import org.hartford.surehealth.repository.ClaimRepository;
 import org.hartford.surehealth.repository.UserRepository;
@@ -57,13 +58,13 @@ public class ClaimController {
 
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasRole('CLAIMS_OFFICER')")
-    public void approve(@PathVariable Long id, @RequestBody ClaimApprovalDTO dto, Authentication auth) {
+    public void approve(@PathVariable Long id, @Valid @RequestBody ClaimApprovalDTO dto, Authentication auth) {
         claimService.approveClaim(id, dto, auth.getName());
     }
 
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasRole('CLAIMS_OFFICER')")
-    public void reject(@PathVariable Long id, @RequestBody ClaimRejectionDTO dto, Authentication auth) {
+    public void reject(@PathVariable Long id, @Valid @RequestBody ClaimRejectionDTO dto, Authentication auth) {
         claimService.rejectClaim(id, dto, auth.getName());
     }
 
@@ -85,5 +86,6 @@ public class ClaimController {
         claimService.suspendClaim(id);
     }
 }
+
 
 

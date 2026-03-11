@@ -27,7 +27,7 @@ public class AdminProfile {
     private User user;
 
     private String department;
-    private String accessLevel; // e.g., "SUPER_ADMIN", "SYSTEM_ADMIN"
+//  private String accessLevel; // e.g., "SUPER_ADMIN", "SYSTEM_ADMIN"
     private Boolean canManageUsers;
     private Boolean canManagePolicies;
     private Boolean canManageClaims;
@@ -35,3 +35,4 @@ public class AdminProfile {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
+

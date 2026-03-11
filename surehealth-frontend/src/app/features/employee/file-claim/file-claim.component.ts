@@ -83,7 +83,7 @@ export class FileClaimComponent implements OnInit {
         this.snackBar.open('Claim submitted successfully!', 'OK', { duration: 3000 });
         this.router.navigate(['/employee/my-claims']);
       },
-      error: () => { this.snackBar.open('Failed to submit claim', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 }

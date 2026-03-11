@@ -1,9 +1,11 @@
 package org.hartford.surehealth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.EmployeeCreateDTO;
 import org.hartford.surehealth.entity.Employee;
 import org.hartford.surehealth.entity.User;
+import org.hartford.surehealth.exceptions.InvalidOperationException;
 import org.hartford.surehealth.repository.EmployeeRepository;
 import org.hartford.surehealth.repository.UserRepository;
 import org.hartford.surehealth.service.EmployeeService;
@@ -29,13 +31,13 @@ public class EmployeeController {
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('HR')")
     public Map<String, String> add(
-            @ModelAttribute EmployeeCreateDTO dto,
+            @Valid @ModelAttribute EmployeeCreateDTO dto,
             @RequestParam(value = "file", required = false) MultipartFile file) {
         
         try {
             return employeeService.addEmployee(dto, file);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to add employee: " + e.getMessage());
+            throw new InvalidOperationException("Failed to add employee: " + e.getMessage());
         }
     }
 
@@ -58,5 +60,6 @@ public class EmployeeController {
         return user.getEmployee();
     }
 }
+
 
 

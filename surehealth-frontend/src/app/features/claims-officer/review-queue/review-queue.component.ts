@@ -40,7 +40,7 @@ export class ReviewQueueComponent implements OnInit {
   startReview(claim: Claim) {
     this.claimService.startReview(claim.id).subscribe({
       next: () => { claim.status = 'UNDER_REVIEW' as any; this.snackBar.open('Claim under review', 'OK', { duration: 2000 }); },
-      error: () => { this.snackBar.open('Failed to start review', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 
@@ -49,7 +49,7 @@ export class ReviewQueueComponent implements OnInit {
     if (!amount) return;
     this.claimService.approveClaim(claim.id, { approvedAmount: amount }).subscribe({
       next: () => { this.snackBar.open('Claim approved', 'OK', { duration: 3000 }); this.loadClaims(); },
-      error: () => { this.snackBar.open('Failed to approve', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 
@@ -58,7 +58,7 @@ export class ReviewQueueComponent implements OnInit {
     if (!reason) return;
     this.claimService.rejectClaim(claim.id, { rejectionReason: reason }).subscribe({
       next: () => { this.snackBar.open('Claim rejected', 'OK', { duration: 3000 }); this.loadClaims(); },
-      error: () => { this.snackBar.open('Failed to reject', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 }

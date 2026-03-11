@@ -6,8 +6,8 @@ import org.hartford.surehealth.entity.CorporateClient;
 import org.hartford.surehealth.entity.Employee;
 import org.hartford.surehealth.entity.GroupPolicy;
 import org.hartford.surehealth.entity.User;
-import org.hartford.surehealth.entity.PolicyStatus;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.PolicyStatus;
+import org.hartford.surehealth.enums.Role;
 import org.hartford.surehealth.repository.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -88,4 +88,5 @@ public class EmployeeService {
     // Wait, I can't add toString to a DTO easily without changing the file.
     // I'll just log the message.
 }
+
 

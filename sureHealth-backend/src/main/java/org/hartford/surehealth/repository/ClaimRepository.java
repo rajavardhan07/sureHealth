@@ -1,7 +1,7 @@
 package org.hartford.surehealth.repository;
 
 import org.hartford.surehealth.entity.Claim;
-import org.hartford.surehealth.entity.ClaimStatus;
+import org.hartford.surehealth.enums.ClaimStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,5 +22,6 @@ public interface ClaimRepository extends JpaRepository<Claim,Long> {
     @Query("SELECT COUNT(c) FROM Claim c WHERE c.status = :status AND CAST(c.reviewDate as date) = :date")
     long countByStatusAndReviewDate(ClaimStatus status, LocalDate date);
 }
+
 
 

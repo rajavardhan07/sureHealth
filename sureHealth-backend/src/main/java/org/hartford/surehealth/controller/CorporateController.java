@@ -1,6 +1,7 @@
 package org.hartford.surehealth.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.CorporateRegisterDTO;
 import org.hartford.surehealth.entity.CorporateClient;
@@ -29,7 +30,7 @@ public class CorporateController {
     private final EmployeeRepository employeeRepository;
 
     @PostMapping("/register")
-    public void register(@RequestBody CorporateRegisterDTO dto){
+    public void register(@Valid @RequestBody CorporateRegisterDTO dto){
         corporateService.registerCorporate(dto);
     }
 
@@ -73,5 +74,6 @@ public class CorporateController {
         return corporateService.suspendCorporateClient(id);
     }
 }
+
 
 

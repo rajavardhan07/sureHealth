@@ -35,3 +35,4 @@ public class ClaimsOfficerProfile {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
+

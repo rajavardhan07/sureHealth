@@ -1,5 +1,7 @@
 package org.hartford.surehealth.entity;
 
+import org.hartford.surehealth.enums.Role;
+
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -67,5 +69,6 @@ public class User {
     private CorporateClient corporateClient;
 
 }
+
 
 

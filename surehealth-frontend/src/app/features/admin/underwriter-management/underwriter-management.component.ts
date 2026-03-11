@@ -69,7 +69,7 @@ export class UnderwriterManagementComponent implements OnInit {
             this.snackBar.open('Underwriter created successfully', 'OK', { duration: 3000 });
             this.loadUnderwriters();
           },
-          error: () => this.snackBar.open('Failed to create underwriter', 'OK', { duration: 3000 })
+          error: () => {} // Error handled by interceptor
         });
       }
     });

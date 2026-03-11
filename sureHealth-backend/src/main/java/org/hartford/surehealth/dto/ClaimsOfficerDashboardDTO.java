@@ -11,3 +11,4 @@ public class ClaimsOfficerDashboardDTO {
     private long approvedToday;
     private long rejectedToday;
 }
+

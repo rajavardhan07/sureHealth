@@ -15,3 +15,4 @@ public class RiskBreakdownDTO {
     private BigDecimal groupSizeFactor;
     private BigDecimal finalMultiplier;
 }
+

@@ -44,3 +44,4 @@ public class InvoiceController {
         billingService.generateInvoiceForPolicy(policyId);
     }
 }
+

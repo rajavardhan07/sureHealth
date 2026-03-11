@@ -3,9 +3,9 @@ package org.hartford.surehealth.service;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.AdminDashboardDTO;
 import org.hartford.surehealth.dto.ClaimsOfficerDashboardDTO;
-import org.hartford.surehealth.entity.ClaimStatus;
-import org.hartford.surehealth.entity.PolicyStatus;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.ClaimStatus;
+import org.hartford.surehealth.enums.PolicyStatus;
+import org.hartford.surehealth.enums.Role;
 import org.hartford.surehealth.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -51,3 +51,4 @@ public class DashboardService {
         );
     }
 }
+

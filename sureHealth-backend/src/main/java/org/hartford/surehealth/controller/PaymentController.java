@@ -1,5 +1,6 @@
 package org.hartford.surehealth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.PaymentDTO;
 import org.hartford.surehealth.entity.Payment;
@@ -19,7 +20,7 @@ public class PaymentController {
 
     @PostMapping("/pay")
     @PreAuthorize("hasRole('HR')")
-    public Payment payInvoice(@RequestBody PaymentDTO dto) {
+    public Payment payInvoice(@Valid @RequestBody PaymentDTO dto) {
         return paymentService.processPayment(dto);
     }
 
@@ -35,3 +36,4 @@ public class PaymentController {
         return paymentService.getInvoiceById(invoiceId);
     }
 }
+

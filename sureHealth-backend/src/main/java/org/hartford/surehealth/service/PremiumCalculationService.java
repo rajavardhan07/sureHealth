@@ -256,3 +256,4 @@ public class PremiumCalculationService {
         return BigDecimal.valueOf(0.85); // >= 500
     }
 }
+

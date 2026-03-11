@@ -10,3 +10,4 @@ public interface InsurancePlanRepository extends JpaRepository<InsurancePlan,Lon
 }
 
 
+

@@ -2,8 +2,9 @@ package org.hartford.surehealth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.ClaimsOfficerCreateDTO;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.Role;
 import org.hartford.surehealth.entity.User;
+import org.hartford.surehealth.exceptions.DuplicateResourceException;
 import org.hartford.surehealth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class AdminService {
     @Transactional
     public User createClaimsOfficer(ClaimsOfficerCreateDTO dto) {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new DuplicateResourceException("User with username '" + dto.getUsername() + "' already exists");
         }
 
         User claimsOfficer = new User();
@@ -38,7 +39,7 @@ public class AdminService {
     @Transactional
     public User createUnderwriter(org.hartford.surehealth.dto.UnderwriterCreateDTO dto) {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new DuplicateResourceException("User with username '" + dto.getUsername() + "' already exists");
         }
 
         User underwriter = new User();
@@ -58,3 +59,4 @@ public class AdminService {
         return userRepository.findByRole(role);
     }
 }
+

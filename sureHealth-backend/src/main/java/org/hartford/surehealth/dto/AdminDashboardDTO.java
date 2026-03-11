@@ -16,3 +16,4 @@ public class AdminDashboardDTO {
     private long totalEmployees;
     private long pendingClaims;
 }
+

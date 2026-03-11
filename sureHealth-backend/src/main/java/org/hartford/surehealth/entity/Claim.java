@@ -1,5 +1,7 @@
 package org.hartford.surehealth.entity;
 
+import org.hartford.surehealth.enums.ClaimStatus;
+
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -64,5 +66,6 @@ public class Claim {
     private String claimType;
     private LocalDateTime submissionDate = LocalDateTime.now();
 }
+
 
 

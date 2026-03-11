@@ -69,7 +69,7 @@ export class OfficerManagementComponent implements OnInit {
             this.snackBar.open('Claims officer created successfully', 'OK', { duration: 3000 });
             this.loadOfficers();
           },
-          error: () => this.snackBar.open('Failed to create officer', 'OK', { duration: 3000 })
+          error: () => {} // Error handled by interceptor
         });
       }
     });

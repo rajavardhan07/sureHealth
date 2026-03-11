@@ -1,7 +1,7 @@
 package org.hartford.surehealth.repository;
 
 import org.hartford.surehealth.entity.GroupPolicy;
-import org.hartford.surehealth.entity.PolicyStatus;
+import org.hartford.surehealth.enums.PolicyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,5 +15,6 @@ public interface GroupPolicyRepository extends JpaRepository<GroupPolicy,Long> {
     List<GroupPolicy> findByAssignedUnderwriterId(Long underwriterId);
     List<GroupPolicy> findByAssignedUnderwriterIdAndStatus(Long underwriterId, PolicyStatus status);
 }
+
 
 

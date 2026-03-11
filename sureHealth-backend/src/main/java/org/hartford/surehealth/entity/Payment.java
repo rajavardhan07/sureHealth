@@ -1,5 +1,8 @@
 package org.hartford.surehealth.entity;
 
+import org.hartford.surehealth.enums.PaymentMode;
+import org.hartford.surehealth.enums.PaymentStatus;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,3 +36,4 @@ public class Payment {
     @JoinColumn(name = "invoice_id")
     private PremiumInvoice invoice;
 }
+

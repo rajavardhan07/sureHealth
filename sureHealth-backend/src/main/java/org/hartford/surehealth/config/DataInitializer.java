@@ -2,7 +2,7 @@ package org.hartford.surehealth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.entity.InsurancePlan;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.Role;
 import org.hartford.surehealth.entity.User;
 import org.hartford.surehealth.repository.InsurancePlanRepository;
 import org.hartford.surehealth.repository.UserRepository;
@@ -89,5 +89,6 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 }
+
 
 

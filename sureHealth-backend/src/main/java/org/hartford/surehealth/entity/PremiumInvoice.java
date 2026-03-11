@@ -1,5 +1,7 @@
 package org.hartford.surehealth.entity;
 
+import org.hartford.surehealth.enums.InvoiceStatus;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,3 +39,4 @@ public class PremiumInvoice {
     @JsonIgnore
     private List<Payment> payments;
 }
+

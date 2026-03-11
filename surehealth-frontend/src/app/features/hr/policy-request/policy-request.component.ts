@@ -106,8 +106,8 @@ export class HrPolicyRequestComponent implements OnInit {
         this.fetchingQuote = null; 
       },
       error: () => { 
-        this.snackBar.open('Failed to calculate quote', 'OK', { duration: 3000 });
         this.fetchingQuote = null; 
+        // Error handled by interceptor
       }
     });
   }
@@ -132,7 +132,7 @@ export class HrPolicyRequestComponent implements OnInit {
         this.loadPolicies(); 
         this.loadUnassignedEmployees();
       },
-      error: () => { this.snackBar.open('Failed to submit request', 'OK', { duration: 3000 }); }
+      error: () => {} // Error handled by interceptor
     });
   }
 

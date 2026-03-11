@@ -13,3 +13,4 @@ public class QuoteDTO {
     private BigDecimal calculatedPremiumPerEmployee;
     private RiskBreakdownDTO riskBreakdown;
 }
+

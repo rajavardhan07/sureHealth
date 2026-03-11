@@ -10,3 +10,4 @@ public interface CorporateRepository extends JpaRepository<CorporateClient,Long>
 }
 
 
+

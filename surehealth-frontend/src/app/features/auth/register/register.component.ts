@@ -73,7 +73,7 @@ export class RegisterComponent {
       },
       error: () => {
         this.loading = false;
-        this.snackBar.open('Registration failed. Please try again.', 'OK', { duration: 4000 });
+        // Error handled by interceptor
       }
     });
   }

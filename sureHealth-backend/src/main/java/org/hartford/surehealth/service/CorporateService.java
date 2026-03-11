@@ -5,7 +5,9 @@ import java.util.List;
 import org.hartford.surehealth.dto.CorporateRegisterDTO;
 import org.hartford.surehealth.entity.CorporateClient;
 import org.hartford.surehealth.entity.User;
-import org.hartford.surehealth.entity.Role;
+import org.hartford.surehealth.enums.Role;
+import org.hartford.surehealth.exceptions.DuplicateResourceException;
+import org.hartford.surehealth.exceptions.ResourceNotFoundException;
 import org.hartford.surehealth.repository.CorporateRepository;
 import org.hartford.surehealth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +22,14 @@ public class CorporateService {
     private final PasswordEncoder passwordEncoder;
 
     public void registerCorporate(CorporateRegisterDTO dto){
+
+        if (userRepository.findByUsername(dto.username).isPresent()) {
+            throw new DuplicateResourceException("Username already exists: " + dto.username);
+        }
+
+        if (corporateRepository.findByContactEmail(dto.contactEmail).isPresent()) {
+            throw new DuplicateResourceException("Corporate client with this email already exists");
+        }
 
         CorporateClient corp = new CorporateClient();
         corp.setCompanyName(dto.companyName);
@@ -42,7 +52,8 @@ public class CorporateService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
     }
 
     public List<CorporateClient> getAllCorporateClients() {
@@ -51,10 +62,11 @@ public class CorporateService {
 
     public CorporateClient suspendCorporateClient(Long id) {
         CorporateClient client = corporateRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Corporate Client not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Corporate Client not found with id: " + id));
         
         client.setStatus("SUSPENDED");
         return corporateRepository.save(client);
     }
 }
+
 

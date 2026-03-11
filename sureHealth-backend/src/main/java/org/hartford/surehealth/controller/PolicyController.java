@@ -1,5 +1,6 @@
 package org.hartford.surehealth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hartford.surehealth.dto.PolicyRequestDTO;
 import org.hartford.surehealth.dto.RiskBreakdownDTO;
@@ -7,7 +8,7 @@ import org.hartford.surehealth.dto.QuoteDTO;
 import org.hartford.surehealth.entity.User;
 import org.hartford.surehealth.repository.UserRepository;
 import org.hartford.surehealth.entity.GroupPolicy;
-import org.hartford.surehealth.entity.PolicyStatus;
+import org.hartford.surehealth.enums.PolicyStatus;
 import org.hartford.surehealth.repository.GroupPolicyRepository;
 import org.hartford.surehealth.service.PolicyService;
 import org.hartford.surehealth.service.PremiumCalculationService;
@@ -28,7 +29,7 @@ public class PolicyController {
 
     @PostMapping("/request")
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
-    public void request(@RequestBody PolicyRequestDTO dto){
+    public void request(@Valid @RequestBody PolicyRequestDTO dto){
         policyService.requestPolicy(dto);
     }
 
@@ -98,5 +99,6 @@ public class PolicyController {
         policyService.suspendPolicy(id);
     }
 }
+
 
 
