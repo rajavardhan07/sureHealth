@@ -12,7 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AddEmployeeDialogComponent } from './add-employee-dialog.component';
+import { AddEmployeeDialogComponent } from '../add-employee-dialog/add-employee-dialog.component';
 import { CorporateService } from '../../../core/services/corporate.service';
 import { PolicyService } from '../../../core/services/policy.service';
 import { PlanService } from '../../../core/services/plan.service';

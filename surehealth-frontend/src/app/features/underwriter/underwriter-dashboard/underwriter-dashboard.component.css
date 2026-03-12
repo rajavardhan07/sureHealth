@@ -1,0 +1,119 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+.header-section {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+}
+
+.policies-card {
+  overflow: hidden;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border-radius: 12px;
+}
+
+.policies-table {
+  width: 100%;
+}
+
+.policy-number {
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.approve-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.approve-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px;
+  color: #94a3b8;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  opacity: 0.3;
+  margin: 0 auto 16px;
+}
+
+.empty-text {
+  margin: 16px 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.empty-subtext {
+  margin: 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+}
+
+th.mat-header-cell {
+  font-weight: 600;
+  color: #475569;
+  background-color: #f8fafc;
+}
+
+td.mat-cell {
+  color: #334155;
+}
+
+tr.mat-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .policies-table {
+    font-size: 14px;
+  }
+
+  .approve-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}

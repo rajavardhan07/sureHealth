@@ -29,75 +29,8 @@ import { EmployeeService } from '../../../core/services/employee.service';
     MatNativeDateModule,
     MatProgressSpinnerModule
   ],
-  template: `
-    <h2 mat-dialog-title>Add New Employee</h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" class="form-container">
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Full Name</mat-label>
-            <input matInput formControlName="fullName">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Phone</mat-label>
-            <input matInput formControlName="phone">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Age</mat-label>
-            <input matInput type="number" formControlName="age">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Department</mat-label>
-            <input matInput formControlName="department">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Designation</mat-label>
-            <input matInput formControlName="designation">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Gender</mat-label>
-            <mat-select formControlName="gender">
-              <mat-option value="Male">Male</mat-option>
-              <mat-option value="Female">Female</mat-option>
-              <mat-option value="Other">Other</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Date of Join</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="joinDate">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </div>
-        
-        <div class="file-upload">
-          <label>Health Report (Optional)</label>
-          <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
-        </div>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancel</button>
-      <button mat-flat-button color="primary" [disabled]="form.invalid || loading" (click)="onSubmit()">
-        @if (loading) {
-          <mat-icon><mat-spinner diameter="18"></mat-spinner></mat-icon>
-        } @else {
-          Add Employee
-        }
-      </button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .form-container { padding: 10px 0; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-    .file-upload { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-    .file-upload label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-    mat-dialog-content { min-width: 500px; }
-  `]
+  templateUrl: './add-employee-dialog.component.html',
+  styleUrl: './add-employee-dialog.component.css'
 })
 export class AddEmployeeDialogComponent {
   form: FormGroup;
@@ -164,7 +97,7 @@ export class AddEmployeeDialogComponent {
       },
       error: () => {
         this.loading = false;
-        this.snackBar.open('Failed to add employee', 'OK', { duration: 3000 });
+        // Error handled by interceptor
       }
     });
   }

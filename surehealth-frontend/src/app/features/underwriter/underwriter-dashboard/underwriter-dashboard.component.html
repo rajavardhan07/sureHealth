@@ -1,0 +1,60 @@
+<div class="dashboard-container">
+  <div class="header-section">
+    <h1 class="page-title">Review Queue</h1>
+    <p class="page-subtitle">Policies assigned to you for risk assessment and approval</p>
+  </div>
+
+  <mat-card class="policies-card">
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (policies.length > 0) {
+      <table mat-table [dataSource]="policies" class="policies-table">
+        <!-- Policy Number Column -->
+        <ng-container matColumnDef="policyNumber">
+          <th mat-header-cell *matHeaderCellDef>Policy Number</th>
+          <td mat-cell *matCellDef="let p" class="policy-number">{{ p.policyNumber }}</td>
+        </ng-container>
+        
+        <!-- Corporate Client Column -->
+        <ng-container matColumnDef="corporate">
+          <th mat-header-cell *matHeaderCellDef>Corporate Client</th>
+          <td mat-cell *matCellDef="let p">{{ p.corporateClient?.companyName }}</td>
+        </ng-container>
+
+        <!-- Insurance Plan Column -->
+        <ng-container matColumnDef="plan">
+          <th mat-header-cell *matHeaderCellDef>Insurance Plan</th>
+          <td mat-cell *matCellDef="let p">{{ p.insurancePlan?.planName }}</td>
+        </ng-container>
+
+        <!-- Enrolled Employees Column -->
+        <ng-container matColumnDef="employees">
+          <th mat-header-cell *matHeaderCellDef>Enrolled Employees</th>
+          <td mat-cell *matCellDef="let p">{{ p.employees?.length || 0 }} Employees</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let p">
+            <button mat-flat-button color="primary" (click)="approve(p.id)" class="approve-btn">
+              <mat-icon>check_circle</mat-icon>
+              Approve Policy
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    } @else {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">assignment_turned_in</mat-icon>
+        <p class="empty-text">Your review queue is empty!</p>
+        <p class="empty-subtext">New policy requests will appear here for your review</p>
+      </div>
+    }
+  </mat-card>
+</div>
