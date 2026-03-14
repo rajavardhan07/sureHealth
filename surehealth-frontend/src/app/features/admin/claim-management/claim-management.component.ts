@@ -1,10 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ClaimService } from '../../../core/services/claim.service';
 import { Claim } from '../../../shared/models';
 
@@ -13,18 +9,14 @@ import { Claim } from '../../../shared/models';
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatProgressSpinnerModule
+    MatIconModule
   ],
   templateUrl: './claim-management.component.html',
   styleUrl: './claim-management.component.css'
 })
 export class ClaimManagementComponent implements OnInit {
-  claims: Claim[] = [];
-  loading = true;
+  claims = signal<Claim[]>([]);
+  loading = signal(true);
   displayedColumns = ['claimNumber', 'employee', 'corporate', 'amount', 'type', 'status', 'date'];
 
   constructor(private claimService: ClaimService) {}
@@ -34,16 +26,16 @@ export class ClaimManagementComponent implements OnInit {
   }
 
   loadAllClaims(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.claimService.getAllClaims().subscribe({
       next: (data) => {
-        this.claims = data;
-        console.log(this.claims);
-        this.loading = false;
+        this.claims.set(data);
+        console.log(this.claims());
+        this.loading.set(false);
       },
       error: (err) => {
         console.error('Failed to load claims', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,12 +17,12 @@ import { Employee } from '../../../shared/models';
 @Component({
   selector: 'app-file-claim',
   standalone: true,
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSnackBarModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [ReactiveFormsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './file-claim.component.html',
   styleUrl: './file-claim.component.css'})
 export class FileClaimComponent implements OnInit {
   form: FormGroup;
-  profile: Employee | null = null;
+  profile = signal<Employee | null>(null);
 
   selectedFile: File | null = null;
 
@@ -43,7 +43,7 @@ export class FileClaimComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.employeeService.getMyProfile().subscribe(p => this.profile = p);
+    this.employeeService.getMyProfile().subscribe(p => this.profile.set(p));
   }
 
   onFileSelected(event: any) {
@@ -58,7 +58,7 @@ export class FileClaimComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.invalid || !this.profile || !this.selectedFile) {
+    if (this.form.invalid || !this.profile() || !this.selectedFile) {
       if (!this.selectedFile) {
         this.snackBar.open('Please attach a medical report', 'OK', { duration: 3000 });
       }
@@ -69,8 +69,8 @@ export class FileClaimComponent implements OnInit {
     const date = val.treatmentDate instanceof Date ? val.treatmentDate.toISOString().split('T')[0] : val.treatmentDate;
     
     const formData = new FormData();
-    formData.append('employeeId', this.profile.id.toString());
-    formData.append('policyId', this.profile.groupPolicy?.id.toString() || '');
+    formData.append('employeeId', this.profile()!.id.toString());
+    formData.append('policyId', this.profile()!.groupPolicy?.id.toString() || '');
     formData.append('billAmount', val.billAmount.toString());
     formData.append('hospitalName', val.hospitalName);
     formData.append('diagnosis', val.diagnosis);

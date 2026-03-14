@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -15,22 +15,18 @@ import { User, Role } from '../../../shared/models';
   selector: 'app-officer-management',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatCardModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatSnackBarModule, 
-    MatTableModule,
-    MatDialogModule,
-    MatProgressSpinnerModule
+    CommonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './officer-management.component.html',
   styleUrl: './officer-management.component.css'
 })
 export class OfficerManagementComponent implements OnInit {
-  officers: User[] = [];
+  officers = signal<User[]>([]);
   displayedColumns: string[] = ['fullName', 'username', 'phoneNumber', 'licenseNumber', 'commission', 'createdAt'];
-  loading = true;
+  loading = signal(true);
 
   constructor(
     private adminService: AdminService, 
@@ -43,15 +39,15 @@ export class OfficerManagementComponent implements OnInit {
   }
 
   loadOfficers() {
-    this.loading = true;
+    this.loading.set(true);
     this.adminService.getClaimsOfficers().subscribe({
       next: (data) => {
-        this.officers = data;
-        this.loading = false;
+        this.officers.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.snackBar.open('Failed to load officers', 'OK', { duration: 3000 });
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

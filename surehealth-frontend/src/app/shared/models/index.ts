@@ -151,6 +151,8 @@ export interface CorporateClient {
   contactEmail: string;
   contactPhone: string;
   status: string;
+  industryType?: string;
+  numberOfEmployees?: number;
 }
 
 export interface InsurancePlan {

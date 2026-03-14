@@ -13,6 +13,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+// The @RequiredArgsConstructor annotation from Lombok generates a constructor with parameters for all final fields.
 public class DashboardService {
 
     private final ClaimRepository claimRepository;

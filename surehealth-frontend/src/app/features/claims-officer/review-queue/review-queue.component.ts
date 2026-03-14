@@ -1,27 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { ClaimService } from '../../../core/services/claim.service';
 import { Claim } from '../../../shared/models';
 
 @Component({
   selector: 'app-review-queue',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, MatProgressSpinnerModule, MatCardModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './review-queue.component.html',
   styleUrl: './review-queue.component.css'})
 export class ReviewQueueComponent implements OnInit {
-  claims: Claim[] = [];
-  loading = true;
+  claims = signal<Claim[]>([]);
+  loading = signal(true);
   approvedAmounts: { [key: number]: number } = {};
   rejectionReasons: { [key: number]: string } = {};
 
@@ -30,10 +23,10 @@ export class ReviewQueueComponent implements OnInit {
   ngOnInit() { this.loadClaims(); }
 
   loadClaims() {
-    this.loading = true;
+    this.loading.set(true);
     this.claimService.getReviewQueue().subscribe({
-      next: (data) => { this.claims = data; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: (data) => { this.claims.set(data); this.loading.set(false); },
+      error: () => { this.loading.set(false); }
     });
   }
 

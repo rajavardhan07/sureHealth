@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -19,17 +19,17 @@ import { Employee, CorporateClient, GroupPolicy } from '../../../shared/models';
 @Component({
   selector: 'app-hr-employee-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatTableModule, MatSnackBarModule, MatProgressSpinnerModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './employee-management.component.html',
   styleUrl: './employee-management.component.css'})
 export class HrEmployeeManagementComponent implements OnInit {
   @ViewChild(FormGroupDirective) formDirective!: FormGroupDirective;
 
-  corporate: CorporateClient | null = null;
-  policies: GroupPolicy[] = [];
-  employees: Employee[] = [];
-  loadingEmps = true;
-  createdCreds: { username: string; password: string } | null = null;
+  corporate = signal<CorporateClient | null>(null);
+  policies = signal<GroupPolicy[]>([]);
+  employees = signal<Employee[]>([]);
+  loadingEmps = signal(true);
+  createdCreds = signal<{ username: string; password: string } | null>(null);
   form: FormGroup;
   columns = ['name', 'department', 'designation', 'status'];
 
@@ -60,21 +60,21 @@ export class HrEmployeeManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.corporateService.getMyProfile().subscribe(c => this.corporate = c);
-    this.corporateService.getMyPolicies().subscribe(p => this.policies = p.filter(pol => pol.status === 'APPROVED'));
+    this.corporateService.getMyProfile().subscribe(c => this.corporate.set(c));
+    this.corporateService.getMyPolicies().subscribe(p => this.policies.set(p.filter(pol => pol.status === 'APPROVED')));
     this.loadEmployees();
   }
 
   loadEmployees() {
-    this.loadingEmps = true;
+    this.loadingEmps.set(true);
     this.corporateService.getMyEmployees().subscribe({
-      next: (data) => { this.employees = data; this.loadingEmps = false; },
-      error: () => { this.loadingEmps = false; }
+      next: (data) => { this.employees.set(data); this.loadingEmps.set(false); },
+      error: () => { this.loadingEmps.set(false); }
     });
   }
 
   addEmployee() {
-    if (this.form.invalid || !this.corporate) return;
+    if (this.form.invalid || !this.corporate()) return;
     
     const formData = new FormData();
     formData.append('fullName', this.form.get('fullName')?.value);
@@ -95,7 +95,7 @@ export class HrEmployeeManagementComponent implements OnInit {
       formData.append('joinDate', joinDateValue);
     }
     
-    formData.append('corporateId', this.corporate.id.toString());
+    formData.append('corporateId', this.corporate()!.id.toString());
     
     if (this.selectedFile) {
       formData.append('file', this.selectedFile);
@@ -103,7 +103,7 @@ export class HrEmployeeManagementComponent implements OnInit {
 
     this.employeeService.addEmployee(formData).subscribe({
       next: (creds) => {
-        this.createdCreds = creds;
+        this.createdCreds.set(creds);
         this.snackBar.open('Employee added successfully!', 'OK', { duration: 3000 });
         this.selectedFile = null;
         if (this.formDirective) {

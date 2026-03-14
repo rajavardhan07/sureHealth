@@ -1,62 +1,94 @@
-<div class="login-page-wrapper">
-  <div class="login-container fade-in-up">
-    <div class="login-branding">
-      <div class="logo-icon">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
-          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
+<div class="min-h-screen flex items-center justify-center bg-[#F8F6F1] py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-[#E2E6EC] fade-in-up">
+    
+    <div class="text-center">
+      <div class="mx-auto h-12 w-12 flex items-center justify-center bg-[#1B2A4A] rounded-xl mb-4 text-[#C8A951]">
+         <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="currentColor"/>
         </svg>
       </div>
-      <h1>SureHealth</h1>
-      <p class="tagline">Corporate Health Insurance Portal</p>
+      <h1 class="text-3xl font-bold text-[#1B2A4A]">SureHealth</h1>
+      <p class="mt-2 text-sm text-[#5A6A7E]">Corporate Health Insurance Portal</p>
     </div>
 
-    <mat-card class="login-card">
-      <mat-card-content>
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Sign in to your account to continue</p>
+    <div>
+      <h2 class="text-xl font-semibold text-[#1B2A4A]">Welcome Back</h2>
+      <p class="text-sm text-[#5A6A7E] mt-1">Sign in to your account to continue</p>
+    </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <mat-form-field appearance="outline">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username" placeholder="Enter your username" id="username-input">
-            @if (loginForm.get('username')?.hasError('required')) {
-              <mat-error>Username is required</mat-error>
-            }
-          </mat-form-field>
+    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <!-- Username Field -->
+      <div>
+        <label for="username-input" class="block text-sm font-medium text-[#1B2A4A] mb-1">Username</label>
+        <div class="relative">
+          <input id="username-input" formControlName="username" type="text" placeholder="Enter your username"
+            class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+            [ngClass]="{'border-red-500': loginForm.get('username')?.invalid && loginForm.get('username')?.touched, 'border-[#E2E6EC]': !(loginForm.get('username')?.invalid && loginForm.get('username')?.touched)}">
+        </div>
+        @if (loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched) {
+          <p class="mt-1 text-xs text-red-500">Username is required</p>
+        }
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password" id="password-input">
-            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" tabindex="-1">
-              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-            @if (loginForm.get('password')?.hasError('required')) {
-              <mat-error>Password is required</mat-error>
-            }
-          </mat-form-field>
-
-          @if (errorMessage) {
-            <div class="error-message">
-              <mat-icon>error_outline</mat-icon>
-              <span>{{errorMessage}}</span>
-            </div>
-          }
-
-          <button mat-flat-button color="primary" type="submit" id="login-button"
-            [disabled]="loginForm.invalid || loading" class="login-btn">
-            @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
-            }
-            @if (!loading) {
-              <span>Sign In</span>
-            }
+      <!-- Password Field -->
+      <div>
+        <label for="password-input" class="block text-sm font-medium text-[#1B2A4A] mb-1">Password</label>
+        <div class="relative">
+          <input id="password-input" formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password"
+            class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+            [ngClass]="{'border-red-500': loginForm.get('password')?.invalid && loginForm.get('password')?.touched, 'border-[#E2E6EC]': !(loginForm.get('password')?.invalid && loginForm.get('password')?.touched)}">
+          
+          <button type="button" (click)="hidePassword = !hidePassword" tabindex="-1"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5A6A7E] hover:text-[#1B2A4A]">
+            <mat-icon class="text-[20px] h-[20px] w-[20px] leading-none">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
-        </form>
+        </div>
+        @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+          <p class="mt-1 text-xs text-red-500">Password is required</p>
+        }
+      </div>
 
-        <p class="register-link">New corporate client? <a routerLink="/register">Register your company</a></p>
-        <p class="back-link"><a routerLink="/">Back to Home</a></p>
-      </mat-card-content>
-    </mat-card>
+      <!-- Error Message Area -->
+      @if (errorMessage) {
+        <div class="rounded-md bg-red-50 p-4 border border-red-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <mat-icon class="text-red-400">error_outline</mat-icon>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">{{errorMessage}}</h3>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Submit Button -->
+      <div>
+        <button type="submit" id="login-button" [disabled]="loginForm.invalid || loading"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1B2A4A] hover:bg-[#0F1B33] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B2A4A] disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Signing in...
+          }
+          @if (!loading) {
+            <span>Sign In</span>
+          }
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 flex flex-col items-center justify-center border-t border-[#E2E6EC] pt-6 space-y-4 text-sm">
+        <p class="text-[#5A6A7E]">
+          New corporate client? 
+          <a routerLink="/register" class="font-medium text-[#c8a951] hover:text-[#b49849] hover:underline">Register your company</a>
+        </p>
+        <p class="text-[#5A6A7E]">
+           <a routerLink="/" class="font-medium text-[#1B2A4A] hover:underline">Back to Home</a>
+        </p>
+    </div>
+
   </div>
 </div>

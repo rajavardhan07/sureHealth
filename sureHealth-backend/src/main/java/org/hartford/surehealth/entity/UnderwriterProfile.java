@@ -8,10 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * SHOWCASE ENTITY - Not actively used in application
- * Demonstrates role-specific profile pattern as alternative to single User table
- */
+
 @Entity
 @Table(name = "underwriter_profile")
 @Getter @Setter

@@ -1,160 +1,206 @@
-<div class="fade-in-up">
-  <div class="page-header">
-    <h1>Policy Management</h1>
-    <p>Request new policies and view existing ones</p>
+<div class="space-y-8 p-6 fade-in-up">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Policy Management</h1>
+      <p class="text-[#5A6A7E]">Request new policies and view existing ones</p>
+    </div>
   </div>
 
-  <div class="table-container" style="margin-top:24px">
-    <div class="table-header"><h3>My Policies</h3></div>
-    @if (loadingPolicies) {
-      <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
+    <div class="p-6 border-b border-[#E2E6EC]">
+      <h3 class="text-xl font-bold text-[#1B2A4A]">My Policies</h3>
+    </div>
+    
+    @if (loadingPolicies()) {
+      <div class="flex flex-col items-center justify-center min-h-[300px]">
+        <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
     }
-    @if (!loadingPolicies && policies.length > 0) {
-      <table mat-table [dataSource]="policies" class="full-width">
-        <ng-container matColumnDef="policyNumber">
-          <th mat-header-cell *matHeaderCellDef>Policy #</th>
-          <td mat-cell *matCellDef="let p">{{ p.policyNumber || '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="plan">
-          <th mat-header-cell *matHeaderCellDef>Plan</th>
-          <td mat-cell *matCellDef="let p">{{ p.insurancePlan.planName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="underwriter">
-          <th mat-header-cell *matHeaderCellDef>Underwriter</th>
-          <td mat-cell *matCellDef="let p">{{ p.assignedUnderwriter?.username || 'System Assigned' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="startDate">
-          <th mat-header-cell *matHeaderCellDef>Start</th>
-          <td mat-cell *matCellDef="let p">{{ p.startDate || '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="endDate">
-          <th mat-header-cell *matHeaderCellDef>End</th>
-          <td mat-cell *matCellDef="let p">{{ p.endDate || '—' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let p">
-            <span class="status-badge" [ngClass]="getStatusClass(p.status)">{{ formatStatus(p.status) }}</span>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-      </table>
+    
+    @if (!loadingPolicies() && policies().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-[#E2E6EC]">
+          <thead class="bg-[#F8F6F1]">
+            <tr>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy #</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Plan</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Underwriter</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Start</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">End</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-[#E2E6EC]">
+            @for (p of policies(); track p.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ p.policyNumber || '—' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.insurancePlan.planName }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.assignedUnderwriter?.username || 'System Assigned' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.startDate || '—' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.endDate || '—' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap relative">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                        [ngClass]="{
+                          'bg-green-100 text-green-700': p.status === 'APPROVED',
+                          'bg-yellow-100 text-yellow-700': $any(p.status) === 'PENDING',
+                          'bg-red-100 text-red-700': p.status === 'REJECTED'
+                        }">
+                    {{ formatStatus(p.status) }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
-    @if (!loadingPolicies && policies.length === 0) {
-      <div class="empty-state">
-        <mat-icon>policy</mat-icon><h3>No Policies Yet</h3><p>Request your first group policy above</p>
+    
+    @if (!loadingPolicies() && policies().length === 0) {
+      <div class="py-16 px-4 text-center">
+        <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-4">
+          <mat-icon class="text-[#C8A951] text-3xl">policy</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">No Policies Yet</h3>
+        <p class="text-[#5A6A7E]">Request your first group policy below</p>
       </div>
     }
   </div>
-  @if (corporate) {
-    <div class="plans-header">
-      <br/>
-      <h3>1. Select an Insurance Plan</h3>
-      <p class="subtitle">Your chosen employees will be covered under this plan upon approval.</p>
-    </div>
-    
-    <div class="plans-grid">
-      @for (plan of plans; track plan.id) {
-        <mat-card class="plan-card fade-in-up">
-          <div class="plan-header">
-            <h4>{{ plan.planName }}</h4>
-            <div class="coverage-badge">₹{{ plan.coverageAmount | number }} Coverage</div>
-          </div>
-          <p class="plan-description">{{ plan.description }}</p>
-          
-          <div class="plan-details">
-            <div class="detail-row">
-              <mat-icon>timer</mat-icon>
-              <span class="duration-text">{{ plan.durationMonths }} Month Policy Duration</span>
-            </div>
-            <div class="detail-row">
-              <mat-icon>group</mat-icon>
-              <span>Base Premium: ₹{{ plan.premiumPerEmployee | number }}/employee</span>
-            </div>
-            <div class="detail-row">
-              <mat-icon>support_agent</mat-icon>
-              <span>24/7 dedicated corporate account manager</span>
-            </div>
-            
-            @if (quotes[plan.id]) {
-              <div class="quote-result slide-down">
-                <div class="quote-price">
-                  <span class="label">Expected Premium Rate</span>
-                  <span class="amount">₹{{ quotes[plan.id].calculatedPremiumPerEmployee | number }}<small>/employee</small></span>
+
+  @if (corporate()) {
+    <div class="pt-4 border-t border-[#E2E6EC]">
+      <div class="mb-6">
+        <h3 class="text-2xl font-bold text-[#1B2A4A] mb-2">1. Select an Insurance Plan</h3>
+        <p class="text-[#5A6A7E]">Your chosen employees will be covered under this plan upon approval.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (plan of plans(); track plan.id) {
+          <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden hover:border-[#C8A951] transition-all flex flex-col fade-in-up">
+            <div class="p-6 flex-1 flex flex-col">
+              <div class="flex justify-between items-start mb-4">
+                <h4 class="text-xl font-bold text-[#1B2A4A]">{{ plan.planName }}</h4>
+                <div class="bg-[#E8EFF8] text-[#2E5C9A] px-3 py-1 rounded-full text-sm font-bold shadow-sm whitespace-nowrap">
+                  ₹{{ plan.coverageAmount | number }} Coverage
                 </div>
-                <!-- Optional: Show risk factor -->
-                <!-- <div class="risk-info" [class.high-risk]="quotes[plan.id].riskMultiplier > 1" [class.low-risk]="quotes[plan.id].riskMultiplier < 1">
-                  Risk Multiplier: {{ quotes[plan.id].riskMultiplier }}x
-                </div> -->
               </div>
-            }
-          </div>
-          
-          <div class="plan-actions">
-            @if (!quotes[plan.id]) {
-              <button mat-stroked-button color="primary" class="full-width" (click)="getQuote(plan.id)" [disabled]="fetchingQuote === plan.id">
-                @if (fetchingQuote === plan.id) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                } @else {
-                  <ng-container><mat-icon>calculate</mat-icon> Get Quote</ng-container>
+              <p class="text-[#5A6A7E] text-sm mb-6 flex-1">{{ plan.description }}</p>
+              
+              <div class="space-y-4 mb-6">
+                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3">timer</mat-icon>
+                  <span>{{ plan.durationMonths }} Month Policy Duration</span>
+                </div>
+                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3">group</mat-icon>
+                  <span>Base Premium: ₹{{ plan.premiumPerEmployee | number }}/employee</span>
+                </div>
+                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3">support_agent</mat-icon>
+                  <span>24/7 dedicated corporate account manager</span>
+                </div>
+                
+                @if (quotes()[plan.id]) {
+                  <div class="mt-4 bg-[#F5EDD8] p-4 rounded-lg flex justify-between items-center slide-down border border-[#d6c180] shadow-sm">
+                    <span class="text-[#9A7D2C] font-semibold text-sm">Expected Premium Rate</span>
+                    <div class="text-[#9A7D2C] font-bold text-lg">
+                      ₹{{ quotes()[plan.id].calculatedPremiumPerEmployee | number }}<small class="text-xs">/employee</small>
+                    </div>
+                  </div>
                 }
-              </button>
-            } @else {
-              <button mat-flat-button color="primary" class="full-width" (click)="requestPolicy(plan.id)">
-                <mat-icon>send</mat-icon> Request Policy
-              </button>
-            }
+              </div>
+              
+              <div class="mt-auto pt-4 border-t border-[#E2E6EC]">
+                @if (!quotes()[plan.id]) {
+                  <button (click)="getQuote(plan.id)" [disabled]="fetchingQuote() === plan.id"
+                          class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-white border-2 border-[#2E5C9A] text-[#2E5C9A] hover:bg-[#F0F4FC] font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (fetchingQuote() === plan.id) {
+                      <svg class="animate-spin h-5 w-5 text-[#2E5C9A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    } @else {
+                      <mat-icon class="mr-2 text-[18px]">calculate</mat-icon> Get Quote
+                    }
+                  </button>
+                } @else {
+                  <button (click)="requestPolicy(plan.id)"
+                          class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-[#2E5C9A] hover:bg-[#1B2A4A] text-white font-semibold rounded-lg shadow-sm transition-colors">
+                    <mat-icon class="mr-2 text-[18px]">send</mat-icon> Request Policy
+                  </button>
+                }
+              </div>
+            </div>
           </div>
-        </mat-card>
-      }
+        }
+      </div>
     </div>
   }
-  <div class="selection-section" style="margin-top: 32px">
-    <div class="section-header">
+  
+  <div class="pt-8 border-t border-[#E2E6EC]">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
       <div>
-        <h3>1. Select Employees for Coverage</h3>
-        <p class="subtitle">Only employees not currently assigned to a policy are shown here.</p>
+        <h3 class="text-2xl font-bold text-[#1B2A4A] mb-2">2. Select Employees for Coverage</h3>
+        <p class="text-[#5A6A7E]">Only employees not currently assigned to a policy are shown here.</p>
       </div>
-      <button mat-stroked-button color="primary" (click)="openAddEmployeeDialog()">
-        <mat-icon>person_add</mat-icon> Add New Employee
+      <button (click)="openAddEmployeeDialog()"
+              class="inline-flex justify-center items-center px-5 py-2.5 bg-white border border-[#2E5C9A] text-[#2E5C9A] font-semibold rounded-lg shadow-sm hover:bg-[#F0F4FC] transition-colors whitespace-nowrap">
+        <mat-icon class="mr-2 text-[18px]">person_add</mat-icon> Add New Employee
       </button>
     </div>
     
-    <mat-card class="employee-selection-card">
-      @if (loadingEmployees) {
-        <div style="text-align:center;padding:24px"><mat-spinner diameter="30"></mat-spinner></div>
-      } @else if (unassignedEmployees.length > 0) {
-        <table mat-table [dataSource]="unassignedEmployees" class="full-width">
-          <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox (change)="toggleAll()" [checked]="isAllSelected()"></mat-checkbox>
-            </th>
-            <td mat-cell *matCellDef="let e">
-              <mat-checkbox (change)="toggleEmployee(e.id)" [checked]="selectedEmployeeIds.has(e.id)"></mat-checkbox>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
-            <td mat-cell *matCellDef="let e">{{ e.fullName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="department">
-            <th mat-header-cell *matHeaderCellDef>Department</th>
-            <td mat-cell *matCellDef="let e">{{ e.department }}</td>
-          </ng-container>
-          <ng-container matColumnDef="age">
-            <th mat-header-cell *matHeaderCellDef>Age</th>
-            <td mat-cell *matCellDef="let e">{{ e.age }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="empColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: empColumns;"></tr>
-        </table>
+    <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
+      @if (loadingEmployees()) {
+        <div class="flex justify-center p-12">
+          <svg class="animate-spin h-8 w-8 text-[#C8A951]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      } @else if (unassignedEmployees().length > 0) {
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-[#E2E6EC]">
+            <thead class="bg-[#F8F6F1]">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-left w-16">
+                  <div class="flex items-center">
+                    <input type="checkbox" (change)="toggleAll()" [checked]="isAllSelected()"
+                           class="w-5 h-5 text-[#2E5C9A] bg-white border-gray-300 rounded focus:ring-[#2E5C9A] focus:ring-2 cursor-pointer transition-colors">
+                  </div>
+                </th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Name</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Department</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Age</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-[#E2E6EC]">
+              @for (e of unassignedEmployees(); track e.id) {
+                <tr class="hover:bg-gray-50 transition-colors" [ngClass]="{'bg-blue-50/30': selectedEmployeeIds.has(e.id)}">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <input type="checkbox" (change)="toggleEmployee(e.id)" [checked]="selectedEmployeeIds.has(e.id)"
+                             class="w-5 h-5 text-[#2E5C9A] bg-white border-gray-300 rounded focus:ring-[#2E5C9A] focus:ring-2 cursor-pointer transition-colors">
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ e.fullName }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).department || '—' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).age }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       } @else {
-        <div class="empty-selection">
-          <mat-icon>group_off</mat-icon>
-          <p>No unassigned employees found. Please add employees first.</p>
+        <div class="py-16 px-4 text-center">
+          <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-4">
+            <mat-icon class="text-[#C8A951] text-3xl">group_off</mat-icon>
+          </div>
+          <p class="text-lg font-bold text-[#1B2A4A] mb-2">No unassigned employees found.</p>
+          <p class="text-[#5A6A7E]">Please add employees first to see them available for coverage here.</p>
         </div>
       }
-    </mat-card>
+    </div>
   </div>
 </div>

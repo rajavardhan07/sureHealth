@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,18 +11,18 @@ import { Employee, Claim } from '../../../shared/models';
 @Component({
   selector: 'app-employee-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, RouterModule],
+  imports: [CommonModule, MatIconModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'})
 export class EmployeeDashboardComponent implements OnInit {
-  profile: Employee | null = null;
-  claims: Claim[] = [];
-  loading = true;
+  profile = signal<Employee | null>(null);
+  claims = signal<Claim[]>([]);
+  loading = signal(true);
 
   constructor(private employeeService: EmployeeService, private claimService: ClaimService) {}
 
   ngOnInit() {
-    this.employeeService.getMyProfile().subscribe(p => { this.profile = p; this.loading = false; });
-    this.claimService.getMyClaims().subscribe(c => this.claims = c);
+    this.employeeService.getMyProfile().subscribe(p => { this.profile.set(p); this.loading.set(false); });
+    this.claimService.getMyClaims().subscribe(c => this.claims.set(c));
   }
 }

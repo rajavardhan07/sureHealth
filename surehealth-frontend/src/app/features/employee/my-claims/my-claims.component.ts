@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,20 +9,20 @@ import { Claim } from '../../../shared/models';
 @Component({
   selector: 'app-my-claims',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './my-claims.component.html',
   styleUrl: './my-claims.component.css'})
 export class MyClaimsComponent implements OnInit {
-  claims: Claim[] = [];
-  loading = true;
+  claims = signal<Claim[]>([]);
+  loading = signal(true);
   columns = ['claimNumber', 'hospital', 'diagnosis', 'amount', 'approved', 'assignedTo', 'status'];
 
   constructor(private claimService: ClaimService) {}
 
   ngOnInit() {
     this.claimService.getMyClaims().subscribe({
-      next: (data) => { this.claims = data; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: (data) => { this.claims.set(data); this.loading.set(false); },
+      error: () => { this.loading.set(false); }
     });
   }
 

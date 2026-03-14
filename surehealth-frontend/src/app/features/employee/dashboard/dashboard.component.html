@@ -1,69 +1,107 @@
-@if (!loading) {
+@if (!loading()) {
   <div class="fade-in-up">
-    <div class="page-header">
-      <h1>Welcome, {{ profile?.fullName || 'Employee' }}</h1>
-      <p>Your health insurance dashboard</p>
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Welcome, {{ profile()?.fullName || 'Employee' }}</h1>
+      <p class="text-[#5A6A7E]">Your health insurance dashboard</p>
     </div>
-    @if (profile) {
-      <div class="grid-3">
-        <div class="stat-card">
-          <div class="stat-icon navy"><mat-icon>health_and_safety</mat-icon></div>
-          <div class="stat-value">₹{{ profile.coverageAmount | number }}</div>
-          <div class="stat-label">Total Coverage</div>
+
+    @if (profile()) {
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 flex flex-col items-center text-center">
+          <div class="h-14 w-14 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center mb-4">
+            <mat-icon class="text-3xl leading-none">health_and_safety</mat-icon>
+          </div>
+          <div class="text-3xl font-bold text-[#1B2A4A] mb-1">₹{{ profile()!.coverageAmount | number }}</div>
+          <div class="text-sm font-semibold text-[#5A6A7E] uppercase tracking-wider">Total Coverage</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon green"><mat-icon>account_balance_wallet</mat-icon></div>
-          <div class="stat-value">₹{{ profile.remainingCoverage | number }}</div>
-          <div class="stat-label">Remaining Coverage</div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 flex flex-col items-center text-center">
+          <div class="h-14 w-14 rounded-full bg-green-50 text-green-600 flex items-center justify-center mb-4">
+            <mat-icon class="text-3xl leading-none">account_balance_wallet</mat-icon>
+          </div>
+          <div class="text-3xl font-bold text-[#1B2A4A] mb-1">₹{{ profile()!.remainingCoverage | number }}</div>
+          <div class="text-sm font-semibold text-[#5A6A7E] uppercase tracking-wider">Remaining Coverage</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon gold"><mat-icon>assignment</mat-icon></div>
-          <div class="stat-value">{{ claims.length }}</div>
-          <div class="stat-label">Total Claims</div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 flex flex-col items-center text-center">
+          <div class="h-14 w-14 rounded-full bg-[#F5EDD8] text-[#9A7D2C] flex items-center justify-center mb-4">
+            <mat-icon class="text-3xl leading-none">assignment</mat-icon>
+          </div>
+          <div class="text-3xl font-bold text-[#1B2A4A] mb-1">{{ claims().length }}</div>
+          <div class="text-sm font-semibold text-[#5A6A7E] uppercase tracking-wider">Total Claims</div>
         </div>
       </div>
 
-      <mat-card class="plan-details-card" style="margin-top: 28px;">
-        <div class="card-header">
-          <mat-icon color="primary">description</mat-icon>
-          <h3>Current Insurance Plan</h3>
+      <!-- Plan Details Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden mb-8">
+        <div class="p-6 border-b border-[#E2E6EC] flex items-center">
+          <mat-icon class="text-[#2E5C9A] mr-3">description</mat-icon>
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-0">Current Insurance Plan</h3>
         </div>
         
-        @if (profile.groupPolicy) {
-          <div class="plan-info">
-            <div class="plan-main">
-              <h4>{{ profile.groupPolicy.insurancePlan?.planName }}</h4>
-              <p class="policy-num">Policy #: {{ profile.groupPolicy.policyNumber }}</p>
-              <p class="description">{{ profile.groupPolicy.insurancePlan?.description }}</p>
+        @if (profile()!.groupPolicy) {
+          <div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex-1">
+              <h4 class="text-xl font-bold text-[#1B2A4A] mb-2">{{ profile()!.groupPolicy.insurancePlan.planName }}</h4>
+              <p class="text-sm font-semibold text-[#5A6A7E] mb-3">Policy #: {{ profile()!.groupPolicy.policyNumber }}</p>
+              <p class="text-[#1B2A4A]">{{ profile()!.groupPolicy.insurancePlan.description }}</p>
             </div>
-            <div class="plan-status">
-              <span class="status-badge active">Active</span>
-              <p class="dates">Valid from: {{ profile.groupPolicy.startDate | date }} - {{ profile.groupPolicy.endDate | date }}</p>
+            <div class="md:text-right flex flex-col items-start md:items-end p-4 bg-gray-50 rounded-lg border border-gray-200 min-w-[280px]">
+              <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-green-100 text-green-800 uppercase tracking-wider mb-3">
+                <mat-icon class="text-[18px] mr-1">check_circle</mat-icon> Active
+              </span>
+              <p class="text-sm text-[#5A6A7E] font-medium">Valid from:</p>
+              <p class="text-[#1B2A4A] font-semibold">{{ profile()!.groupPolicy.startDate | date }} - {{ profile()!.groupPolicy.endDate | date }}</p>
             </div>
           </div>
         } @else {
-          <div class="no-plan-assigned">
-            <mat-icon>info_outline</mat-icon>
-            <p>No active insurance plan assigned yet. Please contact your HR.</p>
+          <div class="p-10 flex flex-col items-center text-center">
+            <div class="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-500">
+              <mat-icon class="text-3xl">info_outline</mat-icon>
+            </div>
+            <p class="text-[#1B2A4A] font-medium">No active insurance plan assigned yet.</p>
+            <p class="text-[#5A6A7E]">Please contact your HR department.</p>
           </div>
         }
-      </mat-card>
+      </div>
     }
-    <div class="quick-actions" style="margin-top:28px">
-      <h3 style="font-size:16px;font-weight:600;color:var(--primary-navy);margin-bottom:16px">Quick Actions</h3>
-      <div class="grid-2">
-        <a routerLink="/employee/file-claim" class="action-card">
-          <mat-icon>add_circle_outline</mat-icon>
-          <div><strong>File a Claim</strong><p>Submit a new insurance claim</p></div>
+
+    <!-- Quick Actions -->
+    <div>
+      <h3 class="text-lg font-bold text-[#1B2A4A] mb-4">Quick Actions</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a routerLink="/employee/file-claim" class="flex items-center p-5 bg-white rounded-xl shadow-sm border border-[#E2E6EC] hover:border-[#2E5C9A] hover:shadow-md transition-all group">
+          <div class="h-12 w-12 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+            <mat-icon class="leading-none">add_circle_outline</mat-icon>
+          </div>
+          <div>
+            <strong class="block text-[#1B2A4A] text-lg mb-1 group-hover:text-[#2E5C9A] transition-colors">File a Claim</strong>
+            <p class="text-sm text-[#5A6A7E]">Submit a new insurance claim</p>
+          </div>
         </a>
-        <a routerLink="/employee/my-claims" class="action-card">
-          <mat-icon>list_alt</mat-icon>
-          <div><strong>View My Claims</strong><p>Track claim statuses</p></div>
+        
+        <a routerLink="/employee/my-claims" class="flex items-center p-5 bg-white rounded-xl shadow-sm border border-[#E2E6EC] hover:border-[#2E5C9A] hover:shadow-md transition-all group">
+          <div class="h-12 w-12 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+            <mat-icon class="leading-none">list_alt</mat-icon>
+          </div>
+          <div>
+            <strong class="block text-[#1B2A4A] text-lg mb-1 group-hover:text-[#2E5C9A] transition-colors">View My Claims</strong>
+            <p class="text-sm text-[#5A6A7E]">Track request and approval statuses</p>
+          </div>
         </a>
       </div>
     </div>
   </div>
 }
-@if (loading) {
-  <div style="text-align:center;padding:80px"><mat-spinner diameter="40"></mat-spinner></div>
+
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center min-h-[400px]">
+    <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="text-[#5A6A7E] font-medium">Loading your dashboard...</p>
+  </div>
 }

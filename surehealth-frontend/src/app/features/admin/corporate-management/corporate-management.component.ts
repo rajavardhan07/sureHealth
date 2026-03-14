@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,20 +15,15 @@ import { CorporateClient } from '../../../shared/models';
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatButtonModule,
     MatIconModule,
-    MatChipsModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule,
-    MatCardModule
+    MatSnackBarModule
   ],
   templateUrl: './corporate-management.component.html',
   styleUrls: ['./corporate-management.component.css']
 })
 export class CorporateManagementComponent implements OnInit {
-  corporates: CorporateClient[] = [];
-  loading = true;
+  corporates = signal<CorporateClient[]>([]);
+  loading = signal(true);
   columns = ['companyName', 'registrationNumber', 'industryType', 'employees', 'status', 'actions'];
 
   constructor(private adminService: AdminService, private snackBar: MatSnackBar) {}
@@ -38,15 +33,15 @@ export class CorporateManagementComponent implements OnInit {
   }
 
   loadCorporates() {
-    this.loading = true;
+    this.loading.set(true);
     this.adminService.getAllCorporateClients().subscribe({
       next: (data) => {
-        this.corporates = data;
-        this.loading = false;
+        this.corporates.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.snackBar.open('Failed to load corporate clients', 'OK', { duration: 3000 });
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -84,9 +84,7 @@ public class EmployeeService {
         }
     }
 
-    // Add toString to DTO for logging if possible, but I'll skip it for now and just log the error.
-    // Wait, I can't add toString to a DTO easily without changing the file.
-    // I'll just log the message.
+    // Add toString to DTO for logging.
 }
 
 

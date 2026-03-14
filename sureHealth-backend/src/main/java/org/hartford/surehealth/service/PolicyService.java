@@ -96,7 +96,6 @@ public class PolicyService {
 
         premiumCalculationService.calculateAndSavePremium(policyId);
         
-        // Also update all employee's remaining coverage
         List<Employee> employees = employeeRepository.findByGroupPolicyId(policyId);
         for(Employee emp : employees) {
             emp.setCoverageAmount(policy.getInsurancePlan().getCoverageAmount());

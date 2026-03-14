@@ -1,63 +1,91 @@
-<h2 mat-dialog-title>{{ title }}</h2>
-<mat-dialog-content>
-  <form [formGroup]="form" class="user-form">
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Full Name</mat-label>
-        <input matInput formControlName="fullName" placeholder="e.g. John Doe">
+<div class="px-6 py-6 fade-in-up bg-white rounded-xl shadow-lg border border-[#E2E6EC] min-w-[500px]">
+  <h2 class="text-2xl font-bold text-[#1B2A4A] mb-6 border-b border-[#E2E6EC] pb-4">{{ title }}</h2>
+
+  <form [formGroup]="form" class="space-y-5">
+    <div class="grid grid-cols-2 gap-5">
+      <!-- Full Name -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Full Name</label>
+        <input type="text" formControlName="fullName" placeholder="e.g. John Doe"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('fullName')?.invalid && form.get('fullName')?.touched}">
         @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
-          <mat-error>Full Name is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Full Name is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Phone Number</mat-label>
-        <input matInput formControlName="phoneNumber" placeholder="e.g. +1 234 567 890">
+      <!-- Phone Number -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Phone Number</label>
+        <input type="text" formControlName="phoneNumber" placeholder="e.g. +1 234 567 890"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched}">
         @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
-          <mat-error>Phone Number is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Phone Number is required</p>
         }
-      </mat-form-field>
+      </div>
     </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>License Number</mat-label>
-        <input matInput formControlName="licenseNumber" placeholder="e.g. LIC-123456">
+    <div class="grid grid-cols-2 gap-5">
+      <!-- License Number -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">License Number</label>
+        <input type="text" formControlName="licenseNumber" placeholder="e.g. LIC-123456"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('licenseNumber')?.invalid && form.get('licenseNumber')?.touched}">
         @if (form.get('licenseNumber')?.invalid && form.get('licenseNumber')?.touched) {
-          <mat-error>License Number is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">License Number is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Commission %</mat-label>
-        <input matInput type="number" formControlName="commissionPercentage" placeholder="0-100">
-        <span matSuffix>%</span>
+      <!-- Commission % -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Commission %</label>
+        <div class="relative">
+          <input type="number" formControlName="commissionPercentage" placeholder="0-100"
+                 class="w-full pl-4 pr-8 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('commissionPercentage')?.invalid && form.get('commissionPercentage')?.touched}">
+          <span class="absolute right-3 top-2.5 text-gray-400 font-medium">%</span>
+        </div>
         @if (form.get('commissionPercentage')?.invalid && form.get('commissionPercentage')?.touched) {
-          <mat-error>Must be between 0 and 100</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Must be between 0 and 100</p>
         }
-      </mat-form-field>
+      </div>
     </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Username</mat-label>
-        <input matInput formControlName="username" placeholder="e.g. john.doe">
+    <div class="grid grid-cols-2 gap-5">
+      <!-- Username -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Username</label>
+        <input type="text" formControlName="username" placeholder="e.g. john.doe"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('username')?.invalid && form.get('username')?.touched}">
         @if (form.get('username')?.invalid && form.get('username')?.touched) {
-          <mat-error>Username is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Username is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password" placeholder="Min 4 characters">
+      <!-- Password -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Password</label>
+        <input type="password" formControlName="password" placeholder="Min 4 characters"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('password')?.invalid && form.get('password')?.touched}">
         @if (form.get('password')?.invalid && form.get('password')?.touched) {
-          <mat-error>Password must be at least 4 characters</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Password must be at least 4 characters</p>
         }
-      </mat-form-field>
+      </div>
+    </div>
+
+    <div class="flex justify-end space-x-3 pt-6 border-t border-[#E2E6EC] mt-8">
+      <button type="button" (click)="onCancel()"
+              class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="form.invalid" (click)="onSubmit()"
+              class="px-5 py-2.5 bg-[#2E5C9A] text-white font-semibold rounded-lg hover:bg-[#1B2A4A] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5C9A]">
+        Save User
+      </button>
     </div>
   </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">Save User</button>
-</mat-dialog-actions>
+</div>

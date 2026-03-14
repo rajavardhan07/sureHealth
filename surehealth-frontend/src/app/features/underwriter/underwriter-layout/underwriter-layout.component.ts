@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-underwriter-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './underwriter-layout.component.html',
   styleUrl: './underwriter-layout.component.css'
 })

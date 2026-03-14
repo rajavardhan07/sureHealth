@@ -1,104 +1,139 @@
-<h2 mat-dialog-title>Add New Employee</h2>
+<div class="px-6 py-6 fade-in-up bg-white rounded-xl shadow-lg border border-[#E2E6EC] min-w-[600px] max-w-2xl max-h-[90vh] overflow-y-auto">
+  <h2 class="text-2xl font-bold text-[#1B2A4A] mb-6 border-b border-[#E2E6EC] pb-4">Add New Employee</h2>
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="form-container">
-    <div class="form-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Full Name</mat-label>
-        <input matInput formControlName="fullName" placeholder="e.g. John Doe">
+  <form [formGroup]="form" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- Full Name -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Full Name</label>
+        <input type="text" formControlName="fullName" placeholder="e.g. John Doe"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('fullName')?.invalid && form.get('fullName')?.touched}">
         @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
-          <mat-error>Full name is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Full name is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" placeholder="e.g. john.doe@company.com">
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Email</label>
+        <input type="email" formControlName="email" placeholder="e.g. john.doe@company.com"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('email')?.invalid && form.get('email')?.touched}">
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <mat-error>Valid email is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Valid email is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Phone</mat-label>
-        <input matInput formControlName="phone" placeholder="e.g. 9876543210">
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Phone</label>
+        <input type="text" formControlName="phone" placeholder="e.g. 9876543210"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('phone')?.invalid && form.get('phone')?.touched}">
         @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
-          <mat-error>Phone number is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Phone number is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Age</mat-label>
-        <input matInput type="number" formControlName="age" placeholder="e.g. 30">
+      <!-- Age -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Age</label>
+        <input type="number" formControlName="age" placeholder="e.g. 30"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('age')?.invalid && form.get('age')?.touched}">
         @if (form.get('age')?.invalid && form.get('age')?.touched) {
-          <mat-error>Age must be between 18 and 100</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Age must be between 18 and 100</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Department</mat-label>
-        <input matInput formControlName="department" placeholder="e.g. IT">
+      <!-- Department -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Department</label>
+        <input type="text" formControlName="department" placeholder="e.g. IT"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('department')?.invalid && form.get('department')?.touched}">
         @if (form.get('department')?.invalid && form.get('department')?.touched) {
-          <mat-error>Department is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Department is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Designation</mat-label>
-        <input matInput formControlName="designation" placeholder="e.g. Software Engineer">
+      <!-- Designation -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Designation</label>
+        <input type="text" formControlName="designation" placeholder="e.g. Software Engineer"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('designation')?.invalid && form.get('designation')?.touched}">
         @if (form.get('designation')?.invalid && form.get('designation')?.touched) {
-          <mat-error>Designation is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Designation is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Gender</mat-label>
-        <mat-select formControlName="gender">
-          <mat-option value="Male">Male</mat-option>
-          <mat-option value="Female">Female</mat-option>
-          <mat-option value="Other">Other</mat-option>
-        </mat-select>
+      <!-- Gender -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Gender</label>
+        <select formControlName="gender"
+                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all appearance-none"
+                [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('gender')?.invalid && form.get('gender')?.touched}">
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
         @if (form.get('gender')?.invalid && form.get('gender')?.touched) {
-          <mat-error>Gender is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Gender is required</p>
         }
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Date of Join</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="joinDate">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+      <!-- Date of Join -->
+      <div>
+        <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Date of Join</label>
+        <input type="date" formControlName="joinDate"
+               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
+               [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('joinDate')?.invalid && form.get('joinDate')?.touched}">
         @if (form.get('joinDate')?.invalid && form.get('joinDate')?.touched) {
-          <mat-error>Join date is required</mat-error>
+          <p class="text-red-500 text-xs mt-1 font-medium">Join date is required</p>
         }
-      </mat-form-field>
+      </div>
     </div>
     
-    <div class="file-upload">
-      <label>Health Report (Optional)</label>
-      <input 
-        type="file" 
-        (change)="onFileSelected($event)" 
-        accept=".pdf,.jpg,.jpeg,.png"
-        class="file-input">
+    <!-- Health Report Upload -->
+    <div class="mt-6 p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center">
+      <label class="block text-sm font-semibold text-[#1B2A4A] mb-2 text-center">Health Report (Optional)</label>
+      <div class="relative w-full max-w-xs cursor-pointer flex items-center justify-center">
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png"
+               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+        <div class="flex items-center justify-center space-x-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm text-[#2E5C9A] font-medium shadow-sm hover:bg-gray-50 w-full group">
+          <mat-icon class="text-[18px]">upload_file</mat-icon>
+          <span>{{ selectedFile ? 'Change File' : 'Browse Files' }}</span>
+        </div>
+      </div>
       @if (selectedFile) {
-        <span class="file-name">{{ selectedFile.name }}</span>
+        <p class="mt-3 text-sm text-green-600 font-medium flex items-center bg-green-50 px-3 py-1.5 rounded-md">
+          <mat-icon class="text-[18px] mr-1">check_circle</mat-icon> {{ selectedFile.name }}
+        </p>
       }
+      <p class="text-xs text-gray-500 mt-2 text-center">Accepted formats: PDF, JPG, PNG</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex justify-end space-x-3 pt-6 border-t border-[#E2E6EC] mt-8">
+      <button type="button" (click)="onCancel()"
+              class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200">
+        Cancel
+      </button>
+      <button type="button" (click)="onSubmit()" [disabled]="form.invalid || loading"
+              class="px-5 py-2.5 bg-[#2E5C9A] text-white font-semibold rounded-lg hover:bg-[#1B2A4A] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5C9A]">
+        @if (loading) {
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Adding...
+        } @else {
+          Add Employee
+        }
+      </button>
     </div>
   </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button 
-    mat-flat-button 
-    color="primary" 
-    [disabled]="form.invalid || loading" 
-    (click)="onSubmit()">
-    @if (loading) {
-      <mat-spinner diameter="18"></mat-spinner>
-    } @else {
-      Add Employee
-    }
-  </button>
-</mat-dialog-actions>
+</div>

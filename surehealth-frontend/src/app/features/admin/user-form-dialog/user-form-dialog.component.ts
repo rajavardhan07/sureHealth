@@ -12,10 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
-    MatDialogModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatButtonModule
+    MatDialogModule
   ],
   templateUrl: './user-form-dialog.component.html',
   styleUrl: './user-form-dialog.component.css'

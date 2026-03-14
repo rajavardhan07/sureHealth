@@ -49,7 +49,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       snackBar.open(message, 'Dismiss', {
-        duration: 4000,
+        duration: 2000,
         horizontalPosition: 'end',
         verticalPosition: 'top',
         panelClass: ['error-snackbar']

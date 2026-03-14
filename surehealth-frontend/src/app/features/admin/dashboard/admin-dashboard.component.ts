@@ -1,21 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminService } from '../../../core/services/admin.service';
 import { AdminDashboardDTO } from '../../../shared/models';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent implements OnInit {
-  stats: AdminDashboardDTO | null = null;
-  loading = true;
+  stats = signal<AdminDashboardDTO | null>(null);
+  loading = signal(true);
 
   constructor(private adminService: AdminService) {}
 
@@ -24,14 +22,14 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadStats() {
-    this.loading = true;
+    this.loading.set(true);
     this.adminService.getAdminStats().subscribe({
       next: (data) => {
-        this.stats = data;
-        this.loading = false;
+        this.stats.set(data);
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

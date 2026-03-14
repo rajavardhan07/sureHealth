@@ -35,6 +35,7 @@ public class CorporateClient {
     private String status = "ACTIVE"; // ACTIVE / SUSPENDED
 
     @OneToMany(mappedBy = "corporateClient")
+    //mappedBy -> the corporateClient field in GroupPolicy is the owner of the relationship
     @JsonIgnore
     private List<GroupPolicy> policies;
 

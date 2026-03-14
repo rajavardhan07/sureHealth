@@ -1,109 +1,157 @@
-<div class="landing-page">
+<div class="min-h-screen bg-[#F8F6F1] font-sans">
   <!-- Header -->
-  <header class="landing-header">
-    <div class="header-container">
-      <div class="logo">
-        <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
-          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
-        </svg>
-        <span class="brand-name">SureHealth</span>
-      </div>
-      <div class="header-actions">
-        <a mat-button routerLink="/login" class="nav-btn">Sign In</a>
-        <a mat-flat-button color="primary" routerLink="/register" class="register-btn">Register</a>
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center gap-3">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
+            <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
+          </svg>
+          <span class="text-xl font-bold text-[#1B2A4A] tracking-tight">SureHealth</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <a routerLink="/login" class="text-[#5A6A7E] hover:text-[#1B2A4A] font-medium transition-colors px-4 py-2 rounded-md hover:bg-gray-50">Sign In</a>
+          <a routerLink="/register" class="bg-[#1B2A4A] hover:bg-[#0F1B33] text-white px-5 py-2.5 rounded-md font-medium transition-colors shadow-sm">Register</a>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-content fade-in-up">
-      <h1>Insurance for a <br><span class="highlight">Healthier Workforce</span></h1>
-      <p class="hero-subtitle">Comprehensive corporate health coverage designed for modern businesses and their employees.</p>
-      <div class="hero-btns">
-        <a mat-flat-button color="primary" routerLink="/register" class="cta-btn">Get Started</a>
-        <a mat-stroked-button href="#how-it-works" class="cta-btn secondary">How it Works</a>
+  <section class="relative bg-[#1B2A4A] overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-gradient-to-r from-[#0F1B33] to-transparent opacity-90"></div>
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-[#C8A951] opacity-[0.05] rounded-l-full transform translate-x-1/3"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10 fade-in-up text-center lg:text-left">
+      <div class="lg:w-2/3">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
+          Insurance for a <br><span class="text-[#C8A951]">Healthier Workforce</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-300 mb-10 max-w-2xl mx-auto lg:mx-0 font-light">
+          Comprehensive corporate health coverage designed for modern businesses and their employees. Secure your team's wellbeing today.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <a routerLink="/register" class="bg-[#C8A951] hover:bg-[#b49849] text-[#0F1B33] px-8 py-3.5 rounded-md font-bold text-lg transition-colors shadow-md text-center">Get Started</a>
+          <a href="#how-it-works" class="border-2 border-white/20 hover:border-white/40 text-white hover:bg-white/5 px-8 py-3.5 rounded-md font-semibold text-lg transition-all text-center">How it Works</a>
+        </div>
       </div>
     </div>
-    <div class="hero-bg-pattern"></div>
   </section>
 
   <!-- Educational Section -->
-  <section id="what-is" class="public-section bg-light">
-    <div class="section-container">
-      <div class="section-header">
-        <span class="section-tag">Overview</span>
-        <h2>What is Corporate Health Insurance?</h2>
-        <p>A group health insurance policy acts as a safety net designed specifically for businesses to cover the medical expenses of their employees.</p>
+  <section id="what-is" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-[#C8A951] font-semibold tracking-wider uppercase text-sm mb-3 block">Overview</span>
+        <h2 class="text-3xl font-bold text-[#1B2A4A] mb-4">What is Corporate Health Insurance?</h2>
+        <p class="text-lg text-[#5A6A7E]">A group health insurance policy acts as a safety net designed specifically for businesses to cover the medical expenses of their employees.</p>
       </div>
-      <div class="features-grid">
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-blue"><mat-icon>group_add</mat-icon></div>
-          <h3>Group Coverage</h3>
-          <p>One master policy covers all active employees, significantly reducing administrative overhead and complexity.</p>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="bg-[#F8F6F1] p-8 rounded-xl border border-[#E2E6EC] hover:shadow-lg transition-all transform hover:-translate-y-1 group">
+          <div class="h-14 w-14 rounded-xl bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <mat-icon class="text-3xl h-[30px] w-[30px] leading-none">group_add</mat-icon>
+          </div>
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-3">Group Coverage</h3>
+          <p class="text-[#5A6A7E] leading-relaxed">One master policy covers all active employees, significantly reducing administrative overhead and complexity.</p>
         </div>
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-gold"><mat-icon>savings</mat-icon></div>
-          <h3>Cost Effective</h3>
-          <p>Risk is distributed across a large pool of employees, resulting in exponentially lower premiums per person.</p>
+
+        <!-- Feature 2 -->
+        <div class="bg-[#F8F6F1] p-8 rounded-xl border border-[#E2E6EC] hover:shadow-lg transition-all transform hover:-translate-y-1 group">
+          <div class="h-14 w-14 rounded-xl bg-[#F5EDD8] text-[#C8A951] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <mat-icon class="text-3xl h-[30px] w-[30px] leading-none">savings</mat-icon>
+          </div>
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-3">Cost Effective</h3>
+          <p class="text-[#5A6A7E] leading-relaxed">Risk is distributed across a large pool of employees, resulting in exponentially lower premiums per person.</p>
         </div>
-        <div class="feature-card hover-lift">
-          <div class="feature-icon icon-navy"><mat-icon>favorite</mat-icon></div>
-          <h3>Employee Retention</h3>
-          <p>Offering comprehensive health benefits is proven to increase employee satisfaction and reduce turnover rates.</p>
+
+        <!-- Feature 3 -->
+        <div class="bg-[#F8F6F1] p-8 rounded-xl border border-[#E2E6EC] hover:shadow-lg transition-all transform hover:-translate-y-1 group">
+          <div class="h-14 w-14 rounded-xl bg-[#1B2A4A]/5 text-[#1B2A4A] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <mat-icon class="text-3xl h-[30px] w-[30px] leading-none">favorite</mat-icon>
+          </div>
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-3">Employee Retention</h3>
+          <p class="text-[#5A6A7E] leading-relaxed">Offering comprehensive health benefits is proven to increase employee satisfaction and reduce turnover rates.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- How It Works (5-Point Flow) -->
-  <section id="how-it-works" class="public-section">
-    <div class="section-container">
-      <div class="section-header">
-        <span class="section-tag">The Process</span>
-        <h2>From Registration to Claims</h2>
-        <p>A seamless, digitally-native experience for HR teams and employees alike.</p>
+  <section id="how-it-works" class="py-20 bg-[#F8F6F1]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-[#C8A951] font-semibold tracking-wider uppercase text-sm mb-3 block">The Process</span>
+        <h2 class="text-3xl font-bold text-[#1B2A4A] mb-4">From Registration to Claims</h2>
+        <p class="text-lg text-[#5A6A7E]">A seamless, digitally-native experience for HR teams and employees alike.</p>
       </div>
       
-      <div class="flow-container">
-        <div class="flow-item">
-          <div class="flow-number">1</div>
-          <div class="flow-content">
-            <h3>HR Registration</h3>
-            <p>Corporate HR teams register their company and provide basic organizational details to get started.</p>
+      <div class="max-w-4xl mx-auto">
+        <!-- Vertical Timeline for mobile, Horizontal for lg -->
+        <div class="hidden lg:flex justify-between items-start relative px-4">
+          <!-- Continuous Line -->
+          <div class="absolute top-8 left-12 right-12 h-1 bg-[#E2E6EC] -z-10"></div>
+          
+          <div class="flex flex-col items-center w-48 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-[#1B2A4A] text-[#C8A951] flex items-center justify-center text-2xl font-bold mb-4 shadow-md border-4 border-white">1</div>
+            <h3 class="font-bold text-[#1B2A4A] mb-2 text-lg">HR Registration</h3>
+            <p class="text-sm text-[#5A6A7E]">Corporate HR teams register their company and details.</p>
+          </div>
+
+          <div class="flex flex-col items-center w-48 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center text-2xl font-bold mb-4 shadow-sm z-10 transition-colors hover:bg-[#1B2A4A] hover:text-white">2</div>
+            <h3 class="font-bold text-[#1B2A4A] mb-2 text-lg">Policy Selection</h3>
+            <p class="text-sm text-[#5A6A7E]">Our underwriters review and approve the requested policy.</p>
+          </div>
+          
+          <div class="flex flex-col items-center w-48 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center text-2xl font-bold mb-4 shadow-sm z-10 transition-colors hover:bg-[#1B2A4A] hover:text-white">3</div>
+            <h3 class="font-bold text-[#1B2A4A] mb-2 text-lg">Employee Onboarding</h3>
+            <p class="text-sm text-[#5A6A7E]">Employees are added and gain access to insurance details.</p>
+          </div>
+
+          <div class="flex flex-col items-center w-48 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center text-2xl font-bold mb-4 shadow-sm z-10 transition-colors hover:bg-[#1B2A4A] hover:text-white">4</div>
+            <h3 class="font-bold text-[#1B2A4A] mb-2 text-lg">Seamless Filing</h3>
+            <p class="text-sm text-[#5A6A7E]">Employees file claims directly via their dashboard.</p>
+          </div>
+
+          <div class="flex flex-col items-center w-48 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-[#C8A951] text-[#0F1B33] flex items-center justify-center text-2xl font-bold mb-4 shadow-md border-4 border-[#F8F6F1]">5</div>
+            <h3 class="font-bold text-[#1B2A4A] mb-2 text-lg">Fast Settlement</h3>
+            <p class="text-sm text-[#5A6A7E]">Process claims within 24-48 hours for swift reimbursement.</p>
           </div>
         </div>
-        <div class="flow-line"></div>
-        <div class="flow-item">
-          <div class="flow-number">2</div>
-          <div class="flow-content">
-            <h3>Policy Selection</h3>
-            <p>HR selects from tailored insurance tiers. Our underwriters then review and approve the policy request.</p>
+
+        <!-- Mobile Timeline -->
+        <div class="lg:hidden space-y-8 pl-4 border-l-2 border-[#E2E6EC] ml-4">
+          <div class="relative pl-8">
+            <div class="absolute -left-[45px] top-0 w-12 h-12 rounded-full bg-[#1B2A4A] text-[#C8A951] flex items-center justify-center font-bold text-xl border-4 border-[#F8F6F1]">1</div>
+            <h3 class="font-bold text-[#1B2A4A] text-lg mb-1">HR Registration</h3>
+            <p class="text-[#5A6A7E]">Corporate HR teams register their company and details.</p>
           </div>
-        </div>
-        <div class="flow-line"></div>
-        <div class="flow-item">
-          <div class="flow-number">3</div>
-          <div class="flow-content">
-            <h3>Employee Onboarding</h3>
-            <p>Once active, employees are added to the portal and can immediately access their insurance details.</p>
+          <div class="relative pl-8">
+             <div class="absolute -left-[41px] top-0 w-10 h-10 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center font-bold text-lg">2</div>
+            <h3 class="font-bold text-[#1B2A4A] text-lg mb-1">Policy Selection</h3>
+            <p class="text-[#5A6A7E]">Our underwriters review and approve the requested policy.</p>
           </div>
-        </div>
-        <div class="flow-line"></div>
-        <div class="flow-item">
-          <div class="flow-number">4</div>
-          <div class="flow-content">
-            <h3>Seamless Filing</h3>
-            <p>Employees can file claims directly via their dashboard by uploading necessary medical documents.</p>
+          <div class="relative pl-8">
+             <div class="absolute -left-[41px] top-0 w-10 h-10 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center font-bold text-lg">3</div>
+            <h3 class="font-bold text-[#1B2A4A] text-lg mb-1">Employee Onboarding</h3>
+            <p class="text-[#5A6A7E]">Employees are added and gain access to insurance details.</p>
           </div>
-        </div>
-        <div class="flow-line"></div>
-        <div class="flow-item">
-          <div class="flow-number">5</div>
-          <div class="flow-content">
-            <h3>Fast Settlement</h3>
-            <p>Our claims officers review and process claims within 24-48 hours for swift reimbursement.</p>
+           <div class="relative pl-8">
+             <div class="absolute -left-[41px] top-0 w-10 h-10 rounded-full bg-white text-[#1B2A4A] border-2 border-[#1B2A4A] flex items-center justify-center font-bold text-lg">4</div>
+            <h3 class="font-bold text-[#1B2A4A] text-lg mb-1">Seamless Filing</h3>
+            <p class="text-[#5A6A7E]">Employees file claims directly via their dashboard.</p>
+          </div>
+          <div class="relative pl-8">
+            <div class="absolute -left-[45px] top-0 w-12 h-12 rounded-full bg-[#C8A951] text-[#0F1B33] flex items-center justify-center font-bold text-xl border-4 border-[#F8F6F1]">5</div>
+            <h3 class="font-bold text-[#1B2A4A] text-lg mb-1">Fast Settlement</h3>
+            <p class="text-[#5A6A7E]">Process claims within 24-48 hours for swift reimbursement.</p>
           </div>
         </div>
       </div>
@@ -111,52 +159,60 @@
   </section>
 
   <!-- Plans Display Section -->
-  <section id="plans" class="public-section bg-light">
-    <div class="section-container">
-      <div class="section-header">
-        <span class="section-tag">Our Plans</span>
-        <h2>Active Policy Tiers</h2>
-        <p>We offer flexible, risk-adjusted plans tailored to your company's demographic profile.</p>
+  <section id="plans" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-[#C8A951] font-semibold tracking-wider uppercase text-sm mb-3 block">Our Plans</span>
+        <h2 class="text-3xl font-bold text-[#1B2A4A] mb-4">Active Policy Tiers</h2>
+        <p class="text-lg text-[#5A6A7E]">We offer flexible, risk-adjusted plans tailored to your company's demographic profile.</p>
       </div>
       
-      <div class="plans-grid">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         @for (plan of publicPlans; track plan.id) {
-          <mat-card class="policy-card hover-lift">
-            <div class="card-top-bar"></div>
-            <div class="plan-header">
-              <mat-icon class="plan-icon">verified_user</mat-icon>
-              <h3>{{ plan.planName }}</h3>
-              <div class="coverage-amount">Rs {{ plan.coverageAmount | number }}</div>
-              <div class="premium-note">Starting Rs {{ plan.premiumPerEmployee | number }} / employee</div>
-            </div>
-            <mat-card-content>
-              <p class="plan-desc">{{plan.description}}</p>
-              <div class="features-list">
-                <div class="feature-item">
-                  <mat-icon>schedule</mat-icon>
-                  <span>{{plan.durationMonths}} months duration</span>
+          <div class="bg-white rounded-xl border border-[#E2E6EC] shadow-sm hover:shadow-xl transition-all flex flex-col overflow-hidden transform hover:-translate-y-1">
+            <div class="h-2 w-full bg-[#1B2A4A]"></div>
+            <div class="p-8 pb-0 flex-grow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 bg-[#E8EFF8] rounded-lg text-[#2E5C9A]">
+                  <mat-icon class="h-[24px] w-[24px] leading-none">verified_user</mat-icon>
                 </div>
-                <div class="feature-item">
-                  <mat-icon>payments</mat-icon>
-                  <span>Cashless Network Access</span>
-                </div>
-                <div class="feature-item">
-                  <mat-icon>bolt</mat-icon>
-                  <span>Fast Settlement (24-48h)</span>
-                </div>
+                <h3 class="text-2xl font-bold text-[#1B2A4A] leading-tight">{{ plan.planName }}</h3>
               </div>
-            </mat-card-content>
-            <mat-card-actions>
-              <a mat-flat-button color="primary" class="full-width-btn" routerLink="/register">Get a Quote</a>
-            </mat-card-actions>
-          </mat-card>
+              
+              <div class="mb-6">
+                <div class="text-[#1B2A4A] text-3xl font-extrabold mb-1">Rs {{ plan.coverageAmount | number }}<span class="text-sm font-normal text-[#5A6A7E]"> cover</span></div>
+                <div class="inline-block bg-[#F5EDD8] text-[#9A7D2C] px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide">Starting Rs {{ plan.premiumPerEmployee | number }} / employee</div>
+              </div>
+              
+              <p class="text-[#5A6A7E] mb-8 leading-relaxed">{{plan.description}}</p>
+              
+              <ul class="space-y-4 mb-8">
+                <li class="flex items-center text-[#1B2A4A] font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3 h-[20px] w-[20px] leading-none">schedule</mat-icon>
+                  <span>{{plan.durationMonths}} months duration</span>
+                </li>
+                <li class="flex items-center text-[#1B2A4A] font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3 h-[20px] w-[20px] leading-none">payments</mat-icon>
+                  <span>Cashless Network Access</span>
+                </li>
+                <li class="flex items-center text-[#1B2A4A] font-medium">
+                  <mat-icon class="text-[#C8A951] mr-3 h-[20px] w-[20px] leading-none">bolt</mat-icon>
+                  <span>Fast Settlement (24-48h)</span>
+                </li>
+              </ul>
+            </div>
+            <div class="p-8 pt-0 mt-auto">
+              <a routerLink="/register" class="block w-full text-center bg-[#1B2A4A] hover:bg-[#0F1B33] text-white py-3 rounded-lg font-semibold transition-colors">Get a Quote</a>
+            </div>
+          </div>
         }
       </div>
     </div>
   </section>
 
-  <footer class="landing-footer">
-    <div class="footer-container">
+  <!-- Footer -->
+  <footer class="bg-[#0F1B33] py-8 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 font-medium text-sm">
       <p>&copy; 2026 SureHealth &bull; Powered by The Hartford</p>
     </div>
   </footer>

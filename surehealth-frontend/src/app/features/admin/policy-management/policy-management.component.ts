@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,10 +16,10 @@ import { GroupPolicy } from '../../../shared/models';
   templateUrl: './policy-management.component.html',
   styleUrl: './policy-management.component.css'})
 export class PolicyManagementComponent implements OnInit {
-  pendingPolicies: GroupPolicy[] = [];
-  allPolicies: GroupPolicy[] = [];
-  loadingPending = true;
-  loadingAll = false;
+  pendingPolicies = signal<GroupPolicy[]>([]);
+  allPolicies = signal<GroupPolicy[]>([]);
+  loadingPending = signal(true);
+  loadingAll = signal(false);
   pendingColumns = ['policyNumber', 'company', 'plan', 'premium', 'status', 'actions'];
   allColumns = ['policyNumber', 'company', 'plan', 'status', 'actions'];
 
@@ -31,18 +31,18 @@ export class PolicyManagementComponent implements OnInit {
   }
 
   loadPending() {
-    this.loadingPending = true;
+    this.loadingPending.set(true);
     this.policyService.getPendingPolicies().subscribe({
-      next: (data) => { this.pendingPolicies = data; this.loadingPending = false; },
-      error: () => { this.loadingPending = false; }
+      next: (data) => { this.pendingPolicies.set(data); this.loadingPending.set(false); },
+      error: () => { this.loadingPending.set(false); }
     });
   }
 
   loadAll() {
-    this.loadingAll = true;
+    this.loadingAll.set(true);
     this.policyService.getAllPolicies().subscribe({
-      next: (data) => { this.allPolicies = data; this.loadingAll = false; },
-      error: () => { this.loadingAll = false; }
+      next: (data) => { this.allPolicies.set(data); this.loadingAll.set(false); },
+      error: () => { this.loadingAll.set(false); }
     });
   }
 

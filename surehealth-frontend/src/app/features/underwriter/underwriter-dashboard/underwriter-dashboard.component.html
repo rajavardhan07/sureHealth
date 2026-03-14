@@ -1,60 +1,56 @@
-<div class="dashboard-container">
-  <div class="header-section">
-    <h1 class="page-title">Review Queue</h1>
-    <p class="page-subtitle">Policies assigned to you for risk assessment and approval</p>
+<div class="space-y-6 p-6 fade-in-up">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Review Queue</h1>
+      <p class="text-[#5A6A7E]">Policies assigned to you for risk assessment and approval</p>
+    </div>
   </div>
 
-  <mat-card class="policies-card">
-    @if (loading) {
-      <div class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center min-h-[300px]">
+        <svg class="animate-spin h-10 w-10 text-[#2B74E2] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
       </div>
-    } @else if (policies.length > 0) {
-      <table mat-table [dataSource]="policies" class="policies-table">
-        <!-- Policy Number Column -->
-        <ng-container matColumnDef="policyNumber">
-          <th mat-header-cell *matHeaderCellDef>Policy Number</th>
-          <td mat-cell *matCellDef="let p" class="policy-number">{{ p.policyNumber }}</td>
-        </ng-container>
-        
-        <!-- Corporate Client Column -->
-        <ng-container matColumnDef="corporate">
-          <th mat-header-cell *matHeaderCellDef>Corporate Client</th>
-          <td mat-cell *matCellDef="let p">{{ p.corporateClient?.companyName }}</td>
-        </ng-container>
-
-        <!-- Insurance Plan Column -->
-        <ng-container matColumnDef="plan">
-          <th mat-header-cell *matHeaderCellDef>Insurance Plan</th>
-          <td mat-cell *matCellDef="let p">{{ p.insurancePlan?.planName }}</td>
-        </ng-container>
-
-        <!-- Enrolled Employees Column -->
-        <ng-container matColumnDef="employees">
-          <th mat-header-cell *matHeaderCellDef>Enrolled Employees</th>
-          <td mat-cell *matCellDef="let p">{{ p.employees?.length || 0 }} Employees</td>
-        </ng-container>
-
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let p">
-            <button mat-flat-button color="primary" (click)="approve(p.id)" class="approve-btn">
-              <mat-icon>check_circle</mat-icon>
-              Approve Policy
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-      </table>
+    } @else if (policies().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-[#E2E6EC]">
+          <thead class="bg-[#F8F6F1]">
+            <tr>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy Number</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Corporate Client</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Insurance Plan</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Enrolled Employees</th>
+              <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#E2E6EC] bg-white">
+            @for (p of policies(); track p.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ p.policyNumber }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#1B2A4A]">{{ p.corporateClient.companyName }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.insurancePlan.planName }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ policies().length || 0 }} Employees</td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <button (click)="approve(p.id)" class="inline-flex justify-center items-center px-4 py-2 bg-[#2B74E2] text-white font-semibold rounded-lg shadow-sm hover:bg-[#1B2A4A] transition-colors">
+                    <mat-icon class="mr-2 text-[18px]">check_circle</mat-icon> Approve Policy
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     } @else {
-      <div class="empty-state">
-        <mat-icon class="empty-icon">assignment_turned_in</mat-icon>
-        <p class="empty-text">Your review queue is empty!</p>
-        <p class="empty-subtext">New policy requests will appear here for your review</p>
+      <div class="py-16 px-4 text-center">
+        <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-4">
+          <mat-icon class="text-[#2B74E2] text-3xl">assignment_turned_in</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">Your review queue is empty!</h3>
+        <p class="text-[#5A6A7E]">New policy requests will appear here for your review</p>
       </div>
     }
-  </mat-card>
+  </div>
 </div>

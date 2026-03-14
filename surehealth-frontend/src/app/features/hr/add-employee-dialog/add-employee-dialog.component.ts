@@ -2,15 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmployeeService } from '../../../core/services/employee.service';
 
 @Component({
@@ -20,14 +13,7 @@ import { EmployeeService } from '../../../core/services/employee.service';
     CommonModule, 
     ReactiveFormsModule, 
     MatDialogModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatSelectModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatDatepickerModule, 
-    MatNativeDateModule,
-    MatProgressSpinnerModule
+    MatIconModule
   ],
   templateUrl: './add-employee-dialog.component.html',
   styleUrl: './add-employee-dialog.component.css'

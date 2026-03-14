@@ -12,8 +12,6 @@ import { PolicyService } from '../../../core/services/policy.service';
   imports: [
     CommonModule,
     RouterModule,
-    MatButtonModule,
-    MatCardModule,
     MatIconModule
   ],
   templateUrl: './landing.component.html',

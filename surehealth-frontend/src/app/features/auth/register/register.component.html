@@ -1,140 +1,213 @@
-<div class="register-page">
-  <div class="register-bg-pattern"></div>
+<div class="min-h-screen bg-[#F8F6F1] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+  <!-- Decorative background pattern replacing register-bg-pattern -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#1B2A4A] to-transparent opacity-5"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-[#C8A951] opacity-[0.03] rounded-bl-full"></div>
+    <div class="absolute bottom-0 left-0 w-1/2 h-1/2 bg-[#2E5C9A] opacity-[0.03] rounded-tr-full"></div>
+  </div>
 
-  <div class="register-container fade-in-up">
-    <div class="register-branding">
-      <div class="logo-icon">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="#1B2A4A"/>
-          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#C8A951"/>
+  <div class="sm:mx-auto sm:w-full sm:max-w-xl relative z-10 fade-in-up">
+    <div class="text-center mb-8">
+      <div class="mx-auto h-12 w-12 flex items-center justify-center bg-[#1B2A4A] rounded-xl mb-4 text-[#C8A951]">
+         <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="currentColor"/>
         </svg>
       </div>
-      <h1>SureHealth</h1>
-      <p class="tagline">Corporate Registration Portal</p>
+      <h1 class="text-3xl font-bold text-[#1B2A4A]">SureHealth</h1>
+      <p class="mt-2 text-sm text-[#5A6A7E]">Corporate Registration Portal</p>
     </div>
 
-    <mat-card class="register-card">
-      <mat-card-content>
-        <h2>Register Your Company</h2>
-        <p class="subtitle">Create your corporate HR account to get started</p>
+    <div class="bg-white py-8 px-4 shadow-lg border border-[#E2E6EC] sm:rounded-xl sm:px-10">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-[#1B2A4A]">Register Your Company</h2>
+        <p class="text-sm text-[#5A6A7E] mt-1">Create your corporate HR account to get started</p>
+      </div>
 
-        <form [formGroup]="form" (ngSubmit)="register()">
-          <div class="section-label">Company Information</div>
-          <mat-form-field appearance="outline">
-            <mat-label>Company Name</mat-label>
-            <input matInput formControlName="companyName" placeholder="e.g. TechCorp Solutions">
-            @if (form.get('companyName')?.hasError('required')) {
-              <mat-error>Company name is required</mat-error>
-            }
-          </mat-form-field>
+      <form class="space-y-6" [formGroup]="form" (ngSubmit)="register()">
+        
+        <!-- Company Information -->
+        <div>
+          <h3 class="text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider mb-4 border-b border-[#E2E6EC] pb-2">Company Information</h3>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Company Name</label>
+              <input formControlName="companyName" type="text" placeholder="e.g. TechCorp Solutions"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('companyName')?.invalid && form.get('companyName')?.touched, 'border-[#E2E6EC]': !(form.get('companyName')?.invalid && form.get('companyName')?.touched)}">
+              @if (form.get('companyName')?.hasError('required') && form.get('companyName')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Company name is required</p>
+              }
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Registration Number</mat-label>
-            <input matInput formControlName="registrationNumber" placeholder="e.g. REG123456">
-            @if (form.get('registrationNumber')?.hasError('required')) {
-              <mat-error>Registration number is required</mat-error>
-            }
-          </mat-form-field>
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Registration Number</label>
+              <input formControlName="registrationNumber" type="text" placeholder="e.g. REG123456"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('registrationNumber')?.invalid && form.get('registrationNumber')?.touched, 'border-[#E2E6EC]': !(form.get('registrationNumber')?.invalid && form.get('registrationNumber')?.touched)}">
+              @if (form.get('registrationNumber')?.hasError('required') && form.get('registrationNumber')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Registration number is required</p>
+              }
+            </div>
+          </div>
+        </div>
 
-          <div class="section-label">Contact Details</div>
-          <mat-form-field appearance="outline">
-            <mat-label>Contact Person</mat-label>
-            <input matInput formControlName="contactPerson" placeholder="Full name of HR contact">
-            @if (form.get('contactPerson')?.hasError('required')) {
-              <mat-error>Contact person is required</mat-error>
-            }
-          </mat-form-field>
+        <!-- Contact Details -->
+        <div>
+          <h3 class="text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider mb-4 border-b border-[#E2E6EC] pb-2 mt-8">Contact Details</h3>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Contact Person</label>
+              <input formControlName="contactPerson" type="text" placeholder="Full name of HR contact"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('contactPerson')?.invalid && form.get('contactPerson')?.touched, 'border-[#E2E6EC]': !(form.get('contactPerson')?.invalid && form.get('contactPerson')?.touched)}">
+              @if (form.get('contactPerson')?.hasError('required') && form.get('contactPerson')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Contact person is required</p>
+              }
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Email Address</mat-label>
-            <input matInput type="email" formControlName="contactEmail" placeholder="hr&#64;company.com">
-            @if (form.get('contactEmail')?.hasError('required')) {
-              <mat-error>Email is required</mat-error>
-            }
-            @if (form.get('contactEmail')?.hasError('email')) {
-              <mat-error>Enter a valid email address</mat-error>
-            }
-          </mat-form-field>
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Email Address</label>
+              <input formControlName="contactEmail" type="email" placeholder="hr@company.com"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched, 'border-[#E2E6EC]': !(form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched)}">
+              @if (form.get('contactEmail')?.hasError('required') && form.get('contactEmail')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Email is required</p>
+              }
+              @if (form.get('contactEmail')?.hasError('email') && form.get('contactEmail')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Enter a valid email address</p>
+              }
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="contactPhone" placeholder="e.g. 9876543210">
-            @if (form.get('contactPhone')?.hasError('required')) {
-              <mat-error>Phone number is required</mat-error>
-            }
-          </mat-form-field>
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Phone Number</label>
+              <input formControlName="contactPhone" type="text" placeholder="e.g. 9876543210"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('contactPhone')?.invalid && form.get('contactPhone')?.touched, 'border-[#E2E6EC]': !(form.get('contactPhone')?.invalid && form.get('contactPhone')?.touched)}">
+              @if (form.get('contactPhone')?.hasError('required') && form.get('contactPhone')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Phone number is required</p>
+              }
+            </div>
+          </div>
+        </div>
 
-          <div class="section-label">Demographics & Risk Profile</div>
-          <mat-form-field appearance="outline">
-            <mat-label>Number of Employees</mat-label>
-            <mat-select formControlName="numberOfEmployees">
-              <mat-option [value]="25">Below 50</mat-option>
-              <mat-option [value]="75">50 to 100</mat-option>
-              <mat-option [value]="250">100 to 500</mat-option>
-              <mat-option [value]="600">500 and above</mat-option>
-            </mat-select>
-            @if (form.get('numberOfEmployees')?.hasError('required')) {
-              <mat-error>Number of employees is required</mat-error>
-            }
-          </mat-form-field>
+        <!-- Demographics & Risk Profile -->
+        <div>
+          <h3 class="text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider mb-4 border-b border-[#E2E6EC] pb-2 mt-8">Demographics & Risk Profile</h3>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Number of Employees</label>
+              <select formControlName="numberOfEmployees"
+                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm rounded-md bg-white border shadow-sm"
+                [ngClass]="{'border-red-500': form.get('numberOfEmployees')?.invalid && form.get('numberOfEmployees')?.touched, 'border-[#E2E6EC]': !(form.get('numberOfEmployees')?.invalid && form.get('numberOfEmployees')?.touched)}">
+                <option value="" disabled selected>Select size</option>
+                <option [value]="25">Below 50</option>
+                <option [value]="75">50 to 100</option>
+                <option [value]="250">100 to 500</option>
+                <option [value]="600">500 and above</option>
+              </select>
+              @if (form.get('numberOfEmployees')?.hasError('required') && form.get('numberOfEmployees')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Number of employees is required</p>
+              }
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Industry Type</mat-label>
-            <mat-select formControlName="industryType">
-              <mat-option value="IT">IT & Software</mat-option>
-              <mat-option value="Banking">Banking & Finance</mat-option>
-              <mat-option value="Manufacturing">Manufacturing</mat-option>
-              <mat-option value="Construction">Construction</mat-option>
-              <mat-option value="Mining">Mining & Heavy Duty</mat-option>
-            </mat-select>
-            @if (form.get('industryType')?.hasError('required')) {
-              <mat-error>Industry type is required</mat-error>
-            }
-          </mat-form-field>
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Industry Type</label>
+              <select formControlName="industryType"
+                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm rounded-md bg-white border shadow-sm"
+                [ngClass]="{'border-red-500': form.get('industryType')?.invalid && form.get('industryType')?.touched, 'border-[#E2E6EC]': !(form.get('industryType')?.invalid && form.get('industryType')?.touched)}">
+                <option value="" disabled selected>Select industry</option>
+                <option value="IT">IT & Software</option>
+                <option value="Banking">Banking & Finance</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Construction">Construction</option>
+                <option value="Mining">Mining & Heavy Duty</option>
+              </select>
+              @if (form.get('industryType')?.hasError('required') && form.get('industryType')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Industry type is required</p>
+              }
+            </div>
+          </div>
+        </div>
 
-          <div class="section-label">Login Credentials</div>
-          <mat-form-field appearance="outline">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username" placeholder="Choose a username">
-            @if (form.get('username')?.hasError('required')) {
-              <mat-error>Username is required</mat-error>
-            }
-          </mat-form-field>
+        <!-- Login Credentials -->
+        <div>
+          <h3 class="text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider mb-4 border-b border-[#E2E6EC] pb-2 mt-8">Login Credentials</h3>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Username</label>
+              <input formControlName="username" type="text" placeholder="Choose a username"
+                class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                [ngClass]="{'border-red-500': form.get('username')?.invalid && form.get('username')?.touched, 'border-[#E2E6EC]': !(form.get('username')?.invalid && form.get('username')?.touched)}">
+              @if (form.get('username')?.hasError('required') && form.get('username')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Username is required</p>
+              }
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Minimum 4 characters">
-            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" tabindex="-1">
-              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-            @if (form.get('password')?.hasError('required')) {
-              <mat-error>Password is required</mat-error>
-            }
-            @if (form.get('password')?.hasError('minlength')) {
-              <mat-error>Minimum 4 characters</mat-error>
-            }
-          </mat-form-field>
+            <div>
+              <label class="block text-sm font-medium text-[#1B2A4A] mb-1">Password</label>
+              <div class="relative">
+                <input formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Minimum 4 characters"
+                  class="appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-[#8A96A6] focus:outline-none focus:ring-[#C8A951] focus:border-[#C8A951] sm:text-sm"
+                  [ngClass]="{'border-red-500': form.get('password')?.invalid && form.get('password')?.touched, 'border-[#E2E6EC]': !(form.get('password')?.invalid && form.get('password')?.touched)}">
+                
+                <button type="button" (click)="hidePassword = !hidePassword" tabindex="-1"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5A6A7E] hover:text-[#1B2A4A]">
+                  <mat-icon class="text-[20px] h-[20px] w-[20px] leading-none">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </div>
+              @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Password is required</p>
+              }
+              @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+                <p class="mt-1 text-xs text-red-500">Minimum 4 characters</p>
+              }
+            </div>
+          </div>
+        </div>
 
-          <button mat-flat-button color="primary" type="submit" id="register-button"
-            [disabled]="form.invalid || loading" class="register-btn">
+        <div class="pt-4">
+          <button type="submit" id="register-button" [disabled]="form.invalid || loading"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#1B2A4A] hover:bg-[#0F1B33] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B2A4A] disabled:opacity-50 disabled:cursor-not-allowed">
             @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Registering...
             }
             @if (!loading) {
               <span>Register Company</span>
             }
           </button>
-        </form>
+        </div>
+      </form>
 
-        @if (success) {
-          <div class="success-msg">
-            <mat-icon>check_circle</mat-icon>
-            <span>Registration successful! You can now <a routerLink="/login">sign in</a> with your credentials.</span>
+      @if (success) {
+        <div class="mt-4 rounded-md bg-green-50 p-4 border border-green-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <mat-icon class="text-green-400">check_circle</mat-icon>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-green-800">
+                Registration successful! You can now <a routerLink="/login" class="underline hover:text-green-900">sign in</a> with your credentials.
+              </p>
+            </div>
           </div>
-        }
+        </div>
+      }
 
-        <p class="switch-link">Already have an account? <a routerLink="/login">Sign In</a></p>
-      </mat-card-content>
-    </mat-card>
+      <div class="mt-6 border-t border-[#E2E6EC] pt-6 text-center text-sm">
+        <p class="text-[#5A6A7E]">
+          Already have an account? 
+          <a routerLink="/login" class="font-medium text-[#1B2A4A] hover:underline">Sign In</a>
+        </p>
+      </div>
+
+    </div>
   </div>
 </div>

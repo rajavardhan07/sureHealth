@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -12,13 +12,13 @@ import { GroupPolicy } from '../../../shared/models';
 @Component({
   selector: 'app-underwriter-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatIconModule, MatSnackBarModule],
   templateUrl: './underwriter-dashboard.component.html',
   styleUrl: './underwriter-dashboard.component.css'
 })
 export class UnderwriterDashboardComponent implements OnInit {
-  policies: GroupPolicy[] = [];
-  loading = true;
+  policies = signal<GroupPolicy[]>([]);
+  loading = signal(true);
   columns = ['policyNumber', 'corporate', 'plan', 'employees', 'actions'];
 
   constructor(private policyService: PolicyService, private snackBar: MatSnackBar) {}
@@ -28,18 +28,18 @@ export class UnderwriterDashboardComponent implements OnInit {
   }
 
   loadQueue() {
-    this.loading = true;
+    this.loading.set(true);
     this.policyService.getUnderwriterQueue().subscribe({
       next: (data) => {
-        this.policies = data;
-        this.loading = false;
+        this.policies.set(data);
+        console.log(this.policies());
+        this.loading.set(false);
       },
-      error: () => { this.loading = false; }
+      error: () => { this.loading.set(false); }
     });
   }
 
   approve(id: number) {
-    if (confirm('Verify risk and approve this policy? This will finalize employee coverage.')) {
       this.policyService.underwritePolicy(id).subscribe({
         next: () => {
           this.snackBar.open('Policy approved and employees assigned!', 'OK', { duration: 3000 });
@@ -48,5 +48,4 @@ export class UnderwriterDashboardComponent implements OnInit {
         error: () => {} // Error handled by interceptor
       });
     }
-  }
 }

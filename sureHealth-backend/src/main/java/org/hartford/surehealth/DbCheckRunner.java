@@ -25,4 +25,3 @@ public class DbCheckRunner implements CommandLineRunner {
         System.out.println("--- DB CHECK END ---");
     }
 }
-

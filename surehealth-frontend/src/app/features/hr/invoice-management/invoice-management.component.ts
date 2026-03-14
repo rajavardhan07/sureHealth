@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,20 +17,20 @@ import { PremiumInvoice, PaymentMode } from '../../../shared/models';
 @Component({
   selector: 'app-hr-invoice-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, MatProgressSpinnerModule, MatCardModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatSnackBarModule],
   templateUrl: './invoice-management.component.html',
   styleUrl: './invoice-management.component.css'})
 export class HrInvoiceManagementComponent implements OnInit {
-  invoices: PremiumInvoice[] = [];
-  loading = true;
+  invoices = signal<PremiumInvoice[]>([]);
+  loading = signal(true);
   paymentModes: { [key: number]: string } = {};
 
   constructor(private invoiceService: InvoiceService, private paymentService: PaymentService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.invoiceService.getMyInvoices().subscribe({
-      next: (data) => { this.invoices = data; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: (data) => { this.invoices.set(data); this.loading.set(false); },
+      error: () => { this.loading.set(false); }
     });
   }
 

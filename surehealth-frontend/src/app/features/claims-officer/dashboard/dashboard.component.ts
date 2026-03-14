@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,18 +9,18 @@ import { ClaimsOfficerDashboardDTO } from '../../../shared/models';
 @Component({
   selector: 'app-co-dashboard',
   standalone: true,
-  imports: [MatCardModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [MatIconModule],
   templateUrl: './dashboard.component.html'})
 export class CODashboardComponent implements OnInit {
-  data: ClaimsOfficerDashboardDTO | null = null;
-  loading = true;
+  data = signal<ClaimsOfficerDashboardDTO | null>(null);
+  loading = signal(true);
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit() {
     this.adminService.getClaimsOfficerDashboard().subscribe({
-      next: (d) => { this.data = d; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: (d) => { this.data.set(d); this.loading.set(false); },
+      error: () => { this.loading.set(false); }
     });
   }
 }

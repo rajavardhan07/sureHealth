@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,22 +15,18 @@ import { User } from '../../../shared/models';
   selector: 'app-underwriter-management',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatCardModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatSnackBarModule, 
-    MatTableModule,
-    MatDialogModule,
-    MatProgressSpinnerModule
+    CommonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './underwriter-management.component.html',
   styleUrl: './underwriter-management.component.css'
 })
 export class UnderwriterManagementComponent implements OnInit {
-  underwriters: User[] = [];
+  underwriters = signal<User[]>([]);
   displayedColumns: string[] = ['fullName', 'username', 'phoneNumber', 'licenseNumber', 'commission', 'createdAt'];
-  loading = true;
+  loading = signal(true);
 
   constructor(
     private adminService: AdminService, 
@@ -43,15 +39,15 @@ export class UnderwriterManagementComponent implements OnInit {
   }
 
   loadUnderwriters() {
-    this.loading = true;
+    this.loading.set(true);
     this.adminService.getUnderwriters().subscribe({
       next: (data) => {
-        this.underwriters = data;
-        this.loading = false;
+        this.underwriters.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.snackBar.open('Failed to load underwriters', 'OK', { duration: 3000 });
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

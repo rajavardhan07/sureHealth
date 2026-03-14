@@ -6,12 +6,14 @@ import org.hartford.surehealth.enums.Role;
 import org.hartford.surehealth.exceptions.InvalidCredentialsException;
 import org.hartford.surehealth.repository.UserRepository;
 import org.hartford.surehealth.util.JwtUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -39,67 +41,55 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
-    @Test
-    void shouldReturnTokenWhenCredentialsAreValid() {
-        // ARRANGE
-        String username = "admin";
-        String password = "admin123";
-        User user = new User();
-        user.setUsername(username);
-        user.setRole(Role.ADMIN);
+    private User testUser;
 
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(null);
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        when(jwtUtil.generateToken(username, "ADMIN")).thenReturn("mock-jwt-token");
-
-        // ACT
-        LoginResponseDTO result = authService.login(username, password);
-
-        // ASSERT
-        assertNotNull(result);
-        assertEquals("mock-jwt-token", result.getToken());
-        assertEquals(username, result.getUsername());
-        assertEquals("ADMIN", result.getRole());
-        verify(authenticationManager, times(1)).authenticate(any());
-        verify(userRepository, times(1)).findByUsername(username);
+    @BeforeEach
+    void setUp() {
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testuser");
+        testUser.setPassword("encodedPassword");
+        testUser.setRole(Role.EMPLOYEE);
     }
 
     @Test
-    void shouldThrowExceptionWhenUserNotFound() {
-        // ARRANGE
-        String username = "nonexistent";
-        String password = "password";
+    void login_Success() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+        when(jwtUtil.generateToken("testuser", "EMPLOYEE")).thenReturn("mockToken");
 
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(null);
-        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        LoginResponseDTO response = authService.login("testuser", "password");
 
-        // ACT & ASSERT
-        assertThrows(InvalidCredentialsException.class, () -> {
-            authService.login(username, password);
-        });
+        assertNotNull(response);
+        assertEquals("mockToken", response.getToken());
+        assertEquals("testuser", response.getUsername());
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test
-    void shouldChangePasswordSuccessfully() {
-        // ARRANGE
-        String username = "admin";
-        String oldPassword = "old123";
-        String newPassword = "new123";
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("encoded-old");
+    void login_InvalidCredentials() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Invalid credentials"));
 
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(oldPassword, "encoded-old")).thenReturn(true);
-        when(passwordEncoder.encode(newPassword)).thenReturn("encoded-new");
+        assertThrows(InvalidCredentialsException.class, () -> authService.login("testuser", "wrong"));
+    }
 
-        // ACT
-        authService.changePassword(username, oldPassword, newPassword);
+    @Test
+    void changePassword_Success() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches("old", "encodedPassword")).thenReturn(true);
+        when(passwordEncoder.encode("new")).thenReturn("newEncoded");
 
-        // ASSERT
-        verify(userRepository, times(1)).save(user);
-        assertEquals("encoded-new", user.getPassword());
+        authService.changePassword("testuser", "old", "new");
+
+        assertEquals("newEncoded", testUser.getPassword());
+        verify(userRepository).save(testUser);
+    }
+
+    @Test
+    void changePassword_WrongOldPassword() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches("wrong", "encodedPassword")).thenReturn(false);
+
+        assertThrows(InvalidCredentialsException.class, () -> authService.changePassword("testuser", "wrong", "new"));
     }
 }

@@ -1,35 +1,74 @@
-@if (!loading) {
-  <div class="fade-in-up">
-    <div class="page-header">
-      <h1>Claims Officer Dashboard</h1>
-      <p>Overview of claims processing activity</p>
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center min-h-[400px]">
+    <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="text-[#5A6A7E] font-medium">Loading dashboard...</p>
+  </div>
+} @else {
+  <div class="fade-in-up space-y-6">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Claims Officer Dashboard</h1>
+        <p class="text-[#5A6A7E]">Overview of claims processing activity</p>
+      </div>
     </div>
-    @if (data) {
-      <div class="grid-4">
-        <div class="stat-card">
-          <div class="stat-icon navy"><mat-icon>assignment</mat-icon></div>
-          <div class="stat-value">{{ data.totalClaims }}</div>
-          <div class="stat-label">Total Claims</div>
+
+    @if (data()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Claims -->
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-[#5A6A7E] mb-1">Total Claims</p>
+              <h3 class="text-3xl font-bold text-[#1B2A4A]">{{ data()!.totalClaims }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center">
+              <mat-icon class="text-2xl leading-none">assignment</mat-icon>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon gold"><mat-icon>pending_actions</mat-icon></div>
-          <div class="stat-value">{{ data.pendingClaims }}</div>
-          <div class="stat-label">Pending Review</div>
+
+        <!-- Pending Review -->
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-[#5A6A7E] mb-1">Pending Review</p>
+              <h3 class="text-3xl font-bold text-[#C8A951]">{{ data()!.pendingClaims }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-[#FDF8EA] text-[#C8A951] flex items-center justify-center">
+              <mat-icon class="text-2xl leading-none">pending_actions</mat-icon>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon green"><mat-icon>check_circle</mat-icon></div>
-          <div class="stat-value">{{ data.approvedToday }}</div>
-          <div class="stat-label">Approved Today</div>
+
+        <!-- Approved Today -->
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-[#5A6A7E] mb-1">Approved Today</p>
+              <h3 class="text-3xl font-bold text-green-600">{{ data()!.approvedToday }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
+              <mat-icon class="text-2xl leading-none">check_circle</mat-icon>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon red"><mat-icon>cancel</mat-icon></div>
-          <div class="stat-value">{{ data.rejectedToday }}</div>
-          <div class="stat-label">Rejected Today</div>
+
+        <!-- Rejected Today -->
+        <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-[#5A6A7E] mb-1">Rejected Today</p>
+              <h3 class="text-3xl font-bold text-red-600">{{ data()!.rejectedToday }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
+              <mat-icon class="text-2xl leading-none">cancel</mat-icon>
+            </div>
+          </div>
         </div>
       </div>
     }
   </div>
-}
-@if (loading) {
-  <div style="text-align:center;padding:80px"><mat-spinner diameter="40"></mat-spinner></div>
 }

@@ -42,7 +42,7 @@ public class Claim {
 
     @ManyToOne
     private Employee employee;
-
+    // one employee can have multiple claims, but each claim is linked to one employee
     @ManyToOne
     private GroupPolicy groupPolicy;
 

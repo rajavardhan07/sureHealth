@@ -1,53 +1,88 @@
-<div class="fade-in-up">
-  <div class="page-header">
-    <h1>Invoice Management</h1>
-    <p>View and manage premium invoices across all corporates</p>
+<div class="p-6 space-y-6 fade-in-up">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center shadow-sm">
+        <mat-icon class="text-3xl leading-none">receipt_long</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-[#1B2A4A] mb-1">Invoice Management</h2>
+        <p class="text-[#5A6A7E] text-sm">View and manage premium invoices across all corporates</p>
+      </div>
+    </div>
   </div>
 
-  @if (loading) {
-    <div style="text-align:center;padding:48px"><mat-spinner diameter="40"></mat-spinner></div>
-  }
-
-  @if (!loading) {
-    <div class="table-container">
-      <div class="table-header">
-        <h3>All Invoices ({{ invoices.length }})</h3>
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden relative">
+    @if (loading()) {
+      <div class="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center min-h-[300px]">
+        <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
       </div>
-      @if (invoices.length > 0) {
-        <table mat-table [dataSource]="invoices" class="full-width">
-          <ng-container matColumnDef="invoiceNumber">
-            <th mat-header-cell *matHeaderCellDef>Invoice #</th>
-            <td mat-cell *matCellDef="let i">{{ i.invoiceNumber }}</td>
-          </ng-container>
-          <ng-container matColumnDef="company">
-            <th mat-header-cell *matHeaderCellDef>Company</th>
-            <td mat-cell *matCellDef="let i">{{ i.groupPolicy?.corporateClient?.companyName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef>Amount</th>
-            <td mat-cell *matCellDef="let i" class="amount">₹{{ i.totalAmount | number }}</td>
-          </ng-container>
-          <ng-container matColumnDef="dueDate">
-            <th mat-header-cell *matHeaderCellDef>Due Date</th>
-            <td mat-cell *matCellDef="let i">{{ i.dueDate }}</td>
-          </ng-container>
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let i">
-              <span class="status-badge" [ngClass]="i.status.toLowerCase()">{{ i.status }}</span>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-        </table>
-      }
-      @if (invoices.length === 0) {
-        <div class="empty-state">
-          <mat-icon>receipt_long</mat-icon>
-          <h3>No Invoices</h3>
-          <p>No invoices have been generated yet</p>
-        </div>
-      }
+    }
+
+    <div class="flex border-b border-[#E2E6EC] bg-gray-50/50 px-6 py-4">
+      <h3 class="text-lg font-semibold text-[#1B2A4A]">All Invoices ({{ invoices().length }})</h3>
     </div>
-  }
+
+    <div class="overflow-x-auto min-h-[300px]">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#F8F6F1] border-b border-[#E2E6EC]">
+            <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Invoice #</th>
+            <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Company</th>
+            <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Amount</th>
+            <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Due Date</th>
+            <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#E2E6EC]">
+          @if (!loading() && invoices().length === 0) {
+            <tr>
+              <td colspan="5" class="py-20 px-4 text-center">
+                <div class="flex flex-col items-center justify-center">
+                  <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mb-4">
+                    <mat-icon class="text-[#C8A951] text-3xl">receipt_long</mat-icon>
+                  </div>
+                  <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">No Invoices</h3>
+                  <p class="text-[#5A6A7E] max-w-sm">No invoices have been generated yet.</p>
+                </div>
+              </td>
+            </tr>
+          } @else {
+            @for (i of invoices(); track i.id) {
+              <tr class="hover:bg-gray-50/50 transition-colors group">
+                <td class="py-4 px-6">
+                  <span class="block text-sm font-bold text-[#1B2A4A]">{{ i.invoiceNumber }}</span>
+                </td>
+                <td class="py-4 px-6 text-sm text-[#5A6A7E]">
+                  {{ i.groupPolicy.corporateClient.companyName }}
+                </td>
+                <td class="py-4 px-6 text-sm font-bold text-[#1B2A4A]">₹{{ i.totalAmount | number }}</td>
+                <td class="py-4 px-6 text-sm text-[#5A6A7E]">{{ i.dueDate }}</td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border shadow-sm"
+                        [ngClass]="{
+                          'bg-green-50 text-green-700 border-green-200': $any(i.status) === 'PAID',
+                          'bg-yellow-50 text-yellow-700 border-yellow-200': $any(i.status) === 'UNPAID',
+                          'bg-red-50 text-red-700 border-red-200': $any(i.status) === 'OVERDUE'
+                        }">
+                    <span class="w-1.5 h-1.5 rounded-full mr-1.5"
+                          [ngClass]="{
+                            'bg-green-500': $any(i.status) === 'PAID',
+                            'bg-yellow-500': $any(i.status) === 'UNPAID',
+                            'bg-red-500': $any(i.status) === 'OVERDUE'
+                          }">
+                    </span>
+                    {{ i.status | titlecase }}
+                  </span>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -21,19 +21,19 @@ import { GroupPolicy, InsurancePlan, CorporateClient, Employee } from '../../../
 @Component({
   selector: 'app-hr-policy-request',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatTableModule, MatSnackBarModule, MatProgressSpinnerModule, MatCheckboxModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatSnackBarModule, MatDialogModule],
   templateUrl: './policy-request.component.html',
   styleUrl: './policy-request.component.css'})
 export class HrPolicyRequestComponent implements OnInit {
-  corporate: CorporateClient | null = null;
-  plans: InsurancePlan[] = [];
-  policies: GroupPolicy[] = [];
-  loadingPolicies = true;
-  unassignedEmployees: Employee[] = [];
+  corporate = signal<CorporateClient | null>(null);
+  plans = signal<InsurancePlan[]>([]);
+  policies = signal<GroupPolicy[]>([]);
+  loadingPolicies = signal(true);
+  unassignedEmployees = signal<Employee[]>([]);
   selectedEmployeeIds = new Set<number>();
-  loadingEmployees = true;
-  quotes: { [planId: number]: any } = {};
-  fetchingQuote: number | null = null;
+  loadingEmployees = signal(true);
+  quotes = signal<{ [planId: number]: any }>({});
+  fetchingQuote = signal<number | null>(null);
   columns = ['policyNumber', 'plan', 'underwriter', 'startDate', 'endDate', 'status'];
   empColumns = ['select', 'name', 'department', 'age'];
 
@@ -48,20 +48,20 @@ export class HrPolicyRequestComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.corporateService.getMyProfile().subscribe(c => this.corporate = c);
-    this.planService.getActivePlans().subscribe(p => this.plans = p);
+    this.corporateService.getMyProfile().subscribe(c => this.corporate.set(c));
+    this.planService.getActivePlans().subscribe(p => this.plans.set(p));
     this.loadPolicies();
     this.loadUnassignedEmployees();
   }
 
   loadUnassignedEmployees() {
-    this.loadingEmployees = true;
+    this.loadingEmployees.set(true);
     this.corporateService.getMyUnassignedEmployees().subscribe({
       next: (data) => {
-        this.unassignedEmployees = data;
-        this.loadingEmployees = false;
+        this.unassignedEmployees.set(data);
+        this.loadingEmployees.set(false);
       },
-      error: () => { this.loadingEmployees = false; }
+      error: () => { this.loadingEmployees.set(false); }
     });
   }
 
@@ -74,22 +74,22 @@ export class HrPolicyRequestComponent implements OnInit {
   }
 
   toggleAll() {
-    if (this.selectedEmployeeIds.size === this.unassignedEmployees.length) {
+    if (this.selectedEmployeeIds.size === this.unassignedEmployees().length) {
       this.selectedEmployeeIds.clear();
     } else {
-      this.unassignedEmployees.forEach(e => this.selectedEmployeeIds.add(e.id));
+      this.unassignedEmployees().forEach(e => this.selectedEmployeeIds.add(e.id));
     }
   }
 
   isAllSelected() {
-    return this.unassignedEmployees.length > 0 && this.selectedEmployeeIds.size === this.unassignedEmployees.length;
+    return this.unassignedEmployees().length > 0 && this.selectedEmployeeIds.size === this.unassignedEmployees().length;
   }
 
   loadPolicies() {
-    this.loadingPolicies = true;
+    this.loadingPolicies.set(true);
     this.corporateService.getMyPolicies().subscribe({
-      next: (data) => { this.policies = data; this.loadingPolicies = false; },
-      error: () => { this.loadingPolicies = false; }
+      next: (data) => { this.policies.set(data); this.loadingPolicies.set(false); },
+      error: () => { this.loadingPolicies.set(false); }
     });
   }
 
@@ -98,29 +98,29 @@ export class HrPolicyRequestComponent implements OnInit {
       this.snackBar.open('Please select at least one employee to get an accurate quote', 'OK', { duration: 3000 });
       return;
     }
-    this.fetchingQuote = planId;
+    this.fetchingQuote.set(planId);
     const employeeIds = Array.from(this.selectedEmployeeIds);
     this.policyService.getQuote(planId, employeeIds).subscribe({
       next: (quote) => { 
-        this.quotes[planId] = quote; 
-        this.fetchingQuote = null; 
+        this.quotes.update(q => ({ ...q, [planId]: quote })); 
+        this.fetchingQuote.set(null); 
       },
       error: () => { 
-        this.fetchingQuote = null; 
+        this.fetchingQuote.set(null); 
         // Error handled by interceptor
       }
     });
   }
 
   requestPolicy(planId: number) {
-    if (!this.corporate) return;
+    if (!this.corporate()) return;
     if (this.selectedEmployeeIds.size === 0) {
       this.snackBar.open('Please select at least one employee', 'OK', { duration: 3000 });
       return;
     }
     
     const payload = { 
-      corporateId: this.corporate.id, 
+      corporateId: this.corporate()!.id, 
       planId: planId, 
       employeeIds: Array.from(this.selectedEmployeeIds) 
     };
@@ -137,11 +137,11 @@ export class HrPolicyRequestComponent implements OnInit {
   }
 
   openAddEmployeeDialog() {
-    if (!this.corporate) return;
+    if (!this.corporate()) return;
     
     const dialogRef = this.dialog.open(AddEmployeeDialogComponent, {
       width: '600px',
-      data: { corporateId: this.corporate.id }
+      data: { corporateId: this.corporate()!.id }
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -55,7 +57,7 @@ public class AdminService {
         return userRepository.save(underwriter);
     }
 
-    public java.util.List<User> getUsersByRole(Role role) {
+    public List<User> getUsersByRole(Role role) {
         return userRepository.findByRole(role);
     }
 }
