@@ -34,13 +34,13 @@ public class InvoiceController {
 
     @GetMapping("/policy/{policyId}")
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
-    public List<PremiumInvoice> getInvoicesByPolicy(@PathVariable Long policyId) {
+    public List<PremiumInvoice> getInvoicesByPolicy(@PathVariable("policyId") Long policyId) {
         return billingService.getInvoicesByPolicy(policyId);
     }
 
     @PostMapping("/generate/{policyId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void generateInvoiceForPolicy(@PathVariable Long policyId) {
+    public void generateInvoiceForPolicy(@PathVariable("policyId") Long policyId) {
         billingService.generateInvoiceForPolicy(policyId);
     }
 }

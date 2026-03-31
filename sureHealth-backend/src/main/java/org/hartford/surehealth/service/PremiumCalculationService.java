@@ -7,7 +7,7 @@ import org.hartford.surehealth.entity.CorporateClient;
 import org.hartford.surehealth.entity.Employee;
 import org.hartford.surehealth.entity.GroupPolicy;
 import org.hartford.surehealth.entity.PremiumInvoice;
-import org.hartford.surehealth.repository.ClaimRepository;
+
 import org.hartford.surehealth.repository.EmployeeRepository;
 import org.hartford.surehealth.repository.GroupPolicyRepository;
 import org.hartford.surehealth.repository.PremiumInvoiceRepository;
@@ -31,7 +31,7 @@ public class PremiumCalculationService {
 
     private final GroupPolicyRepository policyRepository;
     private final EmployeeRepository employeeRepository;
-    private final ClaimRepository claimRepository;
+
     private final PremiumInvoiceRepository invoiceRepository;
     private final InsurancePlanRepository planRepository;
     private final CorporateRepository corporateRepository;
@@ -46,7 +46,9 @@ public class PremiumCalculationService {
         BigDecimal ageFactor = calculateAgeFactor(employees);
         BigDecimal industryFactor = calculateIndustryFactor(corporate.getIndustryType());
         BigDecimal claimHistoryFactor = calculateClaimHistoryFactor(corporate.getId());
-        BigDecimal coverageFactor = calculateCoverageFactor(policy.getInsurancePlan().getCoverageAmount());
+        
+        BigDecimal coverageAmount = policy.getInsurancePlan() != null ? policy.getInsurancePlan().getCoverageAmount() : BigDecimal.ZERO;
+        BigDecimal coverageFactor = calculateCoverageFactor(coverageAmount);
         
         int employeeCount = employees.isEmpty() && corporate.getNumberOfEmployees() != null 
                             ? corporate.getNumberOfEmployees() : employees.size();
@@ -207,7 +209,7 @@ public class PremiumCalculationService {
         for (GroupPolicy pol : corpPolicies) {
             List<PremiumInvoice> invoices = invoiceRepository.findByGroupPolicyId(pol.getId());
             for (PremiumInvoice inv : invoices) {
-                if ("PAID".equals(inv.getStatus().name())) {
+                if (inv.getStatus() != null && "PAID".equals(inv.getStatus().name())) {
                     totalPremiumCollected = totalPremiumCollected.add(inv.getTotalAmount());
                 }
             }
@@ -216,9 +218,9 @@ public class PremiumCalculationService {
             // but we can look it up. Alternatively, since Claim has `approvedAmount`
             // Let's assume pol.getClaims() works if mapped correctly. Since it's @OneToMany with LAZY, it might need @Transactional but we are inside service.
             // Better to use repository query. I'll iterate policies.claims since this is standard JPA.
-            if (pol.getClaims() != null) {
+            if (pol.getClaims() != null && !pol.getClaims().isEmpty()) {
                 for (var claim : pol.getClaims()) {
-                    if ("APPROVED".equals(claim.getStatus().name()) && claim.getApprovedAmount() != null) {
+                    if (claim.getStatus() != null && "APPROVED".equals(claim.getStatus().name()) && claim.getApprovedAmount() != null) {
                         totalClaimsPaid = totalClaimsPaid.add(claim.getApprovedAmount());
                     }
                 }

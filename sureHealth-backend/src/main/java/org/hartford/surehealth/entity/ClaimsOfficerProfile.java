@@ -27,6 +27,7 @@ public class ClaimsOfficerProfile {
     private Integer claimsProcessedCount;
     private Double averageProcessingTime; // in hours
     private String certifications;
+    private String licenseNumber;
     private Integer yearsOfExperience;
 
     private LocalDateTime createdAt = LocalDateTime.now();

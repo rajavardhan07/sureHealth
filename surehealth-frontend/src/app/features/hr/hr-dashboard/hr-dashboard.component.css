@@ -1,0 +1,59 @@
+.dashboard {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Animations */
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Intelligent Actions ── */
+.action-card {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+}
+
+.urgent-action {
+  background-color: #FEF2F2 !important;
+  border-color: #FCA5A5 !important;
+}
+.urgent-action:hover {
+  background-color: #FEE2E2 !important;
+  border-color: #F87171 !important;
+  box-shadow: 0 8px 16px rgba(220,38,38,0.12) !important;
+}
+
+.standard-action:hover {
+  border-color: #C8D6E8 !important;
+}
+
+/* ── Custom Scrollbar for Grids if needed ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: #C8D6E8; 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5A6A7E; 
+}

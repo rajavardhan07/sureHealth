@@ -2,7 +2,6 @@ package org.hartford.surehealth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hartford.surehealth.dto.PolicyRequestDTO;
-import org.hartford.surehealth.entity.GroupPolicy;
 import org.hartford.surehealth.enums.PolicyStatus;
 import org.hartford.surehealth.repository.GroupPolicyRepository;
 import org.hartford.surehealth.repository.UserRepository;
@@ -84,6 +83,7 @@ class PolicyControllerTest {
     void approvePolicy_Success() throws Exception {
         mockMvc.perform(put("/api/policy/approve/1")
                         .with(csrf()))
+                .andDo(org.springframework.test.web.servlet.result.MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
 }

@@ -4,120 +4,196 @@
       <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Employee Management</h1>
       <p class="text-[#5A6A7E]">Add and manage employees under your corporate group policies</p>
     </div>
+    
+    <div class="flex items-center gap-3">
+      <button (click)="showAddForm.set(!showAddForm())"
+              class="px-5 py-2.5 bg-[#2E5C9A] text-white font-semibold rounded-lg hover:bg-[#1B2A4A] transition-colors shadow-sm flex items-center gap-2 focus:outline-none">
+        <mat-icon class="text-[18px]">person_add</mat-icon> {{ showAddForm() ? 'Cancel Adds' : 'Add Employee' }}
+      </button>
+      <button (click)="openBulkUpload()"
+              class="px-5 py-2.5 bg-[#C8A951] text-white font-semibold rounded-lg hover:bg-[#b8963f] transition-colors shadow-sm flex items-center gap-2 focus:outline-none">
+        <mat-icon class="text-[18px]">upload_file</mat-icon> Bulk Upload
+      </button>
+    </div>
   </div>
 
-  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6">
-    <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center border-b border-[#E2E6EC] pb-4">
-      <mat-icon class="mr-2 text-[#C8A951]">person_add</mat-icon>
-      Add New Employee
-    </h3>
-    
-    <form [formGroup]="form" (ngSubmit)="addEmployee()" class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Full Name -->
+  <!-- Demographics KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-[#2E5C9A]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex justify-between items-start relative z-10">
         <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Full Name</label>
-          <input type="text" formControlName="fullName" placeholder="e.g. John Doe"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('fullName')?.invalid && form.get('fullName')?.touched}">
+          <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-2">Total Directory</span>
+          <h2 class="text-4xl font-extrabold text-[#1B2A4A] tracking-tighter">{{ employees().length }}</h2>
         </div>
+        <div class="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm bg-[#E8EFF8] text-[#2E5C9A]">
+          <mat-icon>people</mat-icon>
+        </div>
+      </div>
+    </div>
 
-        <!-- Email -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Email</label>
-          <input type="email" formControlName="email" placeholder="e.g. john.doe@company.com"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('email')?.invalid && form.get('email')?.touched}">
-        </div>
-
-        <!-- Phone -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Phone</label>
-          <input type="text" formControlName="phone" placeholder="e.g. 9876543210"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('phone')?.invalid && form.get('phone')?.touched}">
-        </div>
-
-        <!-- Age -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Age</label>
-          <input type="number" formControlName="age" placeholder="e.g. 30"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('age')?.invalid && form.get('age')?.touched}">
-        </div>
-
-        <!-- Department -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Department</label>
-          <input type="text" formControlName="department" placeholder="e.g. IT"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('department')?.invalid && form.get('department')?.touched}">
-        </div>
-
-        <!-- Designation -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Designation</label>
-          <input type="text" formControlName="designation" placeholder="e.g. Software Engineer"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('designation')?.invalid && form.get('designation')?.touched}">
-        </div>
-
-        <!-- Gender -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Gender</label>
-          <select formControlName="gender"
-                  class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all appearance-none"
-                  [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('gender')?.invalid && form.get('gender')?.touched}">
-            <option value="" disabled selected>Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <!-- Date of Join -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Date of Join</label>
-          <input type="date" formControlName="joinDate"
-                 class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
-                 [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('joinDate')?.invalid && form.get('joinDate')?.touched}">
-        </div>
-        
-        <!-- Health Report Upload -->
-        <div>
-          <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Health Report (Optional)</label>
-          <div class="relative w-full cursor-pointer flex items-center">
-            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png"
-                   class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-[#5A6A7E] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#E8EFF8] file:text-[#2E5C9A] hover:file:bg-[#D0E1F4] cursor-pointer transition-all">
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-[#2E5C9A]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex flex-col relative z-10 h-full">
+        <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-4">Age Distribution</span>
+        <div class="flex items-center gap-6 mt-auto">
+          <div class="w-20 h-20 rounded-full shadow-inner flex-shrink-0" [style.background]="agePieGradient"></div>
+          <div class="flex flex-col gap-1.5 w-full">
+            <div class="flex items-center justify-between text-xs font-bold"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#2E5C9A]"></span> &lt;30</span> <span>{{ ageMetrics.under30 }}%</span></div>
+            <div class="flex items-center justify-between text-xs font-bold"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1B2A4A]"></span> 30-49</span> <span>{{ ageMetrics.thirties + ageMetrics.forties }}%</span></div>
+            <div class="flex items-center justify-between text-xs font-bold"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#C8A951]"></span> 50+</span> <span>{{ ageMetrics.over50 }}%</span></div>
           </div>
         </div>
       </div>
-      
-      <div class="flex justify-end pt-4 border-t border-[#E2E6EC]">
-        <button type="submit" [disabled]="form.invalid"
-                class="px-6 py-2.5 bg-[#2E5C9A] text-white font-semibold rounded-lg hover:bg-[#1B2A4A] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5C9A]">
-          <mat-icon class="mr-2 text-[18px]">person_add</mat-icon> Add Employee
-        </button>
-      </div>
-    </form>
+    </div>
 
-    @if (createdCreds()) {
-      <div class="mt-6 p-5 bg-green-50 border border-green-200 rounded-xl flex items-start gap-4">
-        <mat-icon class="text-green-600 shrink-0">check_circle</mat-icon>
-        <div>
-          <h4 class="font-bold text-green-800 mb-1">Employee Added Successfully</h4>
-          <p class="text-green-700 text-sm">
-            Username: <code class="bg-white px-2 py-0.5 rounded border border-green-200 shadow-sm mx-1">{{ createdCreds()!.username }}</code> 
-            Password: <code class="bg-white px-2 py-0.5 rounded border border-green-200 shadow-sm mx-1">{{ createdCreds()!.password }}</code>
-          </p>
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-[#C8A951]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex flex-col relative z-10 h-full">
+        <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-4">Department Spread</span>
+        <div class="flex items-center gap-6 mt-auto">
+          <div class="w-20 h-20 rounded-full shadow-inner flex-shrink-0" [style.background]="deptPieGradient"></div>
+          <div class="flex flex-col gap-1.5 w-full max-h-20 overflow-y-auto pr-2 custom-scrollbar">
+            @for (dept of departmentMetrics; track dept.name; let idx = $index) {
+              <div class="flex items-center justify-between text-[11px] font-bold">
+                <span class="flex items-center gap-1.5 truncate pr-2" title="{{dept.name}}">
+                  <span class="w-2 h-2 rounded-full shrink-0" [style.backgroundColor]="deptChartColors[idx % deptChartColors.length]"></span>{{ dept.name }}
+                </span> 
+                <span>{{ dept.percentage }}%</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
-    }
+    </div>
   </div>
 
+  @if (showAddForm()) {
+    <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] p-6 animate-fade-in-up">
+      <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center border-b border-[#E2E6EC] pb-4">
+        <mat-icon class="mr-2 text-[#C8A951]">person_add</mat-icon>
+        Add New Employee
+      </h3>
+      
+      <form [formGroup]="form" (ngSubmit)="addEmployee()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Full Name -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Full Name <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="fullName" placeholder="e.g. John Doe"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500 focus:ring-red-500': form.get('fullName')?.invalid && form.get('fullName')?.touched}">
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Corporate Email <span class="text-red-500">*</span></label>
+            <input type="email" formControlName="email" placeholder="john.doe@enterprise.com"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('email')?.invalid && form.get('email')?.touched}">
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Phone <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="phone" placeholder="9876543210"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('phone')?.invalid && form.get('phone')?.touched}">
+          </div>
+
+          <!-- Age -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Age <span class="text-red-500">*</span></label>
+            <input type="number" formControlName="age" placeholder="30"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('age')?.invalid && form.get('age')?.touched}">
+          </div>
+
+          <!-- Department -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Department <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="department" placeholder="Engineering"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('department')?.invalid && form.get('department')?.touched}">
+          </div>
+
+          <!-- Designation -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Designation <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="designation" placeholder="Full Stack Developer"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('designation')?.invalid && form.get('designation')?.touched}">
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Gender <span class="text-red-500">*</span></label>
+            <select formControlName="gender"
+                    class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                    [ngClass]="{'border-red-500': form.get('gender')?.invalid && form.get('gender')?.touched}">
+              <option value="" disabled selected>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Date of Join -->
+          <div>
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Date of Join <span class="text-red-500">*</span></label>
+            <input type="date" formControlName="joinDate"
+                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] transition-all outline-none shadow-sm"
+                   [ngClass]="{'border-red-500': form.get('joinDate')?.invalid && form.get('joinDate')?.touched}">
+          </div>
+          
+          <!-- Health Report Upload -->
+          <div class="col-span-1 md:col-span-2 lg:col-span-1">
+            <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5 flex items-center gap-1">
+              <mat-icon class="text-[16px] text-[#2E5C9A]">medical_information</mat-icon> Health Report (Optional)
+            </label>
+            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png"
+                   class="w-full px-4 py-1.5 bg-white border border-gray-300 rounded-lg text-sm text-[#5A6A7E] file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#E8EFF8] file:text-[#2E5C9A] hover:file:bg-[#D0E1F4] cursor-pointer transition-all shadow-sm">
+          </div>
+        </div>
+        
+        <div class="flex justify-end pt-5 border-t border-[#E2E6EC]">
+          <button type="submit" [disabled]="form.invalid"
+                  class="px-6 py-2.5 bg-[#2E5C9A] text-white font-bold rounded-lg hover:bg-[#1B2A4A] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+            <mat-icon class="mr-2 text-[18px]">person_add</mat-icon> Provision Employee Record
+          </button>
+        </div>
+      </form>
+
+      @if (createdCreds()) {
+        <div class="mt-6 p-5 bg-green-50 border border-green-200 rounded-xl flex items-start gap-4 shadow-sm animate-fade-in-up">
+          <mat-icon class="text-green-600 shrink-0">check_circle</mat-icon>
+          <div>
+            <h4 class="font-bold text-green-800 mb-1">Employee Default Credentials Provisioned</h4>
+            <p class="text-green-700 text-sm mb-2">Share these credentials securely. Recommended to enforce password generation on login.</p>
+            <p class="text-green-800 text-sm font-mono bg-white px-3 py-2 rounded-lg border border-green-200 inline-block shadow-sm">
+              <span class="font-bold mr-2">USR:</span>{{ createdCreds()!.username }} 
+              <span class="mx-3 text-gray-300">|</span> 
+              <span class="font-bold mr-2">PWD:</span>{{ createdCreds()!.password }}
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
   <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] mt-8 overflow-hidden">
-    <div class="p-6 border-b border-[#E2E6EC]">
+    <div class="p-6 border-b border-[#E2E6EC] flex items-center justify-between">
       <h3 class="text-xl font-bold text-[#1B2A4A]">Employees ({{ employees().length }})</h3>
+      
+      <div class="flex items-center gap-3">
+        <label class="text-sm font-bold text-[#5A6A7E]">Filter Department:</label>
+        <select class="px-3 py-1.5 border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-[#2E5C9A] outline-none font-medium bg-[#F8FbFC]" (change)="onDepartmentFilterChange($event)">
+          <option value="ALL">All Departments</option>
+          @for (dept of uniqueDepartments; track dept) {
+            <option [value]="dept">{{ dept }}</option>
+          }
+        </select>
+      </div>
     </div>
     
     @if (loadingEmps()) {
@@ -136,30 +212,78 @@
             <tr>
               <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Name</th>
               <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Department</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Designation</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy Allocation</th>
               <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Status</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-[#5A6A7E] uppercase tracking-wider w-16">Actions</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-[#E2E6EC]">
-            @for (e of employees(); track e.id) {
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ e.fullName }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).department }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).designation }}</td>
+            @for (e of paginatedEmployees; track e.id) {
+              <tr class="hover:bg-gray-50 transition-colors group">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                  <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 rounded-full bg-[#E8EFF8] flex items-center justify-center text-[#2E5C9A] font-bold text-xs uppercase">{{ e.fullName.substring(0,2) }}</div>
+                    <div>
+                      <div class="text-sm font-bold text-[#1B2A4A]">{{ e.fullName }}</div>
+                      <div class="text-xs text-[#5A6A7E] font-medium">{{ e.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-semibold text-[#1B2A4A]">{{ $any(e).department || '—' }}</div>
+                  <div class="text-xs text-[#5A6A7E]">{{ $any(e).designation || '—' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#1B2A4A]">
+                  <div class="font-medium">{{ e.groupPolicy?.insurancePlan?.planName || 'N/A' }}</div>
+                  <!-- <div class="text-xs text-[#5A6A7E]">{{ e.groupPolicy?.policyNumber || 'N/A' }}</div> -->
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
                         [ngClass]="{
-                          'bg-green-100 text-green-700': e.employmentStatus === 'ACTIVE',
-                          'bg-red-100 text-red-700': e.employmentStatus !== 'ACTIVE'
+                          'bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]': e.employmentStatus === 'ACTIVE',
+                          'bg-[#FCE8E6] text-[#C5221F] border border-[#FAD2CF]': e.employmentStatus !== 'ACTIVE'
                         }">
                     {{ e.employmentStatus }}
                   </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                  <button (click)="openEditEmployeeModal(e)" class="p-2 text-[#5A6A7E] hover:text-[#2E5C9A] hover:bg-[#E8EFF8] rounded-lg transition-colors group-hover:opacity-100 opacity-50" title="Edit Employee">
+                    <mat-icon class="text-[20px] w-5 h-5">edit</mat-icon>
+                  </button>
                 </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (employeeTotalPages > 1) {
+        <div class="px-6 py-4 border-t border-[#E2E6EC] flex items-center justify-between bg-[#F8FbFC]">
+          <div class="text-sm font-bold text-[#5A6A7E]">
+            Showing {{ (employeePage() - 1) * employeePageSize + 1 }} to {{ getMathMin(employeePage() * employeePageSize, filteredEmployees.length) }} of {{ filteredEmployees.length }} employees
+          </div>
+          <div class="flex items-center gap-1">
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E6EC] text-[#5A6A7E] hover:bg-white hover:text-[#1B2A4A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent"
+                    [disabled]="employeePage() === 1"
+                    (click)="employeePage.set(employeePage() - 1)">
+              <mat-icon class="text-[18px] w-[18px] h-[18px]">chevron_left</mat-icon>
+            </button>
+            @for (p of getEmployeePageNumbers(); track p) {
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border text-sm font-bold transition-colors"
+                      [ngClass]="employeePage() === p ? 'bg-[#2E5C9A] border-[#2E5C9A] text-white' : 'border-[#E2E6EC] text-[#5A6A7E] hover:bg-white hover:text-[#1B2A4A] bg-transparent'"
+                      (click)="employeePage.set(p)">
+                {{ p }}
+              </button>
+            }
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E6EC] text-[#5A6A7E] hover:bg-white hover:text-[#1B2A4A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent"
+                    [disabled]="employeePage() === employeeTotalPages"
+                    (click)="employeePage.set(employeePage() + 1)">
+              <mat-icon class="text-[18px] w-[18px] h-[18px]">chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
     }
 
     @if (!loadingEmps() && employees().length === 0) {

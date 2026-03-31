@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,17 @@ public class ClaimService {
     private final EmployeeRepository employeeRepository;
     private final GroupPolicyRepository policyRepository;
     private final UserRepository userRepository;
-    private final Random random = new Random();
+    private final NotificationService notificationService;
+
+    @Transactional
+    public void assignOfficer(Long claimId, Long officerId) {
+        Claim claim = claimRepository.findById(claimId)
+            .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+        User officer = userRepository.findById(officerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Claims officer not found"));
+        claim.setAssignedOfficer(officer);
+        claimRepository.save(claim);
+    }
 
     public Claim fileClaim(ClaimCreateDTO dto, MultipartFile file) throws Exception {
 
@@ -42,12 +51,40 @@ public class ClaimService {
         GroupPolicy policy = policyRepository.findById(dto.policyId)
             .orElseThrow(() -> new ResourceNotFoundException("Policy not found with ID: " + dto.policyId));
 
-        // Randomly assign a claims officer
+        if (policy.getStartDate() == null) {
+            throw new InvalidOperationException("Policy is not yet active.");
+        }
+
+        Integer waitingPeriod = policy.getWaitingPeriodDays();
+        if (waitingPeriod != null && waitingPeriod > 0) {
+            LocalDate eligibleFromStart = policy.getStartDate().plusDays(waitingPeriod);
+            if (LocalDate.now().isBefore(eligibleFromStart)) {
+                throw new InvalidOperationException("Cannot file claim during the initial " + waitingPeriod + "-day waiting period. Eligible on: " + eligibleFromStart);
+            }
+
+            List<Claim> employeeClaims = claimRepository.findByEmployeeId(emp.getId());
+            if (employeeClaims != null && !employeeClaims.isEmpty()) {
+                Claim lastClaim = employeeClaims.stream()
+                    .max(java.util.Comparator.comparing(Claim::getSubmissionDate))
+                    .orElse(null);
+                
+                if (lastClaim != null && lastClaim.getSubmissionDate() != null) {
+                    LocalDate eligibleFromLastClaim = lastClaim.getSubmissionDate().toLocalDate().plusDays(waitingPeriod);
+                    if (LocalDate.now().isBefore(eligibleFromLastClaim)) {
+                        throw new InvalidOperationException("You must wait " + waitingPeriod + " days between claims. Next eligible date: " + eligibleFromLastClaim);
+                    }
+                }
+            }
+        }
+
+        // Assign to claims officer with the least number of assigned claims
         List<User> officers = userRepository.findByRole(Role.CLAIMS_OFFICER);
         if (officers.isEmpty()) {
             throw new ResourceNotFoundException("No claims officers available in the system");
         }
-        User assignedOfficer = officers.get(random.nextInt(officers.size()));
+        User assignedOfficer = officers.stream()
+            .min(java.util.Comparator.comparingLong(u -> claimRepository.countByAssignedOfficerId(u.getId())))
+            .orElseThrow(() -> new ResourceNotFoundException("No claims officers available in the system"));
 
         Claim claim = new Claim();
         claim.setClaimNumber("CLM-" + System.currentTimeMillis());
@@ -66,7 +103,27 @@ public class ClaimService {
             claim.setClaimReportFileName(file.getOriginalFilename());
         }
 
-        return claimRepository.save(claim);
+        Claim savedClaim = claimRepository.save(claim);
+
+        // Notify all admins if claim amount > 5000
+        if (claim.getBillAmount() != null && claim.getBillAmount().compareTo(BigDecimal.valueOf(5000)) > 0) {
+            userRepository.findByRole(org.hartford.surehealth.enums.Role.ADMIN).forEach(admin -> {
+                notificationService.createNotification(
+                    admin,
+                    "High-value claim submitted: $" + claim.getBillAmount() + " by " + emp.getFullName(),
+                    org.hartford.surehealth.enums.NotificationType.ALERT
+                );
+            });
+        }
+
+        // Notify Claims Officer
+        notificationService.createNotification(
+            assignedOfficer,
+            "New claim " + savedClaim.getClaimNumber() + " submitted by " + emp.getFullName() + " requires review.",
+            org.hartford.surehealth.enums.NotificationType.INFO
+        );
+
+        return savedClaim;
     }
 
     @Transactional
@@ -137,6 +194,15 @@ public class ClaimService {
         claim.setReviewedBy(reviewer);
         claim.setReviewDate(LocalDateTime.now());
         claimRepository.save(claim);
+
+        // Notify Employee
+        userRepository.findByEmployee(emp).ifPresent(user -> {
+            notificationService.createNotification(
+                user,
+                "Your claim " + claim.getClaimNumber() + " has been APPROVED for amount: " + approvedAmount,
+                org.hartford.surehealth.enums.NotificationType.SUCCESS
+            );
+        });
     }
 
     @Transactional
@@ -156,6 +222,15 @@ public class ClaimService {
         claim.setReviewedBy(reviewer);
         claim.setReviewDate(LocalDateTime.now());
         claimRepository.save(claim);
+
+        // Notify Employee
+        userRepository.findByEmployee(claim.getEmployee()).ifPresent(user -> {
+            notificationService.createNotification(
+                user,
+                "Your claim " + claim.getClaimNumber() + " has been REJECTED. Reason: " + dto.getRejectionReason(),
+                org.hartford.surehealth.enums.NotificationType.ALERT
+            );
+        });
     }
 
     @Transactional
@@ -164,6 +239,60 @@ public class ClaimService {
             .orElseThrow(() -> new ResourceNotFoundException("Claim not found with ID: " + claimId));
         claim.setStatus(ClaimStatus.SUSPENDED);
         claimRepository.save(claim);
+    }
+
+    @Transactional
+    public void requestMoreInfo(Long claimId, String reason) {
+        Claim claim = claimRepository.findById(claimId)
+            .orElseThrow(() -> new ResourceNotFoundException("Claim not found with ID: " + claimId));
+        
+        claim.setStatus(ClaimStatus.INFO_REQUIRED);
+        claim.setRejectionReason(reason); // Reusing rejection reason field for info request details
+        claimRepository.save(claim);
+
+        // Notify Employee
+        userRepository.findByEmployee(claim.getEmployee()).ifPresent(user -> {
+            notificationService.createNotification(
+                user,
+                "More information required for your claim " + claim.getClaimNumber() + ". Detail: " + reason,
+                org.hartford.surehealth.enums.NotificationType.INFO
+            );
+        });
+    }
+
+    @Transactional
+    public void respondToIssue(Long claimId, ClaimCreateDTO dto, MultipartFile file) throws Exception {
+        Claim claim = claimRepository.findById(claimId)
+            .orElseThrow(() -> new ResourceNotFoundException("Claim not found with ID: " + claimId));
+
+        if (claim.getStatus() != ClaimStatus.INFO_REQUIRED) {
+            throw new InvalidOperationException("Can only respond to claims with INFO_REQUIRED status. Current status: " + claim.getStatus());
+        }
+
+        // Update claim fields with new data
+        if (dto.hospitalName != null) claim.setHospitalName(dto.hospitalName);
+        if (dto.diagnosis != null) claim.setDiagnosis(dto.diagnosis);
+        if (dto.billAmount != null) claim.setBillAmount(dto.billAmount);
+        if (dto.treatmentDate != null) claim.setTreatmentDate(dto.treatmentDate);
+        if (dto.billNumber != null) claim.setBillNumber(dto.billNumber);
+
+        if (file != null && !file.isEmpty()) {
+            claim.setClaimReportFile(file.getBytes());
+            claim.setClaimReportFileName(file.getOriginalFilename());
+        }
+
+        claim.setStatus(ClaimStatus.SUBMITTED);
+        claim.setRejectionReason(null); // Clear the issue reason
+        claimRepository.save(claim);
+
+        // Notify the assigned officer
+        if (claim.getAssignedOfficer() != null) {
+            notificationService.createNotification(
+                claim.getAssignedOfficer(),
+                "Claim " + claim.getClaimNumber() + " has been resubmitted by " + claim.getEmployee().getFullName() + " with updated information.",
+                org.hartford.surehealth.enums.NotificationType.INFO
+            );
+        }
     }
 }
 

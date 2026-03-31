@@ -12,6 +12,23 @@
     </div>
   </div>
 
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl border border-[#E2E6EC] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+      <div class="absolute top-0 right-0 p-4 opacity-5 transform translate-x-1/4 -translate-y-1/4 group-hover:scale-110 transition-transform duration-500">
+         <mat-icon class="text-[80px] h-[80px] w-[80px] leading-none">assignment</mat-icon>
+      </div>
+      <div class="flex items-start justify-between relative z-10">
+        <div>
+          <span class="block text-sm font-semibold text-[#5A6A7E] uppercase tracking-wider mb-2">Total Claims</span>
+          <h2 class="text-3xl font-bold text-[#1B2A4A] leading-none" [ngClass]="{'text-[#C8A951]': claims().length > 0}">{{ claims().length }}</h2>
+        </div>
+        <div class="h-12 w-12 rounded-lg flex items-center justify-center shadow-sm" [ngClass]="claims().length > 0 ? 'bg-red-50 text-[#C8A951]' : 'bg-gray-50 text-gray-400'">
+          <mat-icon>assignment</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
   @if (loading()) {
     <div class="flex flex-col items-center justify-center min-h-[400px]">
       <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -43,15 +60,22 @@
                 <span class="block text-sm font-bold text-[#1B2A4A] mb-1">
                   {{ claim.claimNumber || 'CLAIM-' + claim.id }}
                 </span>
+                <p class="block text-sm font-bold text-[#1B2A4A] mb-1">Claim Status: 
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                      
                       [ngClass]="{
                         'bg-yellow-50 text-yellow-700': claim.status === 'UNDER_REVIEW',
-                        'bg-blue-50 text-blue-700': claim.status === 'SUBMITTED'
+                        'bg-blue-50 text-blue-700': claim.status === 'SUBMITTED',
+                        'bg-green-50 text-green-700': claim.status === 'APPROVED',
+                        'bg-red-50 text-red-700': claim.status === 'REJECTED'
                       }">
                   {{ claim.status.replace('_', ' ') }}
                 </span>
+                </p>
               </div>
-              <span class="text-lg font-bold text-[#1B2A4A]">₹{{ claim.billAmount | number }}</span>
+              <p class="text-sm font-bold text-[#1B2A4A] mb-1 text-right">Bill Amount:
+              <span class="text-lg font-bold text-[#1B2A4A]">₹{{ claim.billAmount | number:'1.0-0':'en-IN' }}</span>
+              </p>
             </div>
 
             <div class="space-y-3 mb-6 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
@@ -71,7 +95,105 @@
                 <span class="text-[#5A6A7E] font-medium">Treatment</span>
                 <span class="text-[#1B2A4A] font-semibold text-right">{{ claim.treatmentDate || '—' }}</span>
               </div>
+              <div class="flex justify-between text-sm mt-3 pt-3 border-t border-gray-200">
+                <span class="text-[#C8A951] font-bold">Max Claimable Amount</span>
+                <span class="text-[#C8A951] font-bold text-right">₹{{ getMaxClaimableAmount(claim) | number:'1.0-0':'en-IN' }}</span>
+              </div>
+              
+              <div class="flex flex-wrap justify-start gap-2 mt-4 pt-2">
+                <button (click)="downloadClaimReport(claim.id)" class="inline-flex items-center px-2 py-1 bg-[#F8F6F1] text-[#2E5C9A] text-xs font-semibold rounded hover:bg-[#E8EFF8] transition-colors">
+                  <mat-icon class="text-[14px] w-4 h-4 mr-1">description</mat-icon> Claim Doc
+                </button>
+                <button (click)="downloadHealthReport(claim.employee.id)" class="inline-flex items-center px-2 py-1 bg-[#F8F6F1] text-[#2E5C9A] text-xs font-semibold rounded hover:bg-[#E8EFF8] transition-colors">
+                  <mat-icon class="text-[14px] w-4 h-4 mr-1">medical_information</mat-icon> Health Doc
+                </button>
+                <button (click)="verifyClaimWithAI(claim)" [disabled]="loadingOcr[claim.id]" class="inline-flex items-center px-2 py-1 bg-[#10a37f]/10 text-[#10a37f] text-xs font-semibold rounded hover:bg-[#10a37f]/20 transition-colors disabled:opacity-50">
+                  @if (loadingOcr[claim.id]) {
+                    <div class="w-3 h-3 border-2 border-[#10a37f]/30 border-t-[#10a37f] rounded-full animate-spin mr-1"></div>
+                  } @else {
+                    <mat-icon class="text-[14px] w-4 h-4 mr-1">auto_awesome</mat-icon>
+                  }
+                  Verify with AI
+                </button>
+              </div>
             </div>
+
+            @if (ocrResults[claim.id]) {
+              <div class="mb-6 bg-[#10a37f]/5 p-4 rounded-lg border border-[#10a37f]/20 fade-in-up">
+                <h4 class="text-xs font-bold text-[#10a37f] uppercase tracking-wider mb-3 flex items-center">
+                  <mat-icon class="text-[16px] mr-1">verified</mat-icon> AI Verification Results
+                </h4>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Bill Amount vs Claimed:</span>
+                    <span class="font-bold inline-flex items-center" 
+                          [ngClass]="ocrResults[claim.id].billAmount === claim.billAmount ? 'text-green-600' : 'text-red-600'">
+                      ₹{{ ocrResults[claim.id].billAmount | number:'1.0-0':'en-IN' }} 
+                      @if (ocrResults[claim.id].billAmount === claim.billAmount) {
+                         <mat-icon class="text-[16px] ml-1">check_circle</mat-icon>
+                      } @else {
+                         <mat-icon class="text-[16px] ml-1">error</mat-icon>
+                      }
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Bill Number:</span>
+                    <span class="font-semibold">{{ ocrResults[claim.id].billNumber || '—' }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Diagnosis:</span>
+                    <span class="font-semibold inline-flex items-center max-w-[180px] truncate"
+                          [title]="ocrResults[claim.id].diagnosis"
+                          [ngClass]="ocrResults[claim.id].diagnosis.toLowerCase() === claim.diagnosis.toLowerCase() ? 'text-green-600' : 'text-orange-600'">
+                      {{ ocrResults[claim.id].diagnosis || '—' }}
+                      @if (ocrResults[claim.id].diagnosis.toLowerCase() === claim.diagnosis.toLowerCase()) {
+                        <mat-icon class="text-[16px] ml-1">check_circle</mat-icon>
+                      } @else {
+                        <mat-icon class="text-[16px] ml-1">info</mat-icon>
+                      }
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Hospital:</span>
+                    <span class="font-semibold inline-flex items-center max-w-[180px] truncate" 
+                          [title]="ocrResults[claim.id].hospitalName"
+                          [ngClass]="ocrResults[claim.id].hospitalName.toLowerCase() === claim.hospitalName.toLowerCase() ? 'text-green-600' : 'text-orange-600'">
+                      {{ ocrResults[claim.id].hospitalName }}
+                      @if (ocrResults[claim.id].hospitalName.toLowerCase() === claim.hospitalName.toLowerCase()) {
+                        <mat-icon class="text-[16px] ml-1">check_circle</mat-icon>
+                      } @else {
+                        <mat-icon class="text-[16px] ml-1">info</mat-icon>
+                      }
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Date:</span>
+                    <span class="font-semibold inline-flex items-center"
+                          [ngClass]="ocrResults[claim.id].treatmentDate === claim.treatmentDate ? 'text-green-600' : 'text-orange-600'">
+                      {{ ocrResults[claim.id].treatmentDate }}
+                      @if (ocrResults[claim.id].treatmentDate === claim.treatmentDate) {
+                        <mat-icon class="text-[16px] ml-1">check_circle</mat-icon>
+                      } @else {
+                        <mat-icon class="text-[16px] ml-1">info</mat-icon>
+                      }
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Patient:</span>
+                    <span class="font-semibold inline-flex items-center max-w-[180px] truncate" 
+                          [title]="ocrResults[claim.id].patientName"
+                          [ngClass]="ocrResults[claim.id].patientName?.toLowerCase() === claim.employee?.fullName?.toLowerCase() ? 'text-green-600' : 'text-orange-600'">
+                      {{ ocrResults[claim.id].patientName }}
+                      @if (ocrResults[claim.id].patientName?.toLowerCase() === claim.employee?.fullName?.toLowerCase()) {
+                        <mat-icon class="text-[16px] ml-1">check_circle</mat-icon>
+                      } @else {
+                        <mat-icon class="text-[16px] ml-1">info</mat-icon>
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
 
             @if (claim.status === 'SUBMITTED') {
               <div class="mt-auto">
@@ -87,10 +209,13 @@
                   <div class="flex items-center gap-2">
                     <div class="relative flex-1">
                       <span class="absolute left-3 top-2 text-gray-400 font-medium">₹</span>
-                      <input type="number" [(ngModel)]="approvedAmounts[claim.id]" [placeholder]="claim.billAmount.toString()"
+                      <input type="number" [(ngModel)]="approvedAmounts[claim.id]" 
+                             [placeholder]="'Max: ₹' + (getMaxClaimableAmount(claim) | number:'1.0-0':'en-IN')" 
+                             [max]="getMaxClaimableAmount(claim)" min="1"
                              class="w-full pl-8 pr-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all sm:text-sm">
                     </div>
-                    <button (click)="approve(claim)" [disabled]="!approvedAmounts[claim.id]"
+                    <button (click)="approve(claim)" 
+                            [disabled]="!approvedAmounts[claim.id] || approvedAmounts[claim.id] > getMaxClaimableAmount(claim)"
                             class="inline-flex justify-center items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-28">
                       <mat-icon class="mr-1 text-[18px]">check</mat-icon> Approve
                     </button>
@@ -104,6 +229,18 @@
                     <button (click)="reject(claim)" [disabled]="!rejectionReasons[claim.id]"
                             class="inline-flex justify-center items-center px-4 py-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 text-sm font-semibold rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-28">
                       <mat-icon class="mr-1 text-[18px]">close</mat-icon> Reject
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-2 border-t border-gray-200 pt-4 mt-2">
+                  <p class="text-xs text-gray-500 font-medium mb-2">Need more information?</p>
+                  <div class="flex items-center gap-2">
+                    <input type="text" [(ngModel)]="issueReasons[claim.id]" placeholder="Describe required info..."
+                           class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all sm:text-sm">
+                    <button (click)="raiseIssue(claim)" [disabled]="!issueReasons[claim.id]"
+                            class="inline-flex justify-center items-center px-4 py-2 bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-50 text-sm font-semibold rounded-lg shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-28">
+                      <mat-icon class="mr-1 text-[18px]">report_problem</mat-icon> Raise Issue
                     </button>
                   </div>
                 </div>

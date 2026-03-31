@@ -22,6 +22,7 @@ export class AddEmployeeDialogComponent {
   form: FormGroup;
   loading = false;
   selectedFile: File | null = null;
+  todayDate: string;
 
   constructor(
     private fb: FormBuilder,
@@ -34,12 +35,15 @@ export class AddEmployeeDialogComponent {
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      age: ['', [Validators.required, Validators.min(18), Validators.max(100)]],
+      age: ['', [Validators.required, Validators.min(1), Validators.max(100)]],
       department: ['', Validators.required],
       gender: ['', Validators.required],
       designation: ['', Validators.required],
       joinDate: [new Date(), Validators.required]
     });
+    
+    const today = new Date();
+    this.todayDate = today.toISOString().split('T')[0];
   }
 
   onFileSelected(event: any) {
@@ -78,12 +82,12 @@ export class AddEmployeeDialogComponent {
     this.employeeService.addEmployee(formData).subscribe({
       next: (creds) => {
         this.loading = false;
-        this.snackBar.open('Employee added successfully!', 'OK', { duration: 3000 });
+        this.snackBar.open('Employee added successfully!', 'OK', { duration: 3000, panelClass: ['success-snackbar'] });
         this.dialogRef.close(true);
       },
       error: () => {
         this.loading = false;
-        // Error handled by interceptor
+        this.snackBar.open('Failed to add employee', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
       }
     });
   }

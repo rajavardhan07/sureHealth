@@ -26,6 +26,20 @@ public class AuthController {
     public void changePassword(@Valid @RequestBody ChangePasswordDTO request, Authentication auth) {
         authService.changePassword(auth.getName(), request.getOldPassword(), request.getNewPassword());
     }
+
+    @PostMapping("/forgot-password")
+    public java.util.Map<String, String> forgotPassword(@RequestBody java.util.Map<String, String> body) {
+        String token = authService.forgotPassword(body.get("username"));
+        return java.util.Map.of(
+            "message", "Reset code generated successfully.",
+            "token", token
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody java.util.Map<String, String> body) {
+        authService.resetPassword(body.get("username"), body.get("token"), body.get("newPassword"));
+    }
 }
 
 

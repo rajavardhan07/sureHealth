@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CorporateClient, CorporateRegisterDTO, GroupPolicy, Employee } from '../../shared/models';
+import { CorporateClient, CorporateRegisterDTO, GroupPolicy, Employee, Claim } from '../../shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class CorporateService {
@@ -27,5 +27,13 @@ export class CorporateService {
 
   getMyUnassignedEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(`${this.apiUrl}/me/employees/unassigned`);
+  }
+
+  getMyCorporateClaims(): Observable<Claim[]> {
+    return this.http.get<Claim[]>(`${this.apiUrl}/me/claims`);
+  }
+
+  getMyEmployeesForResubmit(policyId: number): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.apiUrl}/me/employees/for-resubmit/${policyId}`);
   }
 }

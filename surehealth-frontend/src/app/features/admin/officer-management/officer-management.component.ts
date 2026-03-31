@@ -6,8 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminService } from '../../../core/services/admin.service';
+import Swal from 'sweetalert2';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
 import { User, Role } from '../../../shared/models';
 
@@ -18,14 +20,16 @@ import { User, Role } from '../../../shared/models';
     CommonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatMenuModule,
+    MatButtonModule
   ],
   templateUrl: './officer-management.component.html',
   styleUrl: './officer-management.component.css'
 })
 export class OfficerManagementComponent implements OnInit {
   officers = signal<User[]>([]);
-  displayedColumns: string[] = ['fullName', 'username', 'phoneNumber', 'licenseNumber', 'commission', 'createdAt'];
+  displayedColumns: string[] = ['fullName', 'username', 'department', 'phoneNumber', 'licenseNumber', 'commission', 'status', 'createdAt', 'actions'];
   loading = signal(true);
 
   constructor(
@@ -48,6 +52,113 @@ export class OfficerManagementComponent implements OnInit {
       error: () => {
         this.snackBar.open('Failed to load officers', 'OK', { duration: 3000 });
         this.loading.set(false);
+      }
+    });
+  }
+
+  editOfficer(officer: User) {
+    Swal.fire({
+      title: 'Edit Officer Details',
+      html: `
+        <div class="mb-5 text-left">
+          <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">Full Name</label>
+          <input id="swal-input1" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="e.g. Jane Doe" value="${officer.fullName || ''}">
+        </div>
+        <div class="mb-5 text-left">
+          <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">Phone Number</label>
+          <input id="swal-input2" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="e.g. 123-456-7890" value="${officer.phoneNumber || ''}">
+        </div>
+        <div class="mb-5 text-left">
+          <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">Department</label>
+          <input id="swal-input3" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="e.g. Auto Claims" value="${officer.department || ''}">
+        </div>
+        <div class="flex gap-4 mb-5">
+          <div class="flex-1 text-left">
+            <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">License Number</label>
+            <input id="swal-input5" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="e.g. LIC-123" value="${officer.licenseNumber || ''}">
+          </div>
+          <div class="flex-1 text-left">
+            <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">Commission %</label>
+            <input id="swal-input6" type="number" step="0.1" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="e.g. 5.0" value="${officer.commissionPercentage || 0}">
+          </div>
+        </div>
+        <div class="h-px bg-[#E2E6EC] w-full my-6"></div>
+        <div class="mb-2 text-left">
+          <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>Reset Password</span>
+            <span class="text-[10px] bg-[#E8EFF8] text-[#2E5C9A] px-2 py-0.5 rounded-full">Optional</span>
+          </label>
+          <input id="swal-input4" type="password" class="w-full px-4 py-3 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#2E5C9A]/50 focus:border-[#2E5C9A] transition-all shadow-sm" placeholder="Enter new password (min 4 chars)">
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Save Changes',
+      cancelButtonText: 'Cancel',
+      buttonsStyling: false,
+      customClass: {
+        popup: 'rounded-2xl shadow-2xl border border-[#E2E6EC] !p-6 max-w-lg',
+        title: 'text-2xl font-bold text-[#1B2A4A] text-left !mb-6 !p-0',
+        actions: 'mt-8 w-full flex gap-3 !p-0',
+        confirmButton: 'flex-1 items-center justify-center px-4 py-2.5 bg-[#2E5C9A] hover:bg-[#1B2A4A] text-white text-sm font-semibold rounded-lg shadow-sm transition-colors',
+        cancelButton: 'flex-1 items-center justify-center px-4 py-2.5 bg-white border border-[#E2E6EC] hover:bg-gray-50 text-[#5A6A7E] text-sm font-semibold rounded-lg shadow-sm transition-colors'
+      },
+      preConfirm: () => {
+        const fullName = (document.getElementById('swal-input1') as HTMLInputElement).value;
+        const phoneNumber = (document.getElementById('swal-input2') as HTMLInputElement).value;
+        const department = (document.getElementById('swal-input3') as HTMLInputElement).value;
+        const licenseNumber = (document.getElementById('swal-input5') as HTMLInputElement).value;
+        const commissionPercentage = parseFloat((document.getElementById('swal-input6') as HTMLInputElement).value) || 0;
+        const newPassword = (document.getElementById('swal-input4') as HTMLInputElement).value;
+        if (!fullName) {
+          Swal.showValidationMessage('Full Name is required');
+        } else if (newPassword && newPassword.length > 0 && newPassword.length < 4) {
+          Swal.showValidationMessage('Password must be at least 4 characters if provided');
+        }
+        return { fullName, phoneNumber, department, licenseNumber, commissionPercentage, newPassword };
+      }
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        const { newPassword, ...updateData } = result.value;
+        this.adminService.updateOfficer(officer.id, updateData).subscribe({
+          next: () => {
+            if (newPassword) {
+              this.adminService.changePassword(officer.id, newPassword).subscribe({
+                next: () => {
+                  this.snackBar.open('Profile and password updated successfully', 'OK', { duration: 3000 });
+                  this.loadOfficers();
+                },
+                error: () => this.snackBar.open('Profile updated, but failed to update password', 'OK', { duration: 3000 })
+              });
+            } else {
+              this.snackBar.open('Officer updated successfully', 'OK', { duration: 3000 });
+              this.loadOfficers();
+            }
+          },
+          error: () => this.snackBar.open('Failed to update officer', 'OK', { duration: 3000 })
+        });
+      }
+    });
+  }
+
+  toggleStatus(officer: User, action: 'ACTIVE' | 'SUSPEND', state: boolean) {
+    const actionText = action === 'ACTIVE' ? (state ? 'Activate' : 'Deactivate') : (state ? 'Suspend' : 'Unsuspend');
+    Swal.fire({
+      title: `Are you sure?`,
+      text: `Do you want to ${actionText.toLowerCase()} access for ${officer.fullName}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: (action === 'SUSPEND' && state) || (action === 'ACTIVE' && !state) ? '#e63946' : '#2E5C9A',
+      confirmButtonText: `Yes, ${actionText}`
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        this.adminService.toggleOfficerStatus(officer.id, action, state).subscribe({
+          next: () => {
+            this.snackBar.open(`Officer ${actionText.toLowerCase()}d successfully`, 'OK', { duration: 3000 });
+            this.loadOfficers();
+          },
+          error: () => this.snackBar.open(`Failed to update status`, 'OK', { duration: 3000 })
+        });
       }
     });
   }

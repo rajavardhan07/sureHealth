@@ -42,9 +42,10 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="bg-[#F8F6F1] border-b border-[#E2E6EC]">
-                <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Policy #</th>
+                <!-- <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Policy #</th> -->
                 <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Company</th>
                 <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Plan</th>
+                <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Assigned To</th>
                 <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Status</th>
                 <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider text-right">Actions</th>
               </tr>
@@ -52,9 +53,31 @@
             <tbody class="divide-y divide-[#E2E6EC]">
               @for (p of allPolicies(); track p.id) {
                 <tr class="hover:bg-gray-50/50 transition-colors group">
-                  <td class="py-4 px-6 text-sm font-medium text-[#1B2A4A]">{{ p.policyNumber }}</td>
-                  <td class="py-4 px-6 text-sm text-[#5A6A7E]">{{ p.corporateClient.companyName }}</td>
+                  <!-- <td class="py-4 px-6 text-sm font-medium text-[#1B2A4A]">{{ p.policyNumber }}</td> -->
+                  <td class="py-4 px-6 text-sm text-[#5A6A7E]">
+                    <span class="block text-sm font-bold text-[#1B2A4A]">
+                      {{ p.corporateClient.companyName }}
+                    </span>
+                    <span class="block text-xs text-[#5A6A7E]">
+                      {{ p.policyNumber }}
+                    </span>
+                  </td>
                   <td class="py-4 px-6 text-sm text-[#5A6A7E]">{{ p.insurancePlan.planName }}</td>
+                  <td class="py-4 px-6 text-sm text-[#5A6A7E]">
+                    @if (p.assignedUnderwriter) {
+                      {{ p.assignedUnderwriter.username }}
+                    } @else {
+                      Unassigned
+                    }
+                    <div class="mt-2 text-left">
+                      <select (change)="assignUnderwriter(p.id, $event)" class="text-xs border border-gray-300 rounded px-1 py-0.5 max-w-[120px]">
+                        <option value="">Reassign to...</option>
+                        @for (underwriter of underwriters(); track underwriter.id) {
+                          <option [value]="underwriter.id">{{ underwriter.fullName }}</option>
+                        }
+                      </select>
+                    </div>
+                  </td>
                   <td class="py-4 px-6">
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border shadow-sm"
                           [ngClass]="{
@@ -73,12 +96,18 @@
                     </span>
                   </td>
                   <td class="py-4 px-6 text-right">
-                    @if ($any(p.status) !== 'SUSPENDED' && $any(p.status) !== 'REJECTED') {
-                      <button (click)="suspend(p.id)" class="inline-flex items-center px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-md text-sm font-medium hover:bg-red-50 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors shadow-sm">
-                        <mat-icon class="mr-1.5 h-4 w-4 text-[16px] leading-none">block</mat-icon>
-                        Suspend
+                    <div class="flex items-center justify-end gap-2">
+                      <button (click)="openEditModal(p)" class="inline-flex items-center px-3 py-1.5 bg-white border border-blue-200 text-[#2E5C9A] rounded-md text-sm font-medium hover:bg-blue-50 transition-colors shadow-sm">
+                        <mat-icon class="mr-1.5 h-4 w-4 text-[16px] leading-none">edit</mat-icon>
+                        Edit
                       </button>
-                    }
+                      @if ($any(p.status) !== 'SUSPENDED' && $any(p.status) !== 'REJECTED') {
+                        <button (click)="suspend(p.id)" class="inline-flex items-center px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-md text-sm font-medium hover:bg-red-50 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors shadow-sm">
+                          <mat-icon class="mr-1.5 h-4 w-4 text-[16px] leading-none">block</mat-icon>
+                          Suspend
+                        </button>
+                      }
+                    </div>
                   </td>
                 </tr>
               }
@@ -89,3 +118,87 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Policy Modal -->
+@if (editModalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm fade-in">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-[#E2E6EC] transform transition-all">
+      <div class="flex items-center justify-between p-6 border-b border-[#E2E6EC] bg-gray-50/50">
+        <h3 class="text-xl font-bold text-[#1B2A4A] flex items-center">
+          <mat-icon class="mr-2 text-[#2E5C9A]">edit_document</mat-icon>
+          Edit Policy Details
+        </h3>
+        <button (click)="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-colors bg-white rounded-full p-1 border border-transparent hover:border-gray-200 shadow-sm hover:shadow">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Status -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Status</label>
+            <select [(ngModel)]="editPolicyForm.status" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm">
+              <option value="APPROVED">Approved</option>
+              <option value="PENDING_ADMIN_APPROVAL">Pending Admin Approval</option>
+              <option value="PENDING_UNDERWRITER_REVIEW">Pending Underwriter Review</option>
+              <option value="INFO_REQUIRED">Info Required</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+          </div>
+
+          <!-- Billing Cycle -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Billing Cycle</label>
+            <select [(ngModel)]="editPolicyForm.billingCycle" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm">
+              <option value="MONTHLY">Monthly</option>
+              <option value="QUARTERLY">Quarterly</option>
+              <option value="ANNUALLY">Annually</option>
+            </select>
+          </div>
+
+          <!-- Start Date -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Start Date</label>
+            <input type="date" [(ngModel)]="editPolicyForm.startDate" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm">
+          </div>
+
+          <!-- End Date -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">End Date</label>
+            <input type="date" [(ngModel)]="editPolicyForm.endDate" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm">
+          </div>
+
+          <!-- Base Premium -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Base Premium (₹)</label>
+            <input type="number" [(ngModel)]="editPolicyForm.basePremium" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm" placeholder="e.g. 5000">
+          </div>
+
+          <!-- Custom Premium Per Employee -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Per-Employee Custom (₹)</label>
+            <input type="number" [(ngModel)]="editPolicyForm.customPremiumPerEmployee" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm" placeholder="e.g. 1000">
+          </div>
+
+          <!-- Waiting Period -->
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Waiting Period (Days)</label>
+            <input type="number" [(ngModel)]="editPolicyForm.waitingPeriodDays" class="w-full h-11 px-3 border border-gray-300 rounded-lg text-sm text-[#1B2A4A] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-colors shadow-sm" placeholder="e.g. 30">
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-gray-50/50 border-t border-[#E2E6EC] flex justify-end gap-3">
+        <button (click)="closeEditModal()" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+          Cancel
+        </button>
+        <button (click)="savePolicyEdits()" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#1B2A4A] rounded-lg hover:bg-indigo-900 transition-colors shadow-sm flex items-center">
+          <mat-icon class="mr-2 text-[18px] h-[18px] w-[18px] leading-none">save</mat-icon>
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+}

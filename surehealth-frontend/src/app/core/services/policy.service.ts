@@ -56,4 +56,20 @@ export class PolicyService {
   suspendPolicy(id: number): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/suspend`, {});
   }
+
+  sendQuote(id: number, customPremiumPerEmployee: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/send-quote`, { customPremiumPerEmployee });
+  }
+
+  raiseIssue(id: number, reason: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/raise-issue`, { reason });
+  }
+
+  resubmitPolicy(id: number, dto: PolicyRequestDTO): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/resubmit`, dto);
+  }
+
+  updatePolicy(id: number, data: import('../../shared/models').PolicyUpdateDTO): Observable<GroupPolicy> {
+    return this.http.put<GroupPolicy>(`${this.apiUrl}/${id}`, data);
+  }
 }

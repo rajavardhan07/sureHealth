@@ -1,0 +1,186 @@
+<div class="policy-request-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">{{ data.policyId ? 'edit_note' : 'send' }}</mat-icon>
+      <div>
+        <h2 class="dialog-title">{{ data.policyId ? 'Update & Resubmit Policy' : 'Request Policy' }}</h2>
+        <p class="dialog-subtitle">{{ data.planName }} — ₹{{ data.coverageAmount | number:'1.0-0':'en-IN' }} coverage</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-body">
+    <!-- Info banner -->
+    <div class="info-banner">
+      <mat-icon>info_outline</mat-icon>
+      <span>Select the employees you want covered under this plan, then get a quote and submit.</span>
+    </div>
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="loading-wrap">
+        <svg class="animate-spin h-8 w-8 text-[#C8A951]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+    }
+
+    <!-- Simplified Resubmit View -->
+    @if (!loading() && data.policyId) {
+      <div class="resubmit-view py-10 px-6 text-center">
+        <div class="mb-6">
+          <div class="h-20 w-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-amber-100/50">
+            <mat-icon class="text-amber-500" style="font-size: 40px; width:40px; height:40px;">notification_important</mat-icon>
+          </div>
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">Attention Required</h3>
+          <p class="text-sm text-slate-500 max-w-md mx-auto">The underwriter has requested changes or provided feedback regarding this policy request.</p>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-left mb-8 shadow-sm">
+          <div class="flex items-center gap-2 mb-3 text-amber-700">
+            <mat-icon class="text-amber-500">forum</mat-icon>
+            <span class="text-xs font-black uppercase tracking-wider">Underwriter's Feedback</span>
+          </div>
+          <p class="text-[15px] font-medium text-amber-900 leading-relaxed italic">"{{ data.underwriterComment || 'No additional details provided.' }}"</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-4">
+           <button class="w-full max-w-sm py-4 bg-[#C8A951] hover:bg-[#B8963F] text-white rounded-xl shadow-lg shadow-amber-200 font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                   [disabled]="submitting()" (click)="submitRequest()">
+              @if (submitting()) {
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+              } @else {
+                <mat-icon>published_with_changes</mat-icon> Resubmit Details
+              }
+           </button>
+           <button (click)="close()" class="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest py-2">Close and Review Later</button>
+        </div>
+      </div>
+    }
+
+    <!-- Original Selection View (for new requests) -->
+    @if (!loading() && !data.policyId && employees().length === 0) {
+      <div class="empty-state">
+        <mat-icon>group_off</mat-icon>
+        <p class="empty-title">No Unassigned Employees</p>
+        <p class="empty-sub">All employees are already assigned to a policy. Add more employees first.</p>
+      </div>
+    }
+
+    @if (!loading() && !data.policyId && employees().length > 0) {
+      <!-- Selection count -->
+      <div class="selection-bar">
+        <span class="selection-count">
+          <mat-icon class="sel-icon">check_circle</mat-icon>
+          {{ selectedIds.size }} of {{ employees().length }} selected
+        </span>
+      </div>
+
+      <!-- Employee table -->
+      <div class="emp-table-wrap">
+... (rest of the content unchanged)
+        <table class="emp-table">
+          <thead>
+            <tr>
+              <th class="w-12">
+                <input type="checkbox" (change)="toggleAll()" [checked]="isAllSelected()"
+                       class="w-4 h-4 text-[#2E5C9A] border-gray-300 rounded cursor-pointer">
+              </th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Age</th>
+              <th>Gender</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of paginatedEmployees; track e.id) {
+              <tr [class.selected]="selectedIds.has(e.id)" (click)="toggleEmployee(e.id)">
+                <td>
+                  <input type="checkbox" [checked]="selectedIds.has(e.id)" (click)="$event.stopPropagation()"
+                         (change)="toggleEmployee(e.id)"
+                         class="w-4 h-4 text-[#2E5C9A] border-gray-300 rounded cursor-pointer">
+                </td>
+                <td class="font-semibold text-[#1B2A4A]">{{ e.fullName }}</td>
+                <td>{{ $any(e).department || '—' }}</td>
+                <td>{{ $any(e).age }}</td>
+                <td>{{ $any(e).gender || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="table-pagination">
+          <span class="page-info">Page {{ page() }} of {{ totalPages }}</span>
+          <div class="page-btns">
+            <button class="pg-btn" [disabled]="page() === 1" (click)="page.set(page() - 1)">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            @for (n of getPageNumbers(); track n) {
+              <button class="pg-btn" [class.active]="n === page()" (click)="page.set(n)">{{ n }}</button>
+            }
+            <button class="pg-btn" [disabled]="page() === totalPages" (click)="page.set(page() + 1)">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Quote result -->
+      @if (quote) {
+        <div class="quote-result">
+          <!-- <div class="quote-row">
+            <span class="quote-label">Expected Premium Rate</span>
+            <span class="quote-value">₹{{ quote.calculatedPremiumPerEmployee | number:'1.0-0':'en-IN' }}<small>/employee</small></span>
+          </div> -->
+          <div class="quote-row">
+            <span class="quote-label">Total Employees</span>
+            <span class="quote-value">{{ selectedIds.size }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="action-bar">
+        <button class="cancel-btn" (click)="close()">Cancel</button>
+
+        @if (!quote) {
+          <button class="primary-btn" [disabled]="selectedIds.size === 0 || fetchingQuote()" (click)="getQuote()">
+            @if (fetchingQuote()) {
+              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Getting Quote...
+            } @else {
+              <mat-icon>calculate</mat-icon> Get Quote
+            }
+          </button>
+        } @else {
+          <button class="submit-btn" [disabled]="submitting()" (click)="submitRequest()">
+            @if (submitting()) {
+              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Submitting...
+            } @else {
+              <mat-icon>{{ data.policyId ? 'published_with_changes' : 'send' }}</mat-icon> {{ data.policyId ? 'Update & Resubmit Policy' : 'Submit Policy Request' }}
+            }
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

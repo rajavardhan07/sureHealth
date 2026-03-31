@@ -43,6 +43,9 @@ public class CorporateClient {
     @JsonIgnore
     private List<Employee> employees;
 
+    @ManyToOne
+    @JoinColumn(name = "underwriter_id")
+    private User assignedUnderwriter;
 }
 
 

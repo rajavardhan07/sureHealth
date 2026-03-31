@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,27 +8,55 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PolicyService } from '../../../core/services/policy.service';
-import { GroupPolicy } from '../../../shared/models';
+import { AdminService } from '../../../core/services/admin.service';
+import { GroupPolicy, User } from '../../../shared/models';
 
 @Component({
   selector: 'app-policy-management',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatTabsModule, MatSnackBarModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule, MatTabsModule, MatSnackBarModule, MatProgressSpinnerModule],
   templateUrl: './policy-management.component.html',
   styleUrl: './policy-management.component.css'})
 export class PolicyManagementComponent implements OnInit {
   pendingPolicies = signal<GroupPolicy[]>([]);
   allPolicies = signal<GroupPolicy[]>([]);
+  underwriters = signal<User[]>([]);
   loadingPending = signal(true);
   loadingAll = signal(false);
   pendingColumns = ['policyNumber', 'company', 'plan', 'premium', 'status', 'actions'];
   allColumns = ['policyNumber', 'company', 'plan', 'status', 'actions'];
 
-  constructor(private policyService: PolicyService, private snackBar: MatSnackBar) {}
+  // Edit Feature
+  editModalOpen = signal(false);
+  selectedEditPolicy = signal<GroupPolicy | null>(null);
+  editPolicyForm: Partial<import('../../../shared/models').PolicyUpdateDTO> = {};
+
+  constructor(
+    private policyService: PolicyService, 
+    private adminService: AdminService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() { 
     this.loadPending(); 
     this.loadAll();
+    this.adminService.getUnderwriters().subscribe(data => this.underwriters.set(data));
+  }
+
+  assignUnderwriter(policyId: number, event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const underwriterId = target.value;
+    if (!underwriterId) return;
+    
+    this.adminService.assignPolicy(policyId, +underwriterId).subscribe({
+      next: () => {
+         this.snackBar.open('Underwriter reassigned successfully', 'OK', { duration: 3000 });
+         this.loadPending();
+         this.loadAll();
+         target.value = '';
+      },
+      error: () => this.snackBar.open('Failed to reassign underwriter', 'OK', { duration: 3000 })
+    });
   }
 
   loadPending() {
@@ -90,5 +119,39 @@ export class PolicyManagementComponent implements OnInit {
       case 'PENDING_UNDERWRITER_REVIEW': return 'status-review';
       default: return '';
     }
+  }
+
+  openEditModal(policy: GroupPolicy) {
+    this.selectedEditPolicy.set(policy);
+    this.editPolicyForm = {
+      status: policy.status,
+      billingCycle: policy.billingCycle,
+      basePremium: policy.basePremium,
+      customPremiumPerEmployee: policy.customPremiumPerEmployee,
+      waitingPeriodDays: policy.waitingPeriodDays,
+      startDate: policy.startDate,
+      endDate: policy.endDate
+    };
+    this.editModalOpen.set(true);
+  }
+
+  closeEditModal() {
+    this.editModalOpen.set(false);
+    this.selectedEditPolicy.set(null);
+    this.editPolicyForm = {};
+  }
+
+  savePolicyEdits() {
+    const policy = this.selectedEditPolicy();
+    if (!policy) return;
+
+    this.policyService.updatePolicy(policy.id, this.editPolicyForm).subscribe({
+      next: () => {
+        this.snackBar.open('Policy updated successfully', 'OK', { duration: 3000 });
+        this.closeEditModal();
+        this.loadAll();
+      },
+      error: () => this.snackBar.open('Failed to update policy', 'OK', { duration: 3000 })
+    });
   }
 }

@@ -29,6 +29,10 @@ export class ClaimService {
     return this.http.put<void>(`${this.apiUrl}/${id}/approve`, dto);
   }
 
+  requestMoreInfo(id: number, dto: ClaimRejectionDTO): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/request-more-info`, dto);
+  }
+
   rejectClaim(id: number, dto: ClaimRejectionDTO): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/reject`, dto);
   }
@@ -43,5 +47,17 @@ export class ClaimService {
 
   suspendClaim(id: number): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/suspend`, {});
+  }
+
+  downloadClaimReport(claimId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${claimId}/report`, { responseType: 'blob' });
+  }
+
+  verifyOcr(claimId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${claimId}/verify-ocr`);
+  }
+
+  respondToIssue(claimId: number, formData: FormData): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${claimId}/respond-to-issue`, formData);
   }
 }

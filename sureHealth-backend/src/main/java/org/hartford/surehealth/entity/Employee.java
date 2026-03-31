@@ -43,6 +43,7 @@ public class Employee {
 
     @ManyToOne
     @JoinColumn(name = "corporate_id")
+    @JsonIgnore
     private CorporateClient corporateClient;
 
     @ManyToOne

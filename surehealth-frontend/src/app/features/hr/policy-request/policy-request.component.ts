@@ -1,22 +1,14 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { AddEmployeeDialogComponent } from '../add-employee-dialog/add-employee-dialog.component';
+import { PolicyRequestDialogComponent } from '../policy-request-dialog/policy-request-dialog.component';
 import { CorporateService } from '../../../core/services/corporate.service';
 import { PolicyService } from '../../../core/services/policy.service';
 import { PlanService } from '../../../core/services/plan.service';
-import { GroupPolicy, InsurancePlan, CorporateClient, Employee } from '../../../shared/models';
+import { GroupPolicy, InsurancePlan, CorporateClient } from '../../../shared/models';
 
 @Component({
   selector: 'app-hr-policy-request',
@@ -28,14 +20,86 @@ export class HrPolicyRequestComponent implements OnInit {
   corporate = signal<CorporateClient | null>(null);
   plans = signal<InsurancePlan[]>([]);
   policies = signal<GroupPolicy[]>([]);
+
+  // Analytics Metrics
+  get activePoliciesCount() {
+    return this.policies().filter(p => p.status === 'APPROVED').length;
+  }
+
+  get pendingPoliciesCount() {
+    return this.policies().filter(p => 
+      p.status === 'PENDING_ADMIN_APPROVAL' || 
+      p.status === 'PENDING_UNDERWRITER_REVIEW' || 
+      p.status === 'PENDING_HR_APPROVAL'
+    ).length;
+  }
+
+  get totalPlansAvailable() {
+    return this.plans().length;
+  }
+
+  // Policy table search & pagination
+  policySearch = signal('');
+  policyStatusFilter = signal('ALL');
+  policyPage = signal(1);
+  policyPageSize = 5;
+
+  filteredPolicies = computed(() => {
+    return this.policies().filter(p => {
+      const matchSearch = (p.policyNumber || '').toLowerCase().includes(this.policySearch().toLowerCase()) ||
+                          (p.insurancePlan?.planName || '').toLowerCase().includes(this.policySearch().toLowerCase());
+      let matchStatus = true;
+      if (this.policyStatusFilter() !== 'ALL') {
+        matchStatus = p.status === this.policyStatusFilter();
+      }
+      return matchSearch && matchStatus;
+    });
+  });
+
+  paginatedPolicies = computed(() => {
+    const start = (this.policyPage() - 1) * this.policyPageSize;
+    return this.filteredPolicies().slice(start, start + this.policyPageSize);
+  });
+
+  policyTotalPages = computed(() => Math.ceil(this.filteredPolicies().length / this.policyPageSize) || 1);
+
+  // Plan filters & pagination
+  searchQuery = signal('');
+  premiumFilter = signal('ALL');
+  durationFilter = signal('ALL');
+  planPage = signal(1);
+  planPageSize = 6;
+
+  filteredPlans = computed(() => {
+    return this.plans().filter(p => {
+      const matchSearch = p.planName.toLowerCase().includes(this.searchQuery().toLowerCase());
+      
+      let matchPremium = true;
+      if (this.premiumFilter() === 'LOW') matchPremium = p.premiumPerEmployee < 1000;
+      if (this.premiumFilter() === 'MED') matchPremium = p.premiumPerEmployee >= 1000 && p.premiumPerEmployee <= 5000;
+      if (this.premiumFilter() === 'HIGH') matchPremium = p.premiumPerEmployee > 5000;
+
+      let matchDuration = true;
+      if (this.durationFilter() === 'SHORT') matchDuration = p.durationMonths < 12;
+      if (this.durationFilter() === 'MED') matchDuration = p.durationMonths >= 12 && p.durationMonths <= 24;
+      if (this.durationFilter() === 'LONG') matchDuration = p.durationMonths > 24;
+
+      return matchSearch && matchPremium && matchDuration;
+    });
+  });
+
+  paginatedPlans = computed(() => {
+    const start = (this.planPage() - 1) * this.planPageSize;
+    return this.filteredPlans().slice(start, start + this.planPageSize);
+  });
+
+  planTotalPages = computed(() => Math.ceil(this.filteredPlans().length / this.planPageSize) || 1);
+
   loadingPolicies = signal(true);
-  unassignedEmployees = signal<Employee[]>([]);
-  selectedEmployeeIds = new Set<number>();
-  loadingEmployees = signal(true);
-  quotes = signal<{ [planId: number]: any }>({});
-  fetchingQuote = signal<number | null>(null);
-  columns = ['policyNumber', 'plan', 'underwriter', 'startDate', 'endDate', 'status'];
-  empColumns = ['select', 'name', 'department', 'age'];
+
+  // Collapsible sections
+  policiesExpanded = signal(true);
+  plansExpanded = signal(true);
 
   constructor(
     private corporateService: CorporateService,
@@ -51,38 +115,6 @@ export class HrPolicyRequestComponent implements OnInit {
     this.corporateService.getMyProfile().subscribe(c => this.corporate.set(c));
     this.planService.getActivePlans().subscribe(p => this.plans.set(p));
     this.loadPolicies();
-    this.loadUnassignedEmployees();
-  }
-
-  loadUnassignedEmployees() {
-    this.loadingEmployees.set(true);
-    this.corporateService.getMyUnassignedEmployees().subscribe({
-      next: (data) => {
-        this.unassignedEmployees.set(data);
-        this.loadingEmployees.set(false);
-      },
-      error: () => { this.loadingEmployees.set(false); }
-    });
-  }
-
-  toggleEmployee(id: number) {
-    if (this.selectedEmployeeIds.has(id)) {
-      this.selectedEmployeeIds.delete(id);
-    } else {
-      this.selectedEmployeeIds.add(id);
-    }
-  }
-
-  toggleAll() {
-    if (this.selectedEmployeeIds.size === this.unassignedEmployees().length) {
-      this.selectedEmployeeIds.clear();
-    } else {
-      this.unassignedEmployees().forEach(e => this.selectedEmployeeIds.add(e.id));
-    }
-  }
-
-  isAllSelected() {
-    return this.unassignedEmployees().length > 0 && this.selectedEmployeeIds.size === this.unassignedEmployees().length;
   }
 
   loadPolicies() {
@@ -93,72 +125,83 @@ export class HrPolicyRequestComponent implements OnInit {
     });
   }
 
-  getQuote(planId: number) {
-    if (this.selectedEmployeeIds.size === 0) {
-      this.snackBar.open('Please select at least one employee to get an accurate quote', 'OK', { duration: 3000 });
-      return;
-    }
-    this.fetchingQuote.set(planId);
-    const employeeIds = Array.from(this.selectedEmployeeIds);
-    this.policyService.getQuote(planId, employeeIds).subscribe({
-      next: (quote) => { 
-        this.quotes.update(q => ({ ...q, [planId]: quote })); 
-        this.fetchingQuote.set(null); 
-      },
-      error: () => { 
-        this.fetchingQuote.set(null); 
-        // Error handled by interceptor
-      }
-    });
-  }
-
-  requestPolicy(planId: number) {
+  openRequestDialog(plan: InsurancePlan) {
     if (!this.corporate()) return;
-    if (this.selectedEmployeeIds.size === 0) {
-      this.snackBar.open('Please select at least one employee', 'OK', { duration: 3000 });
-      return;
-    }
-    
-    const payload = { 
-      corporateId: this.corporate()!.id, 
-      planId: planId, 
-      employeeIds: Array.from(this.selectedEmployeeIds) 
-    };
-
-    this.policyService.requestPolicy(payload).subscribe({
-      next: () => { 
-        this.snackBar.open('Policy request submitted for underwriter review!', 'OK', { duration: 3000 }); 
-        this.selectedEmployeeIds.clear();
-        this.loadPolicies(); 
-        this.loadUnassignedEmployees();
+    const dialogRef = this.dialog.open(PolicyRequestDialogComponent, {
+      data: {
+        planId: plan.id,
+        planName: plan.planName,
+        corporateId: this.corporate()!.id,
+        premiumPerEmployee: plan.premiumPerEmployee,
+        coverageAmount: plan.coverageAmount
       },
-      error: () => {} // Error handled by interceptor
-    });
-  }
-
-  openAddEmployeeDialog() {
-    if (!this.corporate()) return;
-    
-    const dialogRef = this.dialog.open(AddEmployeeDialogComponent, {
-      width: '600px',
-      data: { corporateId: this.corporate()!.id }
+      width: '700px',
+      maxHeight: '85vh',
+      panelClass: 'policy-request-panel'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadUnassignedEmployees();
+        this.loadPolicies();
       }
     });
   }
 
-  getStatusClass(status: string): string {
-    if (!status) return 'pending';
-    if (status === 'APPROVED') return 'approved';
-    if (status === 'REJECTED') return 'rejected';
-    return 'pending';
+  openResubmitDialog(policy: GroupPolicy) {
+    if (!this.corporate()) return;
+    
+    // Extract employee IDs from existing policy
+    const existingEmployeeIds = policy.employees ? policy.employees.map(e => e.id) : [];
+
+    const dialogRef = this.dialog.open(PolicyRequestDialogComponent, {
+      data: {
+        policyId: policy.id,
+        planId: policy.insurancePlan.id,
+        planName: policy.insurancePlan.planName,
+        corporateId: this.corporate()!.id,
+        premiumPerEmployee: policy.insurancePlan.premiumPerEmployee,
+        coverageAmount: policy.insurancePlan.coverageAmount,
+        selectedEmployeeIds: existingEmployeeIds,
+        underwriterComment: policy.underwriterComment
+      },
+      width: '700px',
+      maxHeight: '85vh',
+      panelClass: 'policy-request-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadPolicies();
+      }
+    });
   }
 
   formatStatus(status: string): string {
     return status ? status.replace(/_/g, ' ') : 'Pending';
+  }
+
+  // Pagination helpers
+  onPolicySearchChange(value: string) {
+    this.policySearch.set(value);
+    this.policyPage.set(1);
+  }
+
+  onPolicyStatusChange(value: string) {
+    this.policyStatusFilter.set(value);
+    this.policyPage.set(1);
+  }
+
+  onPlanFilterChange() {
+    this.planPage.set(1);
+  }
+
+  getPolicyPageNumbers(): number[] {
+    const total = this.policyTotalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  getPlanPageNumbers(): number[] {
+    const total = this.planTotalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
   }
 }

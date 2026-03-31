@@ -29,6 +29,8 @@ public class InsurancePlan {
     private String description;
     
     private Integer durationMonths;
+    
+    private Integer waitingPeriodDays = 0;
 
     private Boolean active = true;
 

@@ -1,7 +1,7 @@
 <div class="flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm">
   <!-- Dialog Header -->
   <div class="px-6 py-4 border-b border-[#E2E6EC] flex justify-between items-center bg-[#F8F6F1]">
-    <h2 class="text-xl font-bold text-[#1B2A4A] m-0">Create New Insurance Plan</h2>
+    <h2 class="text-xl font-bold text-[#1B2A4A] m-0">{{ data?.plan ? 'Edit Insurance Plan' : 'Create New Insurance Plan' }}</h2>
     <button mat-icon-button (click)="onCancel()" class="text-[#5A6A7E] hover:text-[#1B2A4A] transition-colors">
       <mat-icon>close</mat-icon>
     </button>
@@ -44,14 +44,25 @@
         </div>
       </div>
 
-      <!-- Premium Per Employee -->
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold text-[#1B2A4A] mb-1.5">Premium Per Employee (₹) <span class="text-red-500">*</span></label>
-        <input type="number" formControlName="premiumPerEmployee" placeholder="1500" min="1"
-               class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-        @if (planForm.get('premiumPerEmployee')?.invalid && planForm.get('premiumPerEmployee')?.touched) {
-          <span class="text-red-500 text-xs mt-1 font-medium">Premium is required</span>
-        }
+      <!-- Premium & Waiting Period -->
+      <div class="grid grid-cols-2 gap-5">
+        <div class="flex flex-col">
+          <label class="text-sm font-semibold text-[#1B2A4A] mb-1.5">Premium Per Employee (₹) <span class="text-red-500">*</span></label>
+          <input type="number" formControlName="premiumPerEmployee" placeholder="1500" min="1"
+                 class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+          @if (planForm.get('premiumPerEmployee')?.invalid && planForm.get('premiumPerEmployee')?.touched) {
+            <span class="text-red-500 text-xs mt-1 font-medium">Premium is required</span>
+          }
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-semibold text-[#1B2A4A] mb-1.5">Waiting Period (Days) <span class="text-red-500">*</span></label>
+          <input type="number" formControlName="waitingPeriodDays" placeholder="30" min="0"
+                 class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+          @if (planForm.get('waitingPeriodDays')?.invalid && planForm.get('waitingPeriodDays')?.touched) {
+            <span class="text-red-500 text-xs mt-1 font-medium">Waiting period is required</span>
+          }
+        </div>
       </div>
 
       <!-- Description -->
@@ -75,7 +86,7 @@
     </button>
     <button type="button" (click)="onSubmit()" [disabled]="planForm.invalid"
             class="inline-flex justify-center items-center px-6 py-2.5 bg-[#2E5C9A] text-white font-semibold rounded-lg shadow-sm hover:bg-[#1B2A4A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-none">
-      <mat-icon class="mr-2 text-[18px]">save</mat-icon> Create Plan
+      <mat-icon class="mr-2 text-[18px]">save</mat-icon> {{ data?.plan ? 'Update Plan' : 'Create Plan' }}
     </button>
   </mat-dialog-actions>
 </div>

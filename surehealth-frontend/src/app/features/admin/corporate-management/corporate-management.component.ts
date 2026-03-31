@@ -59,4 +59,18 @@ export class CorporateManagementComponent implements OnInit {
       });
     }
   }
+
+  activate(id: number, companyName: string) {
+    if (confirm(`Are you sure you want to activate ${companyName}?`)) {
+      this.adminService.activateCorporateClient(id).subscribe({
+        next: () => {
+          this.snackBar.open(`${companyName} has been activated`, 'OK', { duration: 3000 });
+          this.loadCorporates();
+        },
+        error: () => {
+          this.snackBar.open(`Failed to activate ${companyName}`, 'OK', { duration: 3000 });
+        }
+      });
+    }
+  }
 }

@@ -21,6 +21,8 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PremiumInvoiceRepository invoiceRepository;
+    private final org.hartford.surehealth.repository.GroupPolicyRepository groupPolicyRepository;
+    private final org.hartford.surehealth.repository.EmployeeRepository employeeRepository;
 
     @Transactional
     public Payment processPayment(PaymentDTO dto) {
@@ -50,7 +52,28 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaymentDate(LocalDate.now());
         invoiceRepository.save(invoice);
+
+        // Check if this payment activates the policy
+        if (invoice.getGroupPolicy() != null && 
+            invoice.getGroupPolicy().getStatus() == org.hartford.surehealth.enums.PolicyStatus.PENDING_HR_APPROVAL) {
+            
+            GroupPolicy policy = invoice.getGroupPolicy();
+            policy.setStatus(org.hartford.surehealth.enums.PolicyStatus.APPROVED);
+            policy.setStartDate(LocalDate.now());
+            policy.setEndDate(LocalDate.now().plusYears(1));
+            policy.setNextBillingDate(LocalDate.now().plusMonths(3));
+            
+            groupPolicyRepository.save(policy);
+
+            List<Employee> employees = employeeRepository.findByGroupPolicyId(policy.getId());
+            for (Employee emp : employees) {
+                emp.setCoverageAmount(policy.getInsurancePlan().getCoverageAmount());
+                emp.setRemainingCoverage(policy.getInsurancePlan().getCoverageAmount());
+            }
+            employeeRepository.saveAll(employees);
+        }
 
         return payment;
     }

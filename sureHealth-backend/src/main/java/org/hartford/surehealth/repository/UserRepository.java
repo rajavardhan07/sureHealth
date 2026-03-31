@@ -1,6 +1,8 @@
 package org.hartford.surehealth.repository;
 
 import org.hartford.surehealth.enums.Role;
+import org.hartford.surehealth.entity.CorporateClient;
+import org.hartford.surehealth.entity.Employee;
 import org.hartford.surehealth.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,6 +12,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByUsername(String username);
     List<User> findByRole(Role role);
+    Optional<User> findByEmployee(Employee employee);
+    List<User> findByCorporateClient(CorporateClient corporateClient);
 }
 
 

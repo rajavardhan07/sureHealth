@@ -15,5 +15,9 @@ public class AdminDashboardDTO {
     private long activePolicies;
     private long totalEmployees;
     private long pendingClaims;
+    private java.math.BigDecimal totalRevenue;
+    private long totalClaims;
+    private java.util.Map<String, Long> claimsByStatus;
+    private java.util.Map<String, Long> policiesByStatus;
 }
 

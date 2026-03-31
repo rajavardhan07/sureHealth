@@ -1,0 +1,169 @@
+<!-- Enterprise Claim Activity Page -->
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-extrabold text-[#1B2A4A] tracking-tight">Employee Claim Activity</h1>
+      <p class="text-sm text-[#5A6A7E] font-medium mt-1">Monitor, audit, and track all employee health insurance claim submissions in real-time.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-bold text-[#5A6A7E] bg-white border border-[#E2E6EC] rounded-lg px-3 py-1.5 shadow-sm">
+        <mat-icon class="text-[14px] mr-1 align-middle text-[#2E5C9A]">sync</mat-icon> Live
+      </span>
+    </div>
+  </div>
+
+  <!-- KPI Summary Strip -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl border border-[#E2E6EC] shadow-sm p-5 relative overflow-hidden group hover:shadow-md transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+          <mat-icon class="text-blue-600 text-[20px]">receipt_long</mat-icon>
+        </div>
+        <span class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Total Claims</span>
+      </div>
+      <h4 class="text-3xl font-extrabold text-[#1B2A4A] tracking-tight">{{ totalClaims }}</h4>
+      <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-[#E2E6EC] shadow-sm p-5 relative overflow-hidden group hover:shadow-md transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <mat-icon class="text-emerald-600 text-[20px]">check_circle</mat-icon>
+        </div>
+        <span class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Approved</span>
+      </div>
+      <h4 class="text-3xl font-extrabold text-emerald-700 tracking-tight">{{ approvedClaims }}</h4>
+      <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-[#E2E6EC] shadow-sm p-5 relative overflow-hidden group hover:shadow-md transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
+          <mat-icon class="text-amber-600 text-[20px]">pending</mat-icon>
+        </div>
+        <span class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">In Progress</span>
+      </div>
+      <h4 class="text-3xl font-extrabold text-amber-700 tracking-tight">{{ pendingClaims }}</h4>
+      <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500"></div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-[#E2E6EC] shadow-sm p-5 relative overflow-hidden group hover:shadow-md transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
+          <mat-icon class="text-red-500 text-[20px]">cancel</mat-icon>
+        </div>
+        <span class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Rejected</span>
+      </div>
+      <h4 class="text-3xl font-extrabold text-red-600 tracking-tight">{{ rejectedClaims }}</h4>
+      <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-400 to-red-500"></div>
+    </div>
+  </div>
+
+  <!-- Financial Summary Bar -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-gradient-to-br from-[#1B2A4A] to-[#2E5C9A] rounded-xl p-5 text-white shadow-lg">
+      <p class="text-[10px] font-bold uppercase tracking-widest text-blue-200 mb-1">Total Billed Amount</p>
+      <h4 class="text-2xl font-extrabold tracking-tight">₹{{ totalBilled.toLocaleString('en-IN') }}</h4>
+    </div>
+    <div class="bg-gradient-to-br from-emerald-700 to-emerald-500 rounded-xl p-5 text-white shadow-lg">
+      <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-1">Total Approved Payouts</p>
+      <h4 class="text-2xl font-extrabold tracking-tight">₹{{ totalApproved.toLocaleString('en-IN') }}</h4>
+    </div>
+  </div>
+
+  <!-- Enterprise Data Table -->
+  <div class="bg-white rounded-2xl border border-[#E2E6EC] shadow-sm overflow-hidden">
+    <!-- Table Toolbar -->
+    <div class="px-6 py-4 border-b border-[#E2E6EC] bg-[#FAFBFC] flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-[#EEF2FF] flex items-center justify-center">
+          <mat-icon class="text-[#2E5C9A] text-[20px]">table_chart</mat-icon>
+        </div>
+        <div>
+          <h3 class="text-[15px] font-extrabold text-[#1B2A4A] leading-tight">Claim Records</h3>
+          <p class="text-xs text-[#5A6A7E] font-medium">Sorted by most recent submission</p>
+        </div>
+      </div>
+      <span class="text-xs font-bold text-[#5A6A7E] bg-white border border-[#E2E6EC] rounded-md px-2.5 py-1">{{ sortedClaims.length }} records</span>
+    </div>
+
+    @if (loading()) {
+      <div class="py-20 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2E5C9A]"></div>
+      </div>
+    } @else if (sortedClaims.length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-[#E2E6EC] bg-[#F8F9FB]">
+              <!-- <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Claim #</th> -->
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Employee</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Diagnosis</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Hospital</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Type</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest text-right">Bill Amount</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest text-right">Approved</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest text-center">Status</th>
+              <th class="px-6 py-3 text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest text-right">Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (claim of sortedClaims; track claim.id) {
+              <tr class="border-b border-[#F0F2F5] hover:bg-[#F8FAFD] transition-colors">
+                <!-- <td class="px-6 py-3.5">
+                  <span class="text-xs font-bold text-[#2E5C9A] font-mono tracking-wide">{{ claim.claimNumber || '—' }}</span>
+                </td> -->
+                <td class="px-6 py-3.5">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#2E5C9A] to-[#1B2A4A] flex items-center justify-center text-white text-[10px] font-extrabold shrink-0">
+                      {{ claim.employee?.fullName?.charAt(0) || '?' }}
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-sm font-bold text-[#1B2A4A] truncate max-w-[130px]">{{ claim.employee?.fullName || 'Unknown' }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-3.5">
+                  <span class="text-sm text-[#374151] font-medium truncate max-w-[150px] block">{{ claim.diagnosis || '—' }}</span>
+                </td>
+                <td class="px-6 py-3.5">
+                  <span class="text-sm text-[#5A6A7E] font-medium truncate max-w-[130px] block">{{ claim.hospitalName || '—' }}</span>
+                </td>
+                <td class="px-6 py-3.5">
+                  <span class="text-xs text-[#5A6A7E] font-semibold uppercase tracking-wider">{{ claim.claimType || '—' }}</span>
+                </td>
+                <td class="px-6 py-3.5 text-right">
+                  <span class="text-sm font-extrabold text-[#1B2A4A] tabular-nums">₹{{ claim.billAmount.toLocaleString('en-IN') }}</span>
+                </td>
+                <td class="px-6 py-3.5 text-right">
+                  <span class="text-sm font-bold tabular-nums" [class.text-emerald-600]="claim.approvedAmount > 0" [class.text-[#B0BEC5]]="!claim.approvedAmount">
+                    {{ claim.approvedAmount ? '₹' + claim.approvedAmount.toLocaleString('en-IN') : '—' }}
+                  </span>
+                </td>
+                <td class="px-6 py-3.5 text-center">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border"
+                        [ngClass]="getClaimStatusClass(claim.status)">
+                    {{ formatClaimStatus(claim.status) }}
+                  </span>
+                </td>
+                <td class="px-6 py-3.5 text-right">
+                  <span class="text-xs text-[#5A6A7E] font-medium tabular-nums">{{ claim.submissionDate | date:'mediumDate' }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="py-20 flex flex-col items-center justify-center text-center">
+        <div class="w-16 h-16 bg-[#F0F5FB] rounded-full flex items-center justify-center mb-4">
+          <mat-icon class="text-[#B0BEC5] text-3xl">receipt_long</mat-icon>
+        </div>
+        <h4 class="font-bold text-[#1B2A4A] text-base mb-1">No Claims Recorded</h4>
+        <p class="text-sm text-[#5A6A7E] max-w-[320px]">Employee claims will appear here once submitted through the portal.</p>
+      </div>
+    }
+  </div>
+</div>

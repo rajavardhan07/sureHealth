@@ -1,0 +1,371 @@
+<div class="dashboard fade-in-up">
+
+  <!-- Spectacular Hero Header -->
+  <div class="relative bg-[#1B2A4A] rounded-2xl p-8 mb-8 overflow-hidden shadow-lg border border-[#2B74E2]/20">
+    <!-- Abstract Backgrounds -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[#2B74E2]/30 via-transparent to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-[#C8A951]/20 to-transparent rounded-full blur-xl translate-y-1/2 -translate-x-1/4"></div>
+    
+    <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="max-w-xl">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-blue-100 text-[10px] font-bold uppercase tracking-widest mb-4 border border-white/10">
+          <mat-icon class="text-[14px] text-[#C8A951]">electric_bolt</mat-icon> Intelligence Hub
+        </span>
+        <h1 class="welcome-title text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-2">
+          Welcome back, <br/><span class="text-[#C8A951]">{{ corporate()?.companyName || 'HR Manager' }}</span>
+        </h1>
+        <p class="text-blue-200 font-medium text-base">Oversee your enterprise coverage, automate policies, and generate smart corporate insights.</p>
+      </div>
+
+      <!-- Action Panel right in the hero -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+        <button (click)="openAIChatbot()" class="group flex items-center gap-3 bg-[#131E36]/80 hover:bg-[#0D1526] border border-white/10 text-white px-5 py-3.5 rounded-xl transition-all shadow-md focus:outline-none flex-1 lg:flex-initial">
+          <div class="w-10 h-10 rounded-full bg-[#1B2A4A] border-2 border-[#2B74E2] flex items-center justify-center shrink-0 relative">
+            <mat-icon class="text-[#C8A951] text-[22px] leading-none">chat_bubble</mat-icon>
+            <span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#1B2A4A]"></span>
+          </div>
+          <div class="text-left">
+            <p class="text-[10px] uppercase font-bold text-[#2B74E2] tracking-wider mb-0.5">SureHealth Assistant</p>
+            <p class="text-sm font-bold leading-none flex items-center gap-1 group-hover:text-white transition-colors">Ask AI Advisor <mat-icon class="text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</mat-icon></p>
+          </div>
+        </button>
+
+        <button (click)="openExplorePlansModal()" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#C8A951] to-[#B8963F] text-white font-bold rounded-xl shadow-lg shadow-[#C8A951]/20 hover:shadow-[#C8A951]/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto">
+          <mat-icon class="scale-[0.8] mb-0.5 leading-none">add_moderator</mat-icon> Request Policy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container flex justify-center items-center min-h-[400px]">
+      <svg class="animate-spin h-10 w-10 text-[#2B74E2]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+  }
+
+  @if (!loading()) {
+    <!-- Intelligent Action Center -->
+    @if (intelligentActions.length > 0) {
+      <div class="action-center mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          @for (action of intelligentActions; track action.label) {
+            @if (action.link) {
+              <a [routerLink]="action.link" class="action-card group flex items-start gap-4 p-4 rounded-xl border bg-white transition-all duration-300" [class.urgent-action]="action.urgent" [class.standard-action]="!action.urgent">
+                <div class="action-icon-wrapper rounded-lg p-2.5 shrink-0" [class.bg-red-50]="action.urgent" [class.bg-blue-50]="!action.urgent">
+                  <span class="text-2xl block leading-none">{{ action.emoji }}</span>
+                </div>
+                <div class="flex flex-col mt-0.5">
+                  <span class="font-bold text-sm tracking-tight" [class.text-red-700]="action.urgent" [class.text-[#1B2A4A]]="!action.urgent">{{ action.label }}</span>
+                  <span class="text-xs font-medium mt-0.5" [class.text-red-500]="action.urgent" [class.text-[#5A6A7E]]="!action.urgent">{{ action.desc }}</span>
+                </div>
+                <!-- Hover Arrow -->
+                <mat-icon class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-sm mt-1" [class.text-red-400]="action.urgent" [class.text-[#2B74E2]]="!action.urgent">arrow_forward</mat-icon>
+              </a>
+            } @else {
+              <button (click)="action.action && action.action()" class="action-card group flex items-start gap-4 p-4 rounded-xl border bg-white transition-all duration-300 text-left w-full" [class.urgent-action]="action.urgent" [class.standard-action]="!action.urgent">
+                <div class="action-icon-wrapper rounded-lg p-2.5 shrink-0" [class.bg-red-50]="action.urgent" [class.bg-blue-50]="!action.urgent">
+                  <span class="text-2xl block leading-none">{{ action.emoji }}</span>
+                </div>
+                <div class="flex flex-col mt-0.5">
+                  <span class="font-bold text-sm tracking-tight" [class.text-red-700]="action.urgent" [class.text-[#1B2A4A]]="!action.urgent">{{ action.label }}</span>
+                  <span class="text-xs font-medium mt-0.5" [class.text-red-500]="action.urgent" [class.text-[#5A6A7E]]="!action.urgent">{{ action.desc }}</span>
+                </div>
+                <mat-icon class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-sm mt-1" [class.text-red-400]="action.urgent" [class.text-[#2B74E2]]="!action.urgent">arrow_forward</mat-icon>
+              </button>
+            }
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Elevated KPIs -->
+    <div class="kpi-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      <div class="kpi-card bg-white rounded-xl p-5 border border-[#E2E6EC] shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2.5 rounded-lg bg-[#F0F5FB] text-[#2B74E2] group-hover:scale-110 transition-transform duration-300">
+            <mat-icon>people_alt</mat-icon>
+          </div>
+          <span class="text-xs font-bold text-[#059669] bg-[#ECFDF5] px-2 py-1 rounded-full flex items-center gap-1">+2% <mat-icon class="text-[10px] w-3 h-3 leading-3">trending_up</mat-icon></span>
+        </div>
+        <div>
+          <h4 class="text-3xl font-extrabold text-[#1B2A4A] tracking-tight leading-none mb-1">{{ employees().length }}</h4>
+          <p class="text-xs font-semibold text-[#5A6A7E] uppercase tracking-wider">Total Employees</p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2B74E2] to-[#1B2A4A]"></div>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 border border-[#E2E6EC] shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2.5 rounded-lg bg-[#ECFDF5] text-[#059669] group-hover:scale-110 transition-transform duration-300">
+            <mat-icon>verified</mat-icon>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-3xl font-extrabold text-[#1B2A4A] tracking-tight leading-none mb-1">{{ approvedPolicies }}</h4>
+          <p class="text-xs font-semibold text-[#5A6A7E] uppercase tracking-wider">Active Policies</p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#059669] to-[#047857]"></div>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 border border-[#E2E6EC] shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2.5 rounded-lg bg-[#FEF9E7] text-[#B8963F] group-hover:scale-110 transition-transform duration-300">
+            <mat-icon>health_and_safety</mat-icon>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-3xl font-extrabold text-[#1B2A4A] tracking-tight leading-none mb-1">{{ coveredEmployees }}</h4>
+          <p class="text-xs font-semibold text-[#5A6A7E] uppercase tracking-wider">Covered Staff</p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C8A951] to-[#B8963F]"></div>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 border border-[#E2E6EC] shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2.5 rounded-lg bg-[#FFF7ED] text-[#EA580C] group-hover:scale-110 transition-transform duration-300">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-3xl font-extrabold text-[#1B2A4A] tracking-tight leading-none mb-1">{{ pendingPolicies }}</h4>
+          <p class="text-xs font-semibold text-[#5A6A7E] uppercase tracking-wider">Pending Action</p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#EA580C] to-[#C2410C]"></div>
+      </div>
+    </div>
+
+    <!-- ── AI Budget Planner Feature Banner ── -->
+    <a routerLink="/hr/simulator"
+       class="group relative flex items-center gap-5 bg-gradient-to-r from-[#0D1526] via-[#1B2A4A] to-[#0D1A30] rounded-2xl p-5 mb-8 border border-[#2B74E2]/30 shadow-lg hover:shadow-[#2B74E2]/20 hover:border-[#2B74E2]/60 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden cursor-pointer">
+
+      <!-- Background glow -->
+      <div class="absolute right-0 top-0 w-64 h-full bg-gradient-to-l from-[#C8A951]/10 via-transparent to-transparent pointer-events-none"></div>
+      <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-[#2B74E2]/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Icon -->
+      <div class="relative shrink-0">
+        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2B74E2] to-[#1B2A4A] flex items-center justify-center shadow-lg shadow-[#2B74E2]/30 group-hover:scale-110 transition-transform duration-300">
+          <mat-icon class="text-white text-[28px] leading-none">auto_graph</mat-icon>
+        </div>
+        <!-- Pulse ring -->
+        <span class="absolute -inset-1 rounded-xl border border-[#2B74E2]/40 animate-ping opacity-60"></span>
+      </div>
+
+      <!-- Text -->
+      <div class="flex-1 min-w-0 relative z-10">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-black uppercase tracking-widest text-[#C8A951] bg-[#C8A951]/10 border border-[#C8A951]/30 px-2 py-0.5 rounded-full">New Feature</span>
+          <span class="text-[10px] font-bold text-[#2B74E2] bg-[#2B74E2]/10 border border-[#2B74E2]/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <mat-icon class="text-[11px]">psychology</mat-icon> AI Powered
+          </span>
+        </div>
+        <h3 class="text-lg font-black text-white tracking-tight leading-tight mb-0.5">AI Budget Planner</h3>
+        <p class="text-sm text-slate-400 font-medium truncate">Drag sliders to estimate your premium — before you submit a policy request</p>
+      </div>
+
+      <!-- CTA -->
+      <div class="shrink-0 relative z-10 flex items-center gap-2 bg-[#2B74E2] group-hover:bg-[#1B5CC8] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-colors shadow-md">
+        Try it
+        <mat-icon class="text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</mat-icon>
+      </div>
+    </a>
+
+    <!-- Data Grids -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Policies Data Grid -->
+      <div class="data-grid-card bg-white rounded-xl border border-[#E2E6EC] shadow-sm flex flex-col">
+        <div class="p-5 border-b border-[#E2E6EC] flex justify-between items-center bg-[#FAFBFC] rounded-t-xl">
+          <h3 class="font-bold text-[#1B2A4A] flex items-center gap-2">
+            <mat-icon class="text-gray-400">shield</mat-icon> Recent Policies
+          </h3>
+          <a routerLink="/hr/policies" class="text-xs font-bold text-[#2B74E2] hover:text-[#1B2A4A] transition-colors uppercase tracking-wider">View Catalog</a>
+        </div>
+        
+        <div class="flex-1 p-2">
+          @if (recentPolicies.length > 0) {
+            <div class="flex flex-col gap-1">
+              @for (p of recentPolicies; track p.id) {
+                <div class="group flex items-center justify-between p-3 rounded-lg hover:bg-[#F8F9FA] transition-colors border border-transparent hover:border-[#E2E6EC]">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F5FB] text-[#2B74E2] flex items-center justify-center font-bold text-sm shrink-0">
+                      {{ getPlanInitial(p.insurancePlan?.planName) }}
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-sm text-[#1B2A4A] mb-0.5">{{ p.insurancePlan?.planName || 'Custom Policy' }}</h4>
+                      <p class="text-xs text-[#5A6A7E] font-medium">{{ p.policyNumber || 'Drafting...' }}</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-end">
+                    <span class="status-pill inline-flex px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md border"
+                          [class.bg-[#ECFDF5]]="p.status === 'APPROVED'" [class.text-[#059669]]="p.status === 'APPROVED'" [class.border-[#A7F3D0]]="p.status === 'APPROVED'"
+                          [class.bg-[#FEF9E7]]="p.status !== 'APPROVED' && p.status !== 'REJECTED'" [class.text-[#B8963F]]="p.status !== 'APPROVED' && p.status !== 'REJECTED'" [class.border-[#FDE68A]]="p.status !== 'APPROVED' && p.status !== 'REJECTED'"
+                          [class.bg-[#FEF2F2]]="p.status === 'REJECTED'" [class.text-[#DC2626]]="p.status === 'REJECTED'" [class.border-[#FECACA]]="p.status === 'REJECTED'">
+                      {{ formatStatus(p.status) }}
+                    </span>
+                    @if (p.status === 'PENDING_HR_APPROVAL') {
+                      <button (click)="payToActivate(p.id)" class="text-[10px] font-bold text-[#2B74E2] hover:underline mt-1.5 focus:outline-none flex items-center gap-0.5">
+                        <mat-icon class="text-[12px] leading-none">payment</mat-icon> Activate Now
+                      </button>
+                    }
+                    @if (p.status === 'APPROVED') {
+                      <button (click)="downloadCertificate(p)" class="text-[10px] font-bold text-[#059669] hover:underline mt-1.5 focus:outline-none flex items-center gap-0.5">
+                        <mat-icon class="text-[12px] leading-none">download</mat-icon> Certificate
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="py-12 flex flex-col items-center justify-center text-center">
+              <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                <mat-icon class="text-gray-300 text-3xl">inbox</mat-icon>
+              </div>
+              <h4 class="font-bold text-[#1B2A4A] text-sm mb-1">No Active Policies</h4>
+              <p class="text-xs text-[#5A6A7E]">Request your first corporate health plan to protect your team.</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Recent Employees Data Grid -->
+      <div class="data-grid-card bg-white rounded-xl border border-[#E2E6EC] shadow-sm flex flex-col">
+        <div class="p-5 border-b border-[#E2E6EC] flex justify-between items-center bg-[#FAFBFC] rounded-t-xl">
+          <h3 class="font-bold text-[#1B2A4A] flex items-center gap-2">
+            <mat-icon class="text-gray-400">badge</mat-icon> Corporate Roster
+          </h3>
+          <a routerLink="/hr/employees" class="text-xs font-bold text-[#2B74E2] hover:text-[#1B2A4A] transition-colors uppercase tracking-wider">Manage Directory</a>
+        </div>
+        
+        <div class="flex-1 p-2">
+          @if (recentEmployees.length > 0) {
+            <div class="flex flex-col gap-1">
+              @for (e of recentEmployees; track e.id) {
+                <div class="group flex items-center justify-between p-3 rounded-lg hover:bg-[#F8F9FA] transition-colors border border-transparent hover:border-[#E2E6EC]">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#1B2A4A] to-[#2B74E2] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm border border-[#1A2542] !leading-none pt-0.5">
+                      {{ getInitials(e.fullName) }}
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-sm text-[#1B2A4A] mb-0.5">{{ e.fullName }}</h4>
+                      <p class="text-xs text-[#5A6A7E] font-medium">{{ e.designation || 'Staff' }} &bull; {{ e.department || 'General' }}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="status-pill inline-flex px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md border"
+                          [class.bg-[#ECFDF5]]="e.employmentStatus === 'ACTIVE'" [class.text-[#059669]]="e.employmentStatus === 'ACTIVE'" [class.border-[#A7F3D0]]="e.employmentStatus === 'ACTIVE'"
+                          [class.bg-[#FEF2F2]]="e.employmentStatus !== 'ACTIVE'" [class.text-[#DC2626]]="e.employmentStatus !== 'ACTIVE'" [class.border-[#FECACA]]="e.employmentStatus !== 'ACTIVE'">
+                      {{ e.employmentStatus }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="py-12 flex flex-col items-center justify-center text-center">
+              <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                <mat-icon class="text-gray-300 text-3xl">people_outline</mat-icon>
+              </div>
+              <h4 class="font-bold text-[#1B2A4A] text-sm mb-1">Roster Empty</h4>
+              <p class="text-xs text-[#5A6A7E]">Start onboarding your corporate employees.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Enterprise Stripe-like Payment Modal -->
+  @if (paymentModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1B2A4A]/60 backdrop-blur-md">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden fade-in-up border border-white/20">
+        <!-- Modern Header -->
+        <div class="px-8 pt-8 pb-6 bg-[#FAFBFC] border-b border-[#E2E6EC] relative">
+          <button (click)="closePaymentModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-700 transition-colors">
+            <mat-icon>close</mat-icon>
+          </button>
+          
+          <div class="flex items-center gap-3 mb-2 text-[#2E5C9A]">
+            <mat-icon>lock</mat-icon>
+            <span class="text-xs font-bold uppercase tracking-wider">Secure Checkout</span>
+          </div>
+          <h3 class="text-2xl font-extrabold text-[#1B2A4A] mb-4">Complete Activation</h3>
+          
+          <div class="bg-white rounded-xl p-4 border border-[#E2E6EC] shadow-sm flex justify-between items-center">
+            <div>
+              <p class="text-xs font-semibold text-[#5A6A7E] uppercase tracking-wider mb-1">Total Due</p>
+              <p class="text-[#1B2A4A] font-medium text-sm">Invoice #{{ selectedInvoice()?.id }}</p>
+            </div>
+            <span class="text-3xl font-black text-[#1B2A4A] tracking-tight">₹{{ selectedInvoice()?.totalAmount | number:'1.0-0':'en-IN' }}</span>
+          </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="p-8 space-y-6">
+          <div class="flex gap-3 bg-[#F0F5FB] p-1.5 rounded-lg border border-[#E2E6EC]">
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" value="CARD" [(ngModel)]="paymentData.paymentMode" class="peer hidden">
+              <div class="text-center py-2 text-sm font-bold text-[#5A6A7E] rounded-md transition-colors peer-checked:bg-white peer-checked:text-[#2B74E2] peer-checked:shadow-sm">
+                Credit Card
+              </div>
+            </label>
+            <label class="flex-1 cursor-pointer">
+              <input type="radio" value="BANK_TRANSFER" [(ngModel)]="paymentData.paymentMode" class="peer hidden">
+              <div class="text-center py-2 text-sm font-bold text-[#5A6A7E] rounded-md transition-colors peer-checked:bg-white peer-checked:text-[#2B74E2] peer-checked:shadow-sm">
+                ACH Transfer
+              </div>
+            </label>
+          </div>
+
+          @if (paymentData.paymentMode === 'CARD') {
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-2">Card Details</label>
+                <div class="relative">
+                  <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">credit_card</mat-icon>
+                  <input type="text" [(ngModel)]="paymentData.cardNumber" placeholder="0000 0000 0000 0000" class="w-full pl-12 pr-4 py-3 bg-white border border-[#E2E6EC] rounded-t-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-1 focus:ring-[#2B74E2] focus:border-[#2B74E2] transition-colors font-mono shadow-sm z-10 relative">
+                </div>
+                <div class="flex relative -mt-[1px] z-0">
+                  <input type="text" [(ngModel)]="paymentData.expiryDate" placeholder="MM / YY" class="flex-1 px-4 py-3 bg-white border border-[#E2E6EC] rounded-bl-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-1 focus:ring-[#2B74E2] focus:border-[#2B74E2] transition-colors font-mono shadow-sm relative focus:z-10">
+                  <input type="password" [(ngModel)]="paymentData.cvv" placeholder="CVC" maxlength="3" class="w-1/3 px-4 py-3 bg-white border border-[#E2E6EC] rounded-br-lg text-sm text-[#1B2A4A] focus:outline-none focus:ring-1 focus:ring-[#2B74E2] focus:border-[#2B74E2] transition-colors font-mono -ml-[1px] shadow-sm relative focus:z-10">
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="p-5 bg-[#F8F9FA] rounded-xl border border-[#E2E6EC]">
+              <div class="flex items-start gap-4 text-sm text-[#5A6A7E]">
+                <mat-icon class="text-[#2B74E2] shrink-0 mt-0.5">account_balance</mat-icon>
+                <div>
+                  <p class="font-medium mb-3">You will be redirected to your corporate banking portal to authorize this ACH transfer.</p>
+                  <label class="block text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-1">Authorization Code (Mock)</label>
+                  <input type="text" [(ngModel)]="paymentData.cardNumber" placeholder="Enter bank code..." class="w-full px-4 py-2.5 bg-white border border-[#E2E6EC] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2B74E2]/20 focus:border-[#2B74E2] transition-colors">
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="pt-6">
+            <button (click)="submitPayment()" class="w-full py-3.5 bg-[#1B2A4A] text-white rounded-xl shadow-md hover:bg-[#0D182E] transition-all font-bold text-sm tracking-wide flex justify-center items-center gap-2">
+              Pay ₹{{ selectedInvoice()?.totalAmount | number:'1.0-0':'en-IN' }} Now
+              <mat-icon class="text-[18px]">arrow_forward</mat-icon>
+            </button>
+            <p class="text-center text-[11px] font-medium text-gray-400 mt-4 flex items-center justify-center gap-1.5">
+              <mat-icon class="text-[14px]">verified_user</mat-icon> Payments are secure and encrypted
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Floating Chat Button -->
+  <button (click)="openAIChatbot()"
+          class="fixed bottom-8 right-8 z-50 flex items-center justify-center w-[60px] h-[60px] rounded-full bg-[#1B2A4A] shadow-[0_8px_30px_rgba(27,42,74,0.5)] hover:scale-110 hover:shadow-[0_12px_40px_rgba(43,116,226,0.5)] transition-all duration-300 group outline outline-[3px] outline-offset-[4px] outline-[#C8A951]/60">
+    <mat-icon class="text-[#C8A951] text-[28px] leading-none">chat_bubble</mat-icon>
+    <!-- Online dot -->
+    <span class="absolute top-1 right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-[#1B2A4A] animate-pulse"></span>
+  </button>
+</div>

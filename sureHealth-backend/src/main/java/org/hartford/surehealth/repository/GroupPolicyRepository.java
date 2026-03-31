@@ -14,6 +14,8 @@ public interface GroupPolicyRepository extends JpaRepository<GroupPolicy,Long> {
     long countByCorporateClientIdAndStatus(Long corporateId, PolicyStatus status);
     List<GroupPolicy> findByAssignedUnderwriterId(Long underwriterId);
     List<GroupPolicy> findByAssignedUnderwriterIdAndStatus(Long underwriterId, PolicyStatus status);
+    long countByAssignedUnderwriterId(Long underwriterId);
+    long countByAssignedUnderwriterIdAndStatus(Long underwriterId, PolicyStatus status);
 }
 
 

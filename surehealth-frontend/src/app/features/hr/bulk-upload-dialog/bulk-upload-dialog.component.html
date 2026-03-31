@@ -1,0 +1,163 @@
+<div class="bulk-upload-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">cloud_upload</mat-icon>
+      <div>
+        <h2 class="dialog-title">Bulk Employee Onboarding</h2>
+        <p class="dialog-subtitle">Upload an Excel file to add multiple employees at once</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-body">
+    <!-- Step 1: Download template -->
+    @if (!uploadResult) {
+      <div class="template-section">
+        <div class="step-badge">Step 1</div>
+        <p class="step-text">Download the Excel template, fill in employee details, then upload it below.</p>
+        <button class="template-btn" (click)="downloadTemplate()">
+          <mat-icon>download</mat-icon> Download Template
+        </button>
+      </div>
+
+      <!-- Step 2: Upload area -->
+      <div class="upload-section">
+        <div class="step-badge">Step 2</div>
+        <div class="drop-zone"
+             [class.drag-over]="dragOver"
+             [class.has-file]="selectedFile"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+
+          @if (!selectedFile) {
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <p class="drop-text">Drag & drop your <strong>.xlsx</strong> file here</p>
+            <p class="drop-subtext">or click to browse</p>
+          } @else {
+            <mat-icon class="file-icon">description</mat-icon>
+            <p class="file-name">{{ selectedFile.name }}</p>
+            <p class="file-size">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
+            <button class="remove-btn" (click)="removeFile(); $event.stopPropagation()">
+              <mat-icon>delete_outline</mat-icon> Remove
+            </button>
+          }
+
+          <input #fileInput type="file" accept=".xlsx" (change)="onFileSelected($event)" hidden>
+        </div>
+      </div>
+
+      <!-- Column info -->
+      <div class="column-info">
+        <mat-icon class="info-icon">info_outline</mat-icon>
+        <div>
+          <strong>Required columns:</strong> Full Name, Email, Phone, Age<br>
+          <strong>Optional columns:</strong> Department, Gender, Designation, Join Date
+        </div>
+      </div>
+
+      <!-- Upload button -->
+      <div class="action-bar">
+        <button class="cancel-btn" (click)="close()">Cancel</button>
+        <button class="upload-btn" [disabled]="!selectedFile || uploading" (click)="upload()">
+          @if (uploading) {
+            <svg class="spinner" viewBox="0 0 24 24">
+              <circle class="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"></circle>
+            </svg>
+            Processing...
+          } @else {
+            <mat-icon>upload</mat-icon> Upload & Process
+          }
+        </button>
+      </div>
+    }
+
+    <!-- Results -->
+    @if (uploadResult) {
+      <div class="results-section">
+        <!-- Summary cards -->
+        <div class="summary-cards">
+          <div class="summary-card total">
+            <mat-icon>list_alt</mat-icon>
+            <div>
+              <span class="card-value">{{ uploadResult.totalRows }}</span>
+              <span class="card-label">Total Rows</span>
+            </div>
+          </div>
+          <div class="summary-card success">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+              <span class="card-value">{{ uploadResult.successCount }}</span>
+              <span class="card-label">Successful</span>
+            </div>
+          </div>
+          <div class="summary-card failure">
+            <mat-icon>error</mat-icon>
+            <div>
+              <span class="card-value">{{ uploadResult.failureCount }}</span>
+              <span class="card-label">Failed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Errors -->
+        @if (uploadResult.errors.length > 0) {
+          <div class="errors-section">
+            <h4 class="section-title error-title">
+              <mat-icon>warning</mat-icon> Errors ({{ uploadResult.errors.length }})
+            </h4>
+            <div class="error-list">
+              @for (error of uploadResult.errors; track error) {
+                <div class="error-item">
+                  <mat-icon class="error-dot">fiber_manual_record</mat-icon>
+                  <span>{{ error }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Credentials -->
+        @if (uploadResult.credentials.length > 0) {
+          <div class="credentials-section">
+            <h4 class="section-title cred-title">
+              <mat-icon>vpn_key</mat-icon> Generated Credentials
+            </h4>
+            <div class="cred-table-wrapper">
+              <table class="cred-table">
+                <thead>
+                  <tr>
+                    <th>Employee Name</th>
+                    <th>Username (Email)</th>
+                    <th>Password</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (cred of uploadResult.credentials; track cred.username) {
+                    <tr>
+                      <td>{{ cred.fullName }}</td>
+                      <td><code>{{ cred.username }}</code></td>
+                      <td><code>{{ cred.password }}</code></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- Close action -->
+        <div class="action-bar">
+          <button class="upload-btn" (click)="close()">
+            <mat-icon>done</mat-icon> Done
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

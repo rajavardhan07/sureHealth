@@ -119,6 +119,9 @@
   justify-content: space-between;
   padding: 0 40px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  position: sticky;
+  top: 0;
 }
 
 .page-info h2 {
@@ -126,6 +129,16 @@
   font-weight: 600;
   margin: 0;
   color: #1e293b;
+}
+
+.top-bar-right { display: flex; align-items: center; gap: 24px; }
+
+::ng-deep .notification-bell {
+  color: #1B2A4A !important;
+}
+
+::ng-deep .notification-container {
+  margin-right: 0px !important;
 }
 
 .user-info {

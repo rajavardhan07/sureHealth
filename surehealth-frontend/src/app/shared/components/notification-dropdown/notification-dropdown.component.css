@@ -1,0 +1,146 @@
+.notification-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.notification-bell {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.notification-bell .material-icons {
+  font-size: 1.5rem;
+  color: inherit;
+}
+
+.notification-bell:hover {
+  transform: scale(1.1);
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 320px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 9999;
+  margin-top: 15px;
+  overflow: hidden;
+  opacity: 1;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-header {
+  padding: 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #2f3542;
+}
+
+.mark-all-btn {
+  background: none;
+  border: none;
+  color: #3742fa;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mark-all-btn:hover {
+  text-decoration: underline;
+}
+
+.dropdown-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  color: #747d8c;
+}
+
+.notification-item {
+  padding: 15px;
+  border-bottom: 1px solid #f1f2f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f1f2f6;
+}
+
+.notification-item.alert { border-left: 4px solid #ff4757; }
+.notification-item.success { border-left: 4px solid #2ed573; }
+.notification-item.info { border-left: 4px solid #1e90ff; }
+
+.notification-content {
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.message {
+  margin: 0 0 5px 0;
+  font-size: 0.9rem;
+  color: #2f3542;
+  line-height: 1.4;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: #a4b0be;
+}
+
+.mark-read-btn {
+  background: none;
+  border: none;
+  color: #ced6e0;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.mark-read-btn:hover {
+  color: #2ed573;
+}

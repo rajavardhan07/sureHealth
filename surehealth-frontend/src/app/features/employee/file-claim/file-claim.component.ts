@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,8 +23,34 @@ import { Employee } from '../../../shared/models';
 export class FileClaimComponent implements OnInit {
   form: FormGroup;
   profile = signal<Employee | null>(null);
+  
+  isWaitingPeriod = computed(() => {
+    const p = this.profile();
+    if (!p || !p.groupPolicy || !p.groupPolicy.startDate || !p.groupPolicy.waitingPeriodDays) {
+      return false;
+    }
+    
+    const startDate = new Date(p.groupPolicy.startDate);
+    const waitingDays = p.groupPolicy.waitingPeriodDays;
+    const eligibleDate = new Date(startDate);
+    eligibleDate.setDate(startDate.getDate() + waitingDays);
+    
+    return new Date() < eligibleDate;
+  });
+
+  waitingPeriodEndDate = computed(() => {
+    const p = this.profile();
+    if (!p || !p.groupPolicy || !p.groupPolicy.startDate || !p.groupPolicy.waitingPeriodDays) {
+      return null;
+    }
+    const startDate = new Date(p.groupPolicy.startDate);
+    const eligibleDate = new Date(startDate);
+    eligibleDate.setDate(startDate.getDate() + p.groupPolicy.waitingPeriodDays);
+    return eligibleDate.toLocaleDateString();
+  });
 
   selectedFile: File | null = null;
+  todayDate: string;
 
   constructor(
     private claimService: ClaimService,
@@ -40,6 +66,9 @@ export class FileClaimComponent implements OnInit {
       billNumber: ['', Validators.required],
       treatmentDate: ['', Validators.required]
     });
+
+    const today = new Date();
+    this.todayDate = today.toISOString().split('T')[0];
   }
 
   ngOnInit() {
@@ -50,7 +79,7 @@ export class FileClaimComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        this.snackBar.open('File size exceeds 5MB limit', 'OK', { duration: 3000 });
+        this.snackBar.open('File size exceeds 5MB limit', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
         return;
       }
       this.selectedFile = file;
@@ -60,8 +89,13 @@ export class FileClaimComponent implements OnInit {
   submit() {
     if (this.form.invalid || !this.profile() || !this.selectedFile) {
       if (!this.selectedFile) {
-        this.snackBar.open('Please attach a medical report', 'OK', { duration: 3000 });
+        this.snackBar.open('Please attach a medical report', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
       }
+      return;
+    }
+
+    if (this.profile()?.groupPolicy?.status !== 'APPROVED') {
+      this.snackBar.open('Cannot file a claim for unapproved policy', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
       return;
     }
 
@@ -80,10 +114,13 @@ export class FileClaimComponent implements OnInit {
 
     this.claimService.fileClaim(formData).subscribe({
       next: () => {
-        this.snackBar.open('Claim submitted successfully!', 'OK', { duration: 3000 });
+        this.snackBar.open('Claim submitted successfully!', 'OK', { duration: 3000, panelClass: ['success-snackbar'] });
         this.router.navigate(['/employee/my-claims']);
       },
-      error: () => {} // Error handled by interceptor
+      error: (err) => {
+        const errorMsg = err?.error?.replace?.(/^.*Exception:\s*/, '') || 'Failed to submit claim. You may be in a waiting period.';
+        this.snackBar.open(errorMsg, 'OK', { duration: 5000, panelClass: ['error-snackbar'] });
+      }
     });
   }
 }

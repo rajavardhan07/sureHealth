@@ -53,7 +53,7 @@
                   {{ formatStatus(inv.status) }}
                 </span>
               </div>
-              <span class="text-lg font-bold text-[#1B2A4A]">₹{{ inv.totalAmount | number }}</span>
+              <span class="text-lg font-bold text-[#1B2A4A]">₹{{ inv.totalAmount | number:'1.0-0':'en-IN' }}</span>
             </div>
 
             <div class="space-y-3 mb-6 bg-gray-50/50 p-4 rounded-lg border border-gray-100 flex-1">
@@ -62,9 +62,21 @@
                 <span class="text-[#1B2A4A] font-semibold text-right">{{ inv.groupPolicy.policyNumber || '—' }}</span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-[#5A6A7E] font-medium">Due Date</span>
-                <span class="text-[#1B2A4A] font-semibold text-right">{{ inv.dueDate }}</span>
+                @if (inv.status === 'PAID') {
+                  <span class="text-[#5A6A7E] font-medium">Payment Date</span>
+                  <span class="text-[#1B2A4A] font-semibold text-right">{{ inv.paymentDate || inv.issueDate }}</span>
+                } @else {
+                  <span class="text-[#5A6A7E] font-medium">Due Date</span>
+                  <span class="text-[#1B2A4A] font-semibold text-right">{{ inv.dueDate }}</span>
+                }
               </div>
+
+              @if (inv.groupPolicy.nextBillingDate) {
+                <div class="flex justify-between text-sm py-3 border-t border-gray-100 mt-2">
+                  <span class="text-[#5A6A7E] font-medium italic">Next Bill Due</span>
+                  <span class="text-[#D97706] font-bold text-right">{{ inv.groupPolicy.nextBillingDate }}</span>
+                </div>
+              }
             </div>
 
             @if (inv.status === 'UNPAID' || inv.status === 'OVERDUE') {

@@ -17,7 +17,7 @@ public class InsurancePlanController {
     private final InsurancePlanRepository planRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN', 'UNDERWRITER')")
     public List<InsurancePlan> getActivePlans() {
         return planRepository.findByActiveTrue();
     }
@@ -28,8 +28,8 @@ public class InsurancePlanController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
-    public InsurancePlan getPlanById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN', 'UNDERWRITER')")
+    public InsurancePlan getPlanById(@PathVariable("id") Long id) {
         return planRepository.findById(id).orElseThrow();
     }
 
@@ -40,15 +40,28 @@ public class InsurancePlanController {
         return planRepository.save(plan);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public InsurancePlan updatePlan(@PathVariable("id") Long id, @RequestBody InsurancePlan planDetails) {
+        InsurancePlan plan = planRepository.findById(id).orElseThrow();
+        plan.setPlanName(planDetails.getPlanName());
+        plan.setCoverageAmount(planDetails.getCoverageAmount());
+        plan.setPremiumPerEmployee(planDetails.getPremiumPerEmployee());
+        plan.setDescription(planDetails.getDescription());
+        plan.setDurationMonths(planDetails.getDurationMonths());
+        plan.setWaitingPeriodDays(planDetails.getWaitingPeriodDays());
+        return planRepository.save(plan);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deletePlan(@PathVariable Long id) {
+    public void deletePlan(@PathVariable("id") Long id) {
         planRepository.deleteById(id);
     }
 
     @PutMapping("/{id}/deactivate")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deactivatePlan(@PathVariable Long id) {
+    public void deactivatePlan(@PathVariable("id") Long id) {
         InsurancePlan plan = planRepository.findById(id).orElseThrow();
         plan.setActive(false);
         planRepository.save(plan);
@@ -56,7 +69,7 @@ public class InsurancePlanController {
 
     @PutMapping("/{id}/activate")
     @PreAuthorize("hasRole('ADMIN')")
-    public void activatePlan(@PathVariable Long id) {
+    public void activatePlan(@PathVariable("id") Long id) {
         InsurancePlan plan = planRepository.findById(id).orElseThrow();
         plan.setActive(true);
         planRepository.save(plan);

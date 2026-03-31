@@ -135,6 +135,19 @@ html, body {
   border-radius: var(--radius-sm) !important;
 }
 
+/* Snackbar Status Wrappers */
+.success-snackbar {
+  --mdc-snackbar-container-color: var(--success);
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mdc-snackbar-action-label-text-color: #ffffff;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: var(--error);
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mdc-snackbar-action-label-text-color: #ffffff;
+}
+
 .mat-mdc-tab-group .mat-mdc-tab {
   font-weight: 500 !important;
 }
@@ -323,3 +336,17 @@ html, body {
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius-sm);
 }
+
+/* ── Responsive Mobile Sidebar ─────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  aside {
+    position: static !important;
+    transform: translateX(0) !important;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+}
+

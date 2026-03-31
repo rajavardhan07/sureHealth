@@ -31,8 +31,13 @@ export class PlanDialogComponent {
       description: ['', Validators.required],
       durationMonths: ['', [Validators.required, Validators.min(1)]],
       coverageAmount: ['', [Validators.required, Validators.min(1)]],
-      premiumPerEmployee: ['', [Validators.required, Validators.min(1)]]
+      premiumPerEmployee: ['', [Validators.required, Validators.min(1)]],
+      waitingPeriodDays: [0, [Validators.required, Validators.min(0)]]
     });
+
+    if (this.data?.plan) {
+      this.planForm.patchValue(this.data.plan);
+    }
   }
 
   onCancel(): void {

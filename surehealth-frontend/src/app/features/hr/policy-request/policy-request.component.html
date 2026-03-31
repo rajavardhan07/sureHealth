@@ -1,206 +1,301 @@
-<div class="space-y-8 p-6 fade-in-up">
-  <div class="flex items-center justify-between">
+<div class="space-y-6 p-6 fade-in-up">
+  <div class="flex items-center justify-between mb-4">
     <div>
       <h1 class="text-3xl font-bold text-[#1B2A4A] mb-2">Policy Management</h1>
-      <p class="text-[#5A6A7E]">Request new policies and view existing ones</p>
+      <p class="text-[#5A6A7E]">Request new policies and manage active corporate coverage</p>
     </div>
   </div>
 
-  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
-    <div class="p-6 border-b border-[#E2E6EC]">
-      <h3 class="text-xl font-bold text-[#1B2A4A]">My Policies</h3>
-    </div>
-    
-    @if (loadingPolicies()) {
-      <div class="flex flex-col items-center justify-center min-h-[300px]">
-        <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      </div>
-    }
-    
-    @if (!loadingPolicies() && policies().length > 0) {
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-[#E2E6EC]">
-          <thead class="bg-[#F8F6F1]">
-            <tr>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy #</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Plan</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Underwriter</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Start</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">End</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-[#E2E6EC]">
-            @for (p of policies(); track p.id) {
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ p.policyNumber || '—' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.insurancePlan.planName }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.assignedUnderwriter?.username || 'System Assigned' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.startDate || '—' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ p.endDate || '—' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap relative">
-                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
-                        [ngClass]="{
-                          'bg-green-100 text-green-700': p.status === 'APPROVED',
-                          'bg-yellow-100 text-yellow-700': $any(p.status) === 'PENDING',
-                          'bg-red-100 text-red-700': p.status === 'REJECTED'
-                        }">
-                    {{ formatStatus(p.status) }}
-                  </span>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-    
-    @if (!loadingPolicies() && policies().length === 0) {
-      <div class="py-16 px-4 text-center">
-        <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-4">
-          <mat-icon class="text-[#C8A951] text-3xl">policy</mat-icon>
+  <!-- Policy KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-green-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex justify-between items-start relative z-10">
+        <div>
+          <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-2">Active Policies</span>
+          <h2 class="text-4xl font-extrabold text-green-600 tracking-tighter">{{ activePoliciesCount }}</h2>
         </div>
-        <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">No Policies Yet</h3>
-        <p class="text-[#5A6A7E]">Request your first group policy below</p>
+        <div class="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm bg-green-50 text-green-600">
+          <mat-icon>verified</mat-icon>
+        </div>
       </div>
-    }
+    </div>
+
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-orange-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex justify-between items-start relative z-10">
+        <div>
+          <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-2">Pending Underwriting</span>
+          <h2 class="text-4xl font-extrabold text-orange-500 tracking-tighter">{{ pendingPoliciesCount }}</h2>
+        </div>
+        <div class="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm bg-orange-50 text-orange-500">
+          <mat-icon>hourglass_empty</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-white to-[#F8FbFC] rounded-2xl border border-[#E2E6EC] p-6 shadow-sm relative overflow-hidden group">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-[#2E5C9A]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex justify-between items-start relative z-10">
+        <div>
+          <span class="block text-xs font-bold text-[#5A6A7E] uppercase tracking-wider mb-2">Plans Available</span>
+          <h2 class="text-4xl font-extrabold text-[#1B2A4A] tracking-tighter">{{ totalPlansAvailable }}</h2>
+        </div>
+        <div class="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm bg-[#E8EFF8] text-[#2E5C9A]">
+          <mat-icon>local_library</mat-icon>
+        </div>
+      </div>
+    </div>
   </div>
 
-  @if (corporate()) {
-    <div class="pt-4 border-t border-[#E2E6EC]">
-      <div class="mb-6">
-        <h3 class="text-2xl font-bold text-[#1B2A4A] mb-2">1. Select an Insurance Plan</h3>
-        <p class="text-[#5A6A7E]">Your chosen employees will be covered under this plan upon approval.</p>
+  <!-- ══════════════════════════════════════════════════ -->
+  <!--  SECTION: My Policies                             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
+    <div class="section-header-bar" (click)="policiesExpanded.set(!policiesExpanded())">
+      <div class="flex items-center gap-3">
+        <mat-icon class="text-[#2E5C9A]">policy</mat-icon>
+        <h3 class="text-lg font-bold text-[#1B2A4A] m-0">My Policies</h3>
+        <span class="count-badge">{{ filteredPolicies().length }}</span>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (plan of plans(); track plan.id) {
-          <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden hover:border-[#C8A951] transition-all flex flex-col fade-in-up">
-            <div class="p-6 flex-1 flex flex-col">
-              <div class="flex justify-between items-start mb-4">
-                <h4 class="text-xl font-bold text-[#1B2A4A]">{{ plan.planName }}</h4>
-                <div class="bg-[#E8EFF8] text-[#2E5C9A] px-3 py-1 rounded-full text-sm font-bold shadow-sm whitespace-nowrap">
-                  ₹{{ plan.coverageAmount | number }} Coverage
-                </div>
-              </div>
-              <p class="text-[#5A6A7E] text-sm mb-6 flex-1">{{ plan.description }}</p>
-              
-              <div class="space-y-4 mb-6">
-                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
-                  <mat-icon class="text-[#C8A951] mr-3">timer</mat-icon>
-                  <span>{{ plan.durationMonths }} Month Policy Duration</span>
-                </div>
-                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
-                  <mat-icon class="text-[#C8A951] mr-3">group</mat-icon>
-                  <span>Base Premium: ₹{{ plan.premiumPerEmployee | number }}/employee</span>
-                </div>
-                <div class="flex items-center text-[#1B2A4A] text-sm font-medium">
-                  <mat-icon class="text-[#C8A951] mr-3">support_agent</mat-icon>
-                  <span>24/7 dedicated corporate account manager</span>
-                </div>
-                
-                @if (quotes()[plan.id]) {
-                  <div class="mt-4 bg-[#F5EDD8] p-4 rounded-lg flex justify-between items-center slide-down border border-[#d6c180] shadow-sm">
-                    <span class="text-[#9A7D2C] font-semibold text-sm">Expected Premium Rate</span>
-                    <div class="text-[#9A7D2C] font-bold text-lg">
-                      ₹{{ quotes()[plan.id].calculatedPremiumPerEmployee | number }}<small class="text-xs">/employee</small>
-                    </div>
-                  </div>
-                }
-              </div>
-              
-              <div class="mt-auto pt-4 border-t border-[#E2E6EC]">
-                @if (!quotes()[plan.id]) {
-                  <button (click)="getQuote(plan.id)" [disabled]="fetchingQuote() === plan.id"
-                          class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-white border-2 border-[#2E5C9A] text-[#2E5C9A] hover:bg-[#F0F4FC] font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    @if (fetchingQuote() === plan.id) {
-                      <svg class="animate-spin h-5 w-5 text-[#2E5C9A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    } @else {
-                      <mat-icon class="mr-2 text-[18px]">calculate</mat-icon> Get Quote
-                    }
-                  </button>
-                } @else {
-                  <button (click)="requestPolicy(plan.id)"
-                          class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-[#2E5C9A] hover:bg-[#1B2A4A] text-white font-semibold rounded-lg shadow-sm transition-colors">
-                    <mat-icon class="mr-2 text-[18px]">send</mat-icon> Request Policy
-                  </button>
-                }
-              </div>
-            </div>
-          </div>
-        }
-      </div>
+      <mat-icon class="expand-icon" [class.rotated]="!policiesExpanded()">expand_more</mat-icon>
     </div>
-  }
-  
-  <div class="pt-8 border-t border-[#E2E6EC]">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-      <div>
-        <h3 class="text-2xl font-bold text-[#1B2A4A] mb-2">2. Select Employees for Coverage</h3>
-        <p class="text-[#5A6A7E]">Only employees not currently assigned to a policy are shown here.</p>
+
+    @if (policiesExpanded()) {
+      <!-- Search & Filter Bar -->
+      <div class="filter-bar">
+        <div class="relative flex-1">
+          <mat-icon class="absolute left-3 top-2.5 text-[#5A6A7E] text-[18px]">search</mat-icon>
+          <input type="text" placeholder="Search by policy # or plan name..."
+                 (input)="onPolicySearchChange($any($event.target).value)"
+                 class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none transition-all">
+        </div>
+        <select (change)="onPolicyStatusChange($any($event.target).value)"
+                class="bg-gray-50 border border-gray-200 text-[#1B2A4A] font-medium rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none">
+          <option value="ALL">All Statuses</option>
+          <option value="APPROVED">Approved</option>
+          <option value="PENDING">Pending</option>
+          <option value="PENDING_UNDERWRITING">Pending Underwriting</option>
+          <option value="REJECTED">Rejected</option>
+        </select>
       </div>
-      <button (click)="openAddEmployeeDialog()"
-              class="inline-flex justify-center items-center px-5 py-2.5 bg-white border border-[#2E5C9A] text-[#2E5C9A] font-semibold rounded-lg shadow-sm hover:bg-[#F0F4FC] transition-colors whitespace-nowrap">
-        <mat-icon class="mr-2 text-[18px]">person_add</mat-icon> Add New Employee
-      </button>
-    </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
-      @if (loadingEmployees()) {
-        <div class="flex justify-center p-12">
+
+      @if (loadingPolicies()) {
+        <div class="flex justify-center p-10">
           <svg class="animate-spin h-8 w-8 text-[#C8A951]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
         </div>
-      } @else if (unassignedEmployees().length > 0) {
+      }
+      
+      @if (!loadingPolicies() && paginatedPolicies().length > 0) {
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-[#E2E6EC]">
             <thead class="bg-[#F8F6F1]">
               <tr>
-                <th scope="col" class="px-6 py-4 text-left w-16">
-                  <div class="flex items-center">
-                    <input type="checkbox" (change)="toggleAll()" [checked]="isAllSelected()"
-                           class="w-5 h-5 text-[#2E5C9A] bg-white border-gray-300 rounded focus:ring-[#2E5C9A] focus:ring-2 cursor-pointer transition-colors">
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Name</th>
-                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Department</th>
-                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Age</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy Detail</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Assigned Underwriter</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Policy Period</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Status</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[#5A6A7E] uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-[#E2E6EC]">
-              @for (e of unassignedEmployees(); track e.id) {
-                <tr class="hover:bg-gray-50 transition-colors" [ngClass]="{'bg-blue-50/30': selectedEmployeeIds.has(e.id)}">
+              @for (p of paginatedPolicies(); track p.id) {
+                <tr class="hover:bg-gray-50 transition-colors group">
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <input type="checkbox" (change)="toggleEmployee(e.id)" [checked]="selectedEmployeeIds.has(e.id)"
-                             class="w-5 h-5 text-[#2E5C9A] bg-white border-gray-300 rounded focus:ring-[#2E5C9A] focus:ring-2 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                      <div class="h-10 w-10 rounded-xl bg-[#F8FbFC] border border-[#E2E6EC] flex items-center justify-center text-[#2E5C9A]">
+                        <mat-icon style="font-size:22px; width:22px; height:22px;">shield</mat-icon>
+                      </div>
+                      <div>
+                        <div class="text-sm font-bold text-[#1B2A4A] mb-0.5">{{ p.insurancePlan.planName }}</div>
+                        <div class="text-xs font-mono text-[#5A6A7E]">{{ p.policyNumber || 'Awaiting Generation' }}</div>
+                        @if (p.status === 'INFO_REQUIRED' && p.underwriterComment) {
+                          <div class="mt-2 p-2 bg-amber-50 border border-amber-100 rounded text-[10px] text-amber-800 leading-tight max-w-[200px]">
+                            <span class="font-bold flex items-center gap-1 uppercase tracking-tighter mb-0.5">
+                              <mat-icon class="scale-50 -ml-1 text-amber-500">info</mat-icon> Underwriter Note:
+                            </span>
+                            {{ p.underwriterComment }}
+                          </div>
+                        }
+                      </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#1B2A4A]">{{ e.fullName }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).department || '—' }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[#5A6A7E]">{{ $any(e).age }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-semibold text-[#1B2A4A]">{{ p.assignedUnderwriter?.username || 'In Queue' }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    @if (p.startDate) {
+                      <div class="text-sm font-semibold text-[#1B2A4A]">{{ p.startDate | date:'mediumDate' }}</div>
+                      <div class="text-[10px] font-bold text-[#5A6A7E] uppercase">to {{ p.endDate | date:'mediumDate' }}</div>
+                    } @else {
+                      <div class="text-sm text-gray-400 font-medium">—</div>
+                    }
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+                          [ngClass]="{
+                            'bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]': p.status === 'APPROVED',
+                            'bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]': $any(p.status).includes('PENDING'),
+                            'bg-[#FCE8E6] text-[#C5221F] border border-[#FAD2CF]': p.status === 'REJECTED',
+                            'bg-[#FFF4E5] text-[#FF8C00] border border-[#FFE4CC]': p.status === 'INFO_REQUIRED'
+                          }">
+                      {{ formatStatus(p.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    @if (p.status === 'INFO_REQUIRED') {
+                      <button (click)="openResubmitDialog(p)" 
+                              class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C8A951] hover:bg-[#B8963F] text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95">
+                        <mat-icon class="scale-75">edit_note</mat-icon> Fix & Resubmit
+                      </button>
+                    } @else {
+                      <span class="text-slate-300 text-xs font-light italic">No actions</span>
+                    }
+                  </td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
-      } @else {
-        <div class="py-16 px-4 text-center">
-          <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-4">
-            <mat-icon class="text-[#C8A951] text-3xl">group_off</mat-icon>
+
+        <!-- Pagination -->
+        @if (policyTotalPages() > 1) {
+          <div class="pagination-bar">
+            <span class="page-info">Showing {{ (policyPage() - 1) * policyPageSize + 1 }}–{{ policyPage() * policyPageSize > filteredPolicies().length ? filteredPolicies().length : policyPage() * policyPageSize }} of {{ filteredPolicies().length }}</span>
+            <div class="page-buttons">
+              <button class="page-btn" [disabled]="policyPage() === 1" (click)="policyPage.set(policyPage() - 1)">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              @for (n of getPolicyPageNumbers(); track n) {
+                <button class="page-btn" [class.active]="n === policyPage()" (click)="policyPage.set(n)">{{ n }}</button>
+              }
+              <button class="page-btn" [disabled]="policyPage() === policyTotalPages()" (click)="policyPage.set(policyPage() + 1)">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
           </div>
-          <p class="text-lg font-bold text-[#1B2A4A] mb-2">No unassigned employees found.</p>
-          <p class="text-[#5A6A7E]">Please add employees first to see them available for coverage here.</p>
+        }
+      }
+
+      @if (!loadingPolicies() && filteredPolicies().length === 0) {
+        <div class="py-12 px-4 text-center">
+          <div class="h-14 w-14 bg-[#F8F6F1] rounded-full flex items-center justify-center mx-auto mb-3">
+            <mat-icon class="text-[#C8A951] text-2xl">policy</mat-icon>
+          </div>
+          <h3 class="text-lg font-bold text-[#1B2A4A] mb-1">No Policies Found</h3>
+          <p class="text-[#5A6A7E] text-sm">{{ policies().length === 0 ? 'Request your first group policy below' : 'Try adjusting your search or filters' }}</p>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!--  SECTION: Request a New Policy (Plan Cards)       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  @if (corporate()) {
+    <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
+      <div class="section-header-bar" (click)="plansExpanded.set(!plansExpanded())">
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-[#C8A951]">add_box</mat-icon>
+          <h3 class="text-lg font-bold text-[#1B2A4A] m-0">Request a New Policy</h3>
+          <span class="count-badge gold">{{ filteredPlans().length }} plans</span>
+        </div>
+        <mat-icon class="expand-icon" [class.rotated]="!plansExpanded()">expand_more</mat-icon>
+      </div>
+
+      @if (plansExpanded()) {
+        <!-- Plan Filters -->
+        <div class="filter-bar">
+          <div class="relative flex-1">
+            <mat-icon class="absolute left-3 top-2.5 text-[#5A6A7E] text-[18px]">search</mat-icon>
+            <input type="text" placeholder="Search plans..." (input)="searchQuery.set($any($event.target).value); onPlanFilterChange()"
+                   class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none transition-all">
+          </div>
+          <select (change)="premiumFilter.set($any($event.target).value); onPlanFilterChange()"
+                  class="bg-gray-50 border border-gray-200 text-[#1B2A4A] font-medium rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none">
+            <option value="ALL">All Premiums</option>
+            <option value="LOW">Below ₹1,000</option>
+            <option value="MED">₹1,000 - ₹5,000</option>
+            <option value="HIGH">Above ₹5,000</option>
+          </select>
+          <select (change)="durationFilter.set($any($event.target).value); onPlanFilterChange()"
+                  class="bg-gray-50 border border-gray-200 text-[#1B2A4A] font-medium rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none">
+            <option value="ALL">All Durations</option>
+            <option value="SHORT">Under 12 Months</option>
+            <option value="MED">12 - 24 Months</option>
+            <option value="LONG">Over 24 Months</option>
+          </select>
+        </div>
+
+        @if (filteredPlans().length === 0) {
+          <div class="py-12 px-4 text-center">
+            <mat-icon class="text-gray-300" style="font-size:48px;width:48px;height:48px;">search_off</mat-icon>
+            <h4 class="text-md font-bold text-[#1B2A4A] mt-2">No plans match your filters</h4>
+            <p class="text-[#5A6A7E] text-sm">Try adjusting your search or filter criteria.</p>
+          </div>
+        }
+
+        <div class="p-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            @for (plan of paginatedPlans(); track plan.id) {
+              <div class="bg-white rounded-xl border border-[#E2E6EC] overflow-hidden hover:border-[#C8A951] hover:shadow-md transition-all flex flex-col">
+                <div class="p-5 flex-1 flex flex-col">
+                  <div class="flex justify-between items-start mb-3">
+                    <h4 class="text-lg font-bold text-[#1B2A4A]">{{ plan.planName }}</h4>
+                    <div class="bg-[#E8EFF8] text-[#2E5C9A] px-2.5 py-0.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                      ₹{{ plan.coverageAmount | number:'1.0-0':'en-IN' }}
+                    </div>
+                  </div>
+                  <p class="text-[#5A6A7E] text-xs mb-4 flex-1 line-clamp-2">{{ plan.description }}</p>
+                  
+                  <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-[#1B2A4A] text-xs font-medium">
+                      <mat-icon class="text-[#C8A951] mr-2" style="font-size:16px;width:16px;height:16px;">timer</mat-icon>
+                      {{ plan.durationMonths }} Months
+                    </div>
+                    <div class="flex items-center text-[#1B2A4A] text-xs font-medium">
+                      <mat-icon class="text-[#C8A951] mr-2" style="font-size:16px;width:16px;height:16px;">group</mat-icon>
+                      ₹{{ plan.premiumPerEmployee | number:'1.0-0':'en-IN' }}/employee
+                    </div>
+                    <div class="flex items-center text-[#1B2A4A] text-xs font-medium">
+                      <mat-icon class="text-[#C8A951] mr-2" style="font-size:16px;width:16px;height:16px;">hourglass_empty</mat-icon>
+                      {{ plan.waitingPeriodDays || 0 }} Days Wait
+                    </div>
+                  </div>
+                  
+                  <div class="mt-auto pt-3 border-t border-[#E2E6EC]">
+                    <button (click)="openRequestDialog(plan)"
+                            class="w-full inline-flex justify-center items-center px-3 py-2.5 bg-[#2E5C9A] hover:bg-[#1B2A4A] text-white font-semibold rounded-lg shadow-sm transition-colors text-sm">
+                      <mat-icon class="mr-1" style="font-size:16px;width:16px;height:16px;">send</mat-icon> Request Policy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Plan Pagination -->
+          @if (planTotalPages() > 1) {
+            <div class="pagination-bar mt-4">
+              <span class="page-info">Page {{ planPage() }} of {{ planTotalPages() }} ({{ filteredPlans().length }} plans)</span>
+              <div class="page-buttons">
+                <button class="page-btn" [disabled]="planPage() === 1" (click)="planPage.set(planPage() - 1)">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                @for (n of getPlanPageNumbers(); track n) {
+                  <button class="page-btn" [class.active]="n === planPage()" (click)="planPage.set(n)">{{ n }}</button>
+                }
+                <button class="page-btn" [disabled]="planPage() === planTotalPages()" (click)="planPage.set(planPage() + 1)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
         </div>
       }
     </div>
-  </div>
+  }
 </div>

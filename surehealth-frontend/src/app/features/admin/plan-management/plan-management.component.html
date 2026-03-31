@@ -17,7 +17,7 @@
 
   <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden relative mt-6">
     @if (loading()) {
-      <div class="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center min-h-[300px]">
+      <div class="absolute inset-0 z-10 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
         <svg class="animate-spin h-10 w-10 text-[#C8A951] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -25,30 +25,54 @@
       </div>
     }
 
-    <div class="flex border-b border-[#E2E6EC] bg-gray-50/50 px-6 py-4">
-      <h3 class="text-lg font-semibold text-[#1B2A4A]">All Plans ({{ plans().length }})</h3>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#E2E6EC] bg-gray-50/50 px-6 py-4 gap-4">
+      <h3 class="text-lg font-semibold text-[#1B2A4A]">All Plans ({{ filteredPlans().length }})</h3>
+      
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <div class="relative flex-1 sm:w-48">
+          <mat-icon class="absolute left-3 top-2 text-gray-400 text-[18px]">search</mat-icon>
+          <input type="text" placeholder="Search plans..." (input)="searchQuery.set($any($event.target).value)"
+                 class="w-full pl-9 pr-4 py-1.5 bg-white border border-[#E2E6EC] rounded-lg text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none transition-all">
+        </div>
+        <select (change)="premiumFilter.set($any($event.target).value)" 
+                class="bg-white border border-[#E2E6EC] text-[#1B2A4A] font-medium rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none transition-all">
+          <option value="ALL">All Premiums</option>
+          <option value="LOW">Below ₹1,000</option>
+          <option value="MED">₹1,000 - ₹5,000</option>
+          <option value="HIGH">Above ₹5,000</option>
+        </select>
+        <select (change)="durationFilter.set($any($event.target).value)" 
+                class="bg-white border border-[#E2E6EC] text-[#1B2A4A] font-medium rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#2E5C9A] outline-none transition-all">
+          <option value="ALL">All Durations</option>
+          <option value="SHORT">&lt; 12 Months</option>
+          <option value="MED">12-24 Months</option>
+          <option value="LONG">&gt; 24 Months</option>
+        </select>
+      </div>
     </div>
 
-    @if (!loading() && plans().length > 0) {
-      <div class="overflow-x-auto min-h-[300px]">
+    @if (!loading() && filteredPlans().length > 0) {
+      <div class="overflow-x-auto" [ngClass]="{'min-h-[300px]': loading()}">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-[#F8F6F1] border-b border-[#E2E6EC]">
               <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Plan Name</th>
               <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Coverage</th>
               <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Premium/Employee</th>
+              <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Waiting Period</th>
               <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider">Status</th>
               <th class="py-4 px-6 text-sm font-semibold text-[#1B2A4A] uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[#E2E6EC]">
-            @for (p of plans(); track p.id) {
+            @for (p of filteredPlans(); track p.id) {
               <tr class="hover:bg-gray-50/50 transition-colors group">
                 <td class="py-4 px-6">
                   <span class="block text-sm font-bold text-[#1B2A4A]">{{ p.planName }}</span>
                 </td>
-                <td class="py-4 px-6 text-sm font-bold text-[#1B2A4A]">₹{{ p.coverageAmount | number }}</td>
-                <td class="py-4 px-6 text-sm font-bold text-[#1B2A4A]">₹{{ p.premiumPerEmployee | number }}</td>
+                <td class="py-4 px-6 text-sm font-bold text-[#1B2A4A]">₹{{ p.coverageAmount | number:'1.0-0':'en-IN' }}</td>
+                <td class="py-4 px-6 text-sm font-bold text-[#1B2A4A]">₹{{ p.premiumPerEmployee | number:'1.0-0':'en-IN' }}</td>
+                <td class="py-4 px-6 text-sm font-semibold text-[#5A6A7E]">{{ p.waitingPeriodDays || 0 }} Days</td>
                 <td class="py-4 px-6">
                   <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border shadow-sm"
                         [ngClass]="{
@@ -75,13 +99,16 @@
                       Activate
                     </button>
                   }
+                  <button (click)="openEditPlanDialog(p)" class="inline-flex items-center px-3 py-1.5 bg-white border border-[#E2E6EC] text-[#2E5C9A] rounded-md text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5C9A] transition-colors shadow-sm">
+                    <mat-icon class="text-[18px]">edit</mat-icon>
+                  </button>
                 </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
-    } @else if (!loading() && plans().length === 0) {
+    } @else if (!loading() && filteredPlans().length === 0) {
       <div class="py-20 px-4 text-center">
         <div class="flex flex-col items-center justify-center">
           <div class="h-16 w-16 bg-[#F8F6F1] rounded-full flex items-center justify-center mb-4">

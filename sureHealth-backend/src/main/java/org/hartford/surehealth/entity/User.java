@@ -58,6 +58,13 @@ public class User {
     private Role role;
 
     private Boolean firstLogin = true;
+    
+    private Boolean active = true;
+    private Boolean suspended = false;
+    private String department;
+    
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
 
     private LocalDateTime createdAt = LocalDateTime.now();
     @OneToOne

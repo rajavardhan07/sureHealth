@@ -12,6 +12,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     canActivate: [authGuard],
@@ -35,11 +39,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { role: 'HR' },
     children: [
-      { path: '', redirectTo: 'policies', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', loadComponent: () => import('./features/hr/hr-dashboard/hr-dashboard.component').then(m => m.HrDashboardComponent) },
       // { path: 'register', loadComponent: () => import('./features/hr/corporate-register/corporate-register.component').then(m => m.CorporateRegisterComponent) },
       { path: 'policies', loadComponent: () => import('./features/hr/policy-request/policy-request.component').then(m => m.HrPolicyRequestComponent) },
       { path: 'employees', loadComponent: () => import('./features/hr/employee-management/employee-management.component').then(m => m.HrEmployeeManagementComponent) },
-      { path: 'invoices', loadComponent: () => import('./features/hr/invoice-management/invoice-management.component').then(m => m.HrInvoiceManagementComponent) }
+      { path: 'claim-activity', loadComponent: () => import('./features/hr/claim-activity/claim-activity.component').then(m => m.HrClaimActivityComponent) },
+      { path: 'invoices', loadComponent: () => import('./features/hr/invoice-management/invoice-management.component').then(m => m.HrInvoiceManagementComponent) },
+      { path: 'simulator', loadComponent: () => import('./features/hr/hr-simulator/hr-simulator.component').then(m => m.HrSimulatorComponent) }
     ]
   },
   {
@@ -72,7 +79,8 @@ export const routes: Routes = [
     data: { role: 'UNDERWRITER' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', loadComponent: () => import('./features/underwriter/underwriter-dashboard/underwriter-dashboard.component').then(m => m.UnderwriterDashboardComponent) }
+      { path: 'dashboard', loadComponent: () => import('./features/underwriter/underwriter-dashboard/underwriter-dashboard.component').then(m => m.UnderwriterDashboardComponent) },
+      { path: 'simulator', loadComponent: () => import('./features/underwriter/underwriter-simulator/underwriter-simulator.component').then(m => m.UnderwriterSimulatorComponent) }
     ]
   },
 

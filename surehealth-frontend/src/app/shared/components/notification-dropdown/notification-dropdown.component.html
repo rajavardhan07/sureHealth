@@ -1,0 +1,36 @@
+<div class="notification-container">
+  <button class="notification-bell" (click)="toggleDropdown()" [attr.aria-expanded]="isOpen" title="Notifications">
+    <span class="material-icons">notifications</span>
+    <span *ngIf="notificationService.unreadCount() > 0" class="badge">
+      {{ notificationService.unreadCount() }}
+    </span>
+  </button>
+
+  <div *ngIf="isOpen" class="dropdown-menu">
+    <div class="dropdown-header">
+      <h3>Notifications</h3>
+      <button *ngIf="notificationService.unreadCount() > 0" (click)="markAllAsRead()" class="mark-all-btn">
+        Mark all as read
+      </button>
+    </div>
+
+    <div class="dropdown-content">
+      <div *ngIf="notificationService.notifications().length === 0" class="empty-state">
+        <p>No new notifications</p>
+      </div>
+
+      <div *ngFor="let notif of notificationService.notifications()" 
+           class="notification-item" 
+           [ngClass]="notif.type.toLowerCase()"
+           (click)="handleNotificationClick(notif)">
+        <div class="notification-content">
+          <p class="message">{{ notif.message }}</p>
+          <span class="time">{{ notif.createdAt | date:'short' }}</span>
+        </div>
+        <button class="mark-read-btn" (click)="markAsRead($event, notif.id)" title="Mark as read">
+          <span class="material-icons">done</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

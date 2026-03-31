@@ -1,0 +1,270 @@
+<div class="simulator-page min-h-screen bg-[#0D1526] text-white font-sans">
+
+  <!-- ── PAGE HEADER ───────────────────────────────────────────────────── -->
+  <div class="border-b border-white/10 bg-[#0D1526]/80 backdrop-blur-sm sticky top-0 z-20 px-8 py-5 flex items-center justify-between">
+    <div>
+      <div class="flex items-center gap-3 mb-1">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2B74E2] to-[#C8A951] flex items-center justify-center">
+          <mat-icon class="text-white text-[18px] leading-none">auto_graph</mat-icon>
+        </div>
+        <h1 class="text-xl font-bold text-white tracking-tight">{{ pageTitle }}</h1>
+      </div>
+      <p class="text-sm text-slate-400 ml-11">{{ pageSubtitle }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      @if (lastRunAt()) {
+        <span class="text-xs text-slate-500 flex items-center gap-1.5">
+          <mat-icon class="text-[14px] text-emerald-400">check_circle</mat-icon>
+          Updated {{ lastRunAt() | date:'h:mm:ss a' }}
+        </span>
+      }
+      <button (click)="triggerSimulation()" [disabled]="loading()"
+        class="flex items-center gap-2 px-4 py-2 bg-[#2B74E2] hover:bg-[#1B5CC8] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-bold transition-all">
+        <mat-icon class="text-[18px]" [class.animate-spin]="loading()">
+          {{ loading() ? 'refresh' : 'play_arrow' }}
+        </mat-icon>
+        {{ loading() ? 'Calculating...' : 'Run Simulation' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-5 gap-0 min-h-[calc(100vh-81px)]">
+
+    <!-- ── LEFT PANEL: SLIDERS ────────────────────────────────────────────── -->
+    <div class="xl:col-span-2 border-r border-white/10 p-8 space-y-8">
+
+      <div class="mb-2">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Input Parameters</p>
+        <p class="text-xs text-slate-600 mt-1">Adjust values — AI recalculates automatically</p>
+      </div>
+
+      <!-- Average Age -->
+      <div class="slider-group">
+        <div class="flex justify-between items-baseline mb-3">
+          <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
+            <mat-icon class="text-[#C8A951] text-[16px]">person</mat-icon>
+            Average Employee Age
+          </label>
+          <span class="text-2xl font-black text-white tabular-nums">{{ avgAge }}
+            <span class="text-sm font-normal text-slate-400">yrs</span>
+          </span>
+        </div>
+        <input type="range" min="18" max="65" step="1"
+               [(ngModel)]="avgAge"
+               (input)="onSliderChange()"
+               class="slider w-full accent-[#2B74E2]">
+        <div class="flex justify-between text-[10px] text-slate-600 mt-1.5">
+          <span>18</span><span>30</span><span>40</span><span>50</span><span>65</span>
+        </div>
+      </div>
+
+      <!-- Employee Count -->
+      <div class="slider-group">
+        <div class="flex justify-between items-baseline mb-3">
+          <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
+            <mat-icon class="text-[#2B74E2] text-[16px]">groups</mat-icon>
+            Number of Employees
+          </label>
+          <span class="text-2xl font-black text-white tabular-nums">{{ employeeCount | number:'1.0-0':'en-IN' }}
+            <span class="text-sm font-normal text-slate-400">people</span>
+          </span>
+        </div>
+        <input type="range" min="50" max="2000" step="50"
+               [(ngModel)]="employeeCount"
+               (input)="onSliderChange()"
+               class="slider w-full accent-[#2B74E2]">
+        <div class="flex justify-between text-[10px] text-slate-600 mt-1.5">
+          <span>50</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span>
+        </div>
+      </div>
+
+      <!-- Coverage Amount -->
+      <div class="slider-group">
+        <div class="flex justify-between items-baseline mb-3">
+          <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
+            <mat-icon class="text-emerald-400 text-[16px]">health_and_safety</mat-icon>
+            Coverage Per Employee
+          </label>
+          <span class="text-2xl font-black text-white tabular-nums">{{ formatCurrency(coverageAmount) }}
+          </span>
+        </div>
+        <input type="range" min="100000" max="1500000" step="100000"
+               [(ngModel)]="coverageAmount"
+               (input)="onSliderChange()"
+               class="slider w-full accent-emerald-500">
+        <div class="flex justify-between text-[10px] text-slate-600 mt-1.5">
+          <span>1L</span><span>4.5L</span><span>8L</span><span>11.5L</span><span>15L</span>
+        </div>
+      </div>
+
+      <!-- Industry Risk -->
+      <div class="slider-group">
+        <label class="text-sm font-bold text-slate-300 flex items-center gap-2 mb-3">
+          <mat-icon class="text-amber-400 text-[16px]">factory</mat-icon>
+          Industry Risk Level
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          @for (option of [
+            {value:'LOW',      label:'Technology', sub:'Low Risk',       color:'emerald'},
+            {value:'MEDIUM',   label:'Finance',    sub:'Medium Risk',    color:'amber'},
+            {value:'HIGH',     label:'Manufacturing', sub:'High Risk',   color:'red'},
+            {value:'VERY_HIGH',label:'Construction', sub:'Very High Risk', color:'purple'}
+          ]; track option.value) {
+            <button (click)="onIndustryChange($any(option.value))"
+              class="p-3 rounded-xl border text-left transition-all duration-200"
+              [ngClass]="industryRisk === option.value
+                ? 'border-white bg-white text-slate-900'
+                : 'border-white/10 bg-transparent text-slate-400 hover:border-white/30'">
+              <p class="text-xs font-bold leading-none mb-0.5">{{ option.label }}</p>
+              <p class="text-[10px] opacity-70">{{ option.sub }}</p>
+            </button>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT PANEL: RESULT ────────────────────────────────────────────── -->
+    <div class="xl:col-span-3 p-8 relative">
+
+      <!-- Loading Overlay -->
+      @if (loading()) {
+        <div class="absolute inset-0 flex flex-col items-center justify-center bg-[#0D1526]/80 backdrop-blur-sm z-10 rounded-xl">
+          <div class="w-16 h-16 rounded-full border-4 border-[#2B74E2]/30 border-t-[#2B74E2] animate-spin mb-5"></div>
+          <p class="text-white font-bold text-lg">Simulation AI is calculating...</p>
+          <p class="text-slate-400 text-sm mt-1">Analyzing your risk profile</p>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (error() && !loading()) {
+        <div class="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
+          <mat-icon class="text-red-400 text-5xl mb-3">error_outline</mat-icon>
+          <p class="text-white font-bold">{{ error() }}</p>
+          <button (click)="triggerSimulation()" class="mt-4 px-5 py-2 bg-[#2B74E2] rounded-lg text-sm font-bold">
+            Retry
+          </button>
+        </div>
+      }
+
+      <!-- Result Cards -->
+      @if (result() && !error()) {
+        <div class="space-y-5 fade-in">
+
+          <!-- Main Premium Card -->
+          <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1B2A4A] to-[#0D1A30] border border-[#2B74E2]/30 p-6">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-[#2B74E2]/10 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none"></div>
+            <div class="relative z-10">
+              <p class="text-xs font-bold text-[#2B74E2] uppercase tracking-widest mb-2">
+                {{ role === 'hr' ? 'Estimated Premium' : 'Recommended Premium' }}
+              </p>
+              <div class="flex items-end gap-3 mb-4">
+                <h2 class="text-5xl font-black text-white tracking-tight">
+                  {{ formatCurrency(result()!.recommendedPremium) }}
+                </h2>
+                <span class="text-slate-400 text-sm mb-2">/ employee / year</span>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-3 py-1 rounded-full text-xs font-bold border"
+                      [ngClass]="getRiskBgClass(result()!.riskBand)">
+                  {{ result()!.riskBand }} RISK
+                </span>
+                <span class="text-slate-500 text-xs">|</span>
+                <span class="text-slate-300 text-xs font-medium">
+                  Risk Score: <strong class="text-white">{{ result()!.riskScore }}</strong> / 10
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Total Annual Cost -->
+            <div class="bg-[#1B2A4A]/60 border border-white/10 rounded-xl p-5">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Annual Cost</p>
+              <p class="text-2xl font-black text-white">{{ formatCurrency(result()!.totalAnnualCost) }}</p>
+              <p class="text-xs text-slate-500 mt-1">for {{ employeeCount | number:'1.0-0':'en-IN' }} employees</p>
+            </div>
+            <!-- Risk Score Gauge -->
+            <div class="bg-[#1B2A4A]/60 border border-white/10 rounded-xl p-5">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Risk Score</p>
+              <div class="relative h-2.5 rounded-full bg-white/10 overflow-hidden mb-2">
+                <div class="h-full rounded-full transition-all duration-700"
+                     [style.width]="getRiskBarWidth(result()!.riskScore)"
+                     [style.background-color]="getRiskColor(result()!.riskBand)">
+                </div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-600">
+                <span>1 — Low</span>
+                <span class="font-black text-sm" [style.color]="getRiskColor(result()!.riskBand)">
+                  {{ result()!.riskScore }}
+                </span>
+                <span>10 — Critical</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Reasoning -->
+          <div class="bg-[#1B2A4A]/50 border border-white/10 rounded-xl p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-7 h-7 rounded-lg bg-[#2B74E2]/20 flex items-center justify-center">
+                <mat-icon class="text-[#2B74E2] text-[16px]">psychology</mat-icon>
+              </div>
+              <p class="text-sm font-bold text-white">AI Reasoning</p>
+            </div>
+            <div class="space-y-3">
+              @for (reason of result()!.reasons; track $index) {
+                <div class="flex items-start gap-3">
+                  <div class="w-5 h-5 rounded-full bg-[#2B74E2]/20 text-[#2B74E2] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-black">
+                    {{ $index + 1 }}
+                  </div>
+                  <p class="text-sm text-slate-300 leading-relaxed">{{ reason }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Monthly Breakdown -->
+          <div class="bg-[#1B2A4A]/50 border border-white/10 rounded-xl p-5">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Cost Breakdown</p>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="text-center">
+                <p class="text-lg font-black text-white">
+                  {{ formatCurrency(Math.round(result()!.recommendedPremium / 12)) }}
+                </p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">Per Employee / Month</p>
+              </div>
+              <div class="text-center border-x border-white/10">
+                <p class="text-lg font-black text-white">
+                  {{ formatCurrency(Math.round(result()!.totalAnnualCost / 4)) }}
+                </p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">Quarterly Total</p>
+              </div>
+              <div class="text-center">
+                <p class="text-lg font-black text-white">
+                  {{ formatCurrency(Math.round(result()!.totalAnnualCost / 12)) }}
+                </p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">Monthly Total</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Disclaimer -->
+          <h4 class="text-[10px] text-slate-600 leading-relaxed px-1">
+            * This simulation is AI-generated for indicative purposes only. Actual premiums depend on underwriting assessment, medical history, claims ratio, and insurer terms. Not a binding quote.
+          </h4>
+
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (!result() && !loading() && !error()) {
+        <div class="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
+          <mat-icon class="text-slate-700 text-6xl mb-4">auto_graph</mat-icon>
+          <p class="text-slate-400 font-semibold">Adjust the sliders to begin simulation</p>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

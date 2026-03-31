@@ -20,4 +20,8 @@ export class PaymentService {
   getInvoiceDetails(invoiceId: number): Observable<PremiumInvoice> {
     return this.http.get<PremiumInvoice>(`${this.apiUrl}/invoice/${invoiceId}/details`);
   }
+
+  getInvoicesByPolicy(policyId: number): Observable<PremiumInvoice[]> {
+    return this.http.get<PremiumInvoice[]>(`http://localhost:8080/api/invoices/policy/${policyId}`);
+  }
 }

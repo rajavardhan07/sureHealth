@@ -5,6 +5,7 @@ public enum ClaimStatus {
     UNDER_REVIEW,
     APPROVED,
     REJECTED,
-    SUSPENDED
+    SUSPENDED,
+    INFO_REQUIRED
 }
 

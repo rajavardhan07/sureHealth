@@ -21,6 +21,10 @@ export class PlanService {
     return this.http.post<InsurancePlan>(this.apiUrl, plan);
   }
 
+  updatePlan(id: number, plan: Partial<InsurancePlan>): Observable<InsurancePlan> {
+    return this.http.put<InsurancePlan>(`${this.apiUrl}/${id}`, plan);
+  }
+
   deletePlan(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

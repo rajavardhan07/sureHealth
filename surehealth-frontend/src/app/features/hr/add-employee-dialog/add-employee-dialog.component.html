@@ -88,7 +88,7 @@
       <!-- Date of Join -->
       <div>
         <label class="block text-sm font-semibold text-[#1B2A4A] mb-1.5">Date of Join</label>
-        <input type="date" formControlName="joinDate"
+        <input type="date" formControlName="joinDate" [max]="todayDate"
                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E5C9A] focus:border-transparent transition-all"
                [ngClass]="{'border-red-500 focus:ring-red-500 bg-red-50': form.get('joinDate')?.invalid && form.get('joinDate')?.touched}">
         @if (form.get('joinDate')?.invalid && form.get('joinDate')?.touched) {

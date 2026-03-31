@@ -5,114 +5,138 @@
   </div>
 
   <div class="bg-white rounded-xl shadow-sm border border-[#E2E6EC] overflow-hidden">
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      
-      <!-- Medical Details Section -->
-      <div class="p-6 border-b border-[#E2E6EC]">
-        <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
-          <mat-icon class="text-[#C8A951] mr-3">local_hospital</mat-icon>
-          Medical Details
-        </h3>
+    @if (profile()?.groupPolicy?.status === 'APPROVED') {
+      <form [formGroup]="form" (ngSubmit)="submit()">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="flex flex-col">
-            <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Hospital Name <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="hospitalName" placeholder="Enter hospital name"
-                   class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-            @if (form.get('hospitalName')?.invalid && form.get('hospitalName')?.touched) {
-              <span class="text-red-500 text-xs mt-1 font-medium">Hospital name is required</span>
-            }
+        
+        @if (isWaitingPeriod()) {
+          <div class="m-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded flex items-start gap-4 shadow-sm animate-pulse">
+            <mat-icon class="text-amber-600">warning</mat-icon>
+            <div>
+              <p class="text-amber-900 font-bold mb-1">Waiting Period Active</p>
+              <p class="text-amber-800 text-sm">
+                Your policy is active, but you are currently in a <strong>{{ profile()?.groupPolicy?.waitingPeriodDays }}-day waiting period</strong>. 
+                You will be eligible to file claims after <strong>{{ waitingPeriodEndDate() }}</strong>.
+              </p>
+            </div>
           </div>
-          
-          <div class="flex flex-col">
-            <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Diagnosis <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="diagnosis" placeholder="Enter diagnosis details"
-                   class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-            @if (form.get('diagnosis')?.invalid && form.get('diagnosis')?.touched) {
-              <span class="text-red-500 text-xs mt-1 font-medium">Diagnosis is required</span>
-            }
-          </div>
-        </div>
-      </div>
+        }
 
-      <!-- Billing Details Section -->
-      <div class="p-6 border-b border-[#E2E6EC]">
-        <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
-          <mat-icon class="text-[#C8A951] mr-3">receipt</mat-icon>
-          Billing Details
-        </h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="flex flex-col">
-            <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Bill Amount (₹) <span class="text-red-500">*</span></label>
-            <input type="number" formControlName="billAmount" placeholder="Amount in ₹" min="1"
-                   class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-            @if (form.get('billAmount')?.invalid && form.get('billAmount')?.touched) {
-              <span class="text-red-500 text-xs mt-1 font-medium">Valid positive amount is required</span>
-            }
-          </div>
+        <!-- Medical Details Section -->
+        <div class="p-6 border-b border-[#E2E6EC]">
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
+            <mat-icon class="text-[#C8A951] mr-3">local_hospital</mat-icon>
+            Medical Details
+          </h3>
           
-          <div class="flex flex-col">
-            <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Bill Number <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="billNumber" placeholder="Bill reference"
-                   class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-            @if (form.get('billNumber')?.invalid && form.get('billNumber')?.touched) {
-              <span class="text-red-500 text-xs mt-1 font-medium">Bill number is required</span>
-            }
-          </div>
-          
-          <div class="flex flex-col">
-            <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Treatment Date <span class="text-red-500">*</span></label>
-            <input type="date" formControlName="treatmentDate"
-                   class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
-            @if (form.get('treatmentDate')?.invalid && form.get('treatmentDate')?.touched) {
-              <span class="text-red-500 text-xs mt-1 font-medium">Treatment date is required</span>
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- Supporting Documents Section -->
-      <div class="p-6 bg-[#F8F6F1]">
-        <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
-          <mat-icon class="text-[#C8A951] mr-3">attach_file</mat-icon>
-          Supporting Documents
-        </h3>
-        
-        <div class="flex flex-col bg-white p-6 rounded-lg border border-dashed border-[#C8A951] text-center">
-          <p class="font-semibold text-[#1B2A4A] mb-4">Medical Report / Bill Copy <span class="text-red-500">*</span></p>
-          
-          <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png" #fileInput class="hidden">
-          
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-3">
-            <button type="button" (click)="fileInput.click()"
-                    class="inline-flex justify-center items-center px-4 py-2 border-2 border-[#2E5C9A] text-[#2E5C9A] font-semibold rounded-lg hover:bg-[#F0F4FC] transition-colors whitespace-nowrap">
-              <mat-icon class="mr-2 text-[18px]">cloud_upload</mat-icon> Choose File
-            </button>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-col">
+              <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Hospital Name <span class="text-red-500">*</span></label>
+              <input type="text" formControlName="hospitalName" placeholder="Enter hospital name"
+                     class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+              @if (form.get('hospitalName')?.invalid && form.get('hospitalName')?.touched) {
+                <span class="text-red-500 text-xs mt-1 font-medium">Hospital name is required</span>
+              }
+            </div>
             
-            <div class="flex-1 text-left">
-              @if (selectedFile) {
-                <span class="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 font-semibold text-sm rounded-full border border-green-200 truncate max-w-full">
-                  <mat-icon class="text-[16px] mr-1">check_circle</mat-icon> {{ selectedFile.name }}
-                </span>
-              } @else {
-                <span class="text-[#5A6A7E] text-sm italic">No file chosen yet</span>
+            <div class="flex flex-col">
+              <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Diagnosis <span class="text-red-500">*</span></label>
+              <input type="text" formControlName="diagnosis" placeholder="Enter diagnosis details"
+                     class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+              @if (form.get('diagnosis')?.invalid && form.get('diagnosis')?.touched) {
+                <span class="text-red-500 text-xs mt-1 font-medium">Diagnosis is required</span>
               }
             </div>
           </div>
-          
-          <p class="text-xs text-[#5A6A7E]">Accepted formats: PDF, JPG, PNG (Max 5MB)</p>
         </div>
+
+        <!-- Billing Details Section -->
+        <div class="p-6 border-b border-[#E2E6EC]">
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
+            <mat-icon class="text-[#C8A951] mr-3">receipt</mat-icon>
+            Billing Details
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex flex-col">
+              <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Bill Amount (₹) <span class="text-red-500">*</span></label>
+              <input type="number" formControlName="billAmount" placeholder="Amount in ₹" min="1"
+                     class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+              @if (form.get('billAmount')?.invalid && form.get('billAmount')?.touched) {
+                <span class="text-red-500 text-xs mt-1 font-medium">Valid positive amount is required</span>
+              }
+            </div>
+            
+            <div class="flex flex-col">
+              <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Bill Number <span class="text-red-500">*</span></label>
+              <input type="text" formControlName="billNumber" placeholder="Bill reference"
+                     class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+              @if (form.get('billNumber')?.invalid && form.get('billNumber')?.touched) {
+                <span class="text-red-500 text-xs mt-1 font-medium">Bill number is required</span>
+              }
+            </div>
+            
+            <div class="flex flex-col">
+              <label class="text-sm font-semibold text-[#1B2A4A] mb-2">Treatment Date <span class="text-red-500">*</span></label>
+              <input type="date" formControlName="treatmentDate" [max]="todayDate"
+                     class="w-full px-4 py-2.5 bg-[#F8F6F1] border border-[#E2E6EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A951] focus:bg-white transition-all text-[#1B2A4A]">
+              @if (form.get('treatmentDate')?.invalid && form.get('treatmentDate')?.touched) {
+                <span class="text-red-500 text-xs mt-1 font-medium">Treatment date is required</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Supporting Documents Section -->
+        <div class="p-6 bg-[#F8F6F1]">
+          <h3 class="text-xl font-bold text-[#1B2A4A] mb-6 flex items-center">
+            <mat-icon class="text-[#C8A951] mr-3">attach_file</mat-icon>
+            Supporting Documents
+          </h3>
+          
+          <div class="flex flex-col bg-white p-6 rounded-lg border border-dashed border-[#C8A951] text-center">
+            <p class="font-semibold text-[#1B2A4A] mb-4">Medical Report / Bill Copy <span class="text-red-500">*</span></p>
+            
+            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png" #fileInput class="hidden">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-3">
+              <button type="button" (click)="fileInput.click()"
+                      class="inline-flex justify-center items-center px-4 py-2 border-2 border-[#2E5C9A] text-[#2E5C9A] font-semibold rounded-lg hover:bg-[#F0F4FC] transition-colors whitespace-nowrap">
+                <mat-icon class="mr-2 text-[18px]">cloud_upload</mat-icon> Choose File
+              </button>
+              
+              <div class="flex-1 text-left">
+                @if (selectedFile) {
+                  <span class="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 font-semibold text-sm rounded-full border border-green-200 truncate max-w-full">
+                    <mat-icon class="text-[16px] mr-1">check_circle</mat-icon> {{ selectedFile.name }}
+                  </span>
+                } @else {
+                  <span class="text-[#5A6A7E] text-sm italic">No file chosen yet</span>
+                }
+              </div>
+            </div>
+            
+            <p class="text-xs text-[#5A6A7E]">Accepted formats: PDF, JPG, PNG (Max 5MB)</p>
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="p-6 border-t border-[#E2E6EC] flex justify-end bg-gray-50">
+          <button type="submit" [disabled]="form.invalid"
+                  class="inline-flex justify-center items-center px-6 py-3 bg-[#2E5C9A] text-white font-bold rounded-lg shadow-sm hover:bg-[#1B2A4A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <mat-icon class="mr-2">send</mat-icon> Submit Claim
+          </button>
+        </div>
+        
+      </form>
+    } @else {
+      <div class="p-10 flex flex-col items-center text-center">
+        <div class="h-16 w-16 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mb-4">
+          <mat-icon class="text-3xl">hourglass_empty</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-[#1B2A4A] mb-2">Policy Pending Approval</h3>
+        <p class="text-[#5A6A7E] max-w-md">Your insurance policy is currently awaiting review by an underwriter. You can file claims once your policy status becomes <strong>Active</strong>.</p>
       </div>
-      
-      <!-- Submit Button -->
-      <div class="p-6 border-t border-[#E2E6EC] flex justify-end bg-gray-50">
-        <button type="submit" [disabled]="form.invalid"
-                class="inline-flex justify-center items-center px-6 py-3 bg-[#2E5C9A] text-white font-bold rounded-lg shadow-sm hover:bg-[#1B2A4A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          <mat-icon class="mr-2">send</mat-icon> Submit Claim
-        </button>
-      </div>
-      
-    </form>
+    }
   </div>
 </div>

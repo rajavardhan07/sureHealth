@@ -26,13 +26,13 @@ public class PaymentController {
 
     @GetMapping("/invoice/{invoiceId}")
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
-    public List<Payment> getPaymentsByInvoice(@PathVariable Long invoiceId) {
+    public List<Payment> getPaymentsByInvoice(@PathVariable("invoiceId") Long invoiceId) {
         return paymentService.getPaymentsByInvoice(invoiceId);
     }
 
     @GetMapping("/invoice/{invoiceId}/details")
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
-    public PremiumInvoice getInvoiceDetails(@PathVariable Long invoiceId) {
+    public PremiumInvoice getInvoiceDetails(@PathVariable("invoiceId") Long invoiceId) {
         return paymentService.getInvoiceById(invoiceId);
     }
 }

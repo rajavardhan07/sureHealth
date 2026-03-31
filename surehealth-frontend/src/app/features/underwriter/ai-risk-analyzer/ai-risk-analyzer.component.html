@@ -1,0 +1,127 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" (click)="close()">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden fade-in-up" (click)="$event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="bg-gradient-to-r from-violet-600 to-purple-700 px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+          <mat-icon class="text-white">auto_awesome</mat-icon>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white leading-tight">AI Risk Analysis</h3>
+          <p class="text-violet-200 text-xs font-medium">Powered by Puter.js</p>
+        </div>
+      </div>
+      <button (click)="close()" class="text-white/70 hover:text-white transition-colors bg-white/10 rounded-full h-8 w-8 flex items-center justify-center">
+        <mat-icon class="text-[20px]">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    @if (analyzing()) {
+      <div class="p-12 flex flex-col items-center justify-center">
+        <div class="relative mb-6">
+          <div class="h-16 w-16 rounded-full border-4 border-violet-100 border-t-violet-600 animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <mat-icon class="text-violet-600 text-[20px] animate-pulse">psychology</mat-icon>
+          </div>
+        </div>
+        <h4 class="text-lg font-bold text-[#1B2A4A] mb-1">Analyzing Risk Profile...</h4>
+        <p class="text-sm text-[#5A6A7E] text-center max-w-xs">AI is evaluating company data, employee demographics, and plan suitability</p>
+      </div>
+    }
+
+    <!-- Results -->
+    @if (result(); as res) {
+      <div class="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
+
+        <!-- Risk Score & Decision Row -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Risk Score -->
+          <div class="bg-gradient-to-br from-[#F8F9FA] to-white rounded-xl border border-[#E2E6EC] p-5 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-5">
+              <div class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-gradient-to-br" [ngClass]="getRiskBg(res.riskScore)"></div>
+            </div>
+            <p class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest mb-2">Risk Score</p>
+            <h3 class="text-4xl font-black tracking-tight" [ngClass]="getRiskColor(res.riskScore)">
+              {{ res.riskScore }}
+            </h3>
+            <div class="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r transition-all duration-1000"
+                   [ngClass]="getRiskBg(res.riskScore)"
+                   [style.width.%]="(parseFloat(res.riskScore) || 0) * 10">
+              </div>
+            </div>
+          </div>
+
+          <!-- Decision -->
+          <div class="rounded-xl border p-5 text-center flex flex-col justify-center" [ngClass]="getDecisionColor(res.decision)">
+            <p class="text-[10px] font-bold uppercase tracking-widest mb-2 opacity-70">AI Decision</p>
+            <div class="flex items-center justify-center gap-2">
+              <mat-icon class="text-[28px]">{{ getDecisionIcon(res.decision) }}</mat-icon>
+            </div>
+            <h4 class="text-lg font-extrabold mt-1 leading-tight">{{ res.decision }}</h4>
+          </div>
+        </div>
+
+        <!-- Recommended Premium -->
+        <div class="bg-gradient-to-r from-[#1B2A4A] to-[#2E5C9A] rounded-xl p-5 text-white relative overflow-hidden">
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-10">
+            <mat-icon class="text-[60px] h-[60px] w-[60px]">payments</mat-icon>
+          </div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-blue-200 mb-1">Recommended Premium</p>
+          <h3 class="text-2xl font-black tracking-tight">{{ res.recommendedPremium }}</h3>
+        </div>
+
+        <!-- Summary -->
+        <div class="bg-[#F8F9FA] rounded-xl border border-[#E2E6EC] p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <mat-icon class="text-[#2E5C9A] text-[18px]">summarize</mat-icon>
+            <p class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Risk Summary</p>
+          </div>
+          <p class="text-sm text-[#374151] leading-relaxed font-medium">{{ res.summary }}</p>
+        </div>
+
+        <!-- Reasons -->
+        @if (res.reasons.length > 0) {
+          <div class="bg-white rounded-xl border border-[#E2E6EC] p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <mat-icon class="text-[#C8A951] text-[18px]">lightbulb</mat-icon>
+              <p class="text-[10px] font-bold text-[#5A6A7E] uppercase tracking-widest">Key Reasons</p>
+            </div>
+            <div class="space-y-2.5">
+              @for (reason of res.reasons; track $index) {
+                <div class="flex items-start gap-3">
+                  <div class="w-5 h-5 rounded-full bg-violet-50 flex items-center justify-center shrink-0 mt-0.5">
+                    <span class="text-[10px] font-black text-violet-600">{{ $index + 1 }}</span>
+                  </div>
+                  <p class="text-sm text-[#374151] leading-relaxed font-medium">{{ reason }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 pt-2">
+          <button (click)="applyAndSendQuote()" class="flex-1 h-12 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-violet-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2">
+            <mat-icon class="text-[20px]">request_quote</mat-icon>
+            Apply &amp; Send Quote
+          </button>
+          <button (click)="close()" class="h-12 px-5 border-2 border-[#E2E6EC] text-[#5A6A7E] font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center">
+            Close
+          </button>
+        </div>
+
+        <!-- Powered By Footer -->
+        <div class="flex justify-center pt-1">
+          <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1">
+            <mat-icon class="scale-[0.55]">offline_bolt</mat-icon> Powered by Puter.js AI
+          </span>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</div>

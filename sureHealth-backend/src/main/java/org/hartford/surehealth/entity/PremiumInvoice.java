@@ -27,6 +27,7 @@ public class PremiumInvoice {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private BigDecimal totalAmount;
+    private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status = InvoiceStatus.UNPAID;

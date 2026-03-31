@@ -9,15 +9,21 @@ export enum Role {
 
 export enum PolicyStatus {
   PENDING_ADMIN_APPROVAL = 'PENDING_ADMIN_APPROVAL',
+  PENDING_UNDERWRITER_REVIEW = 'PENDING_UNDERWRITER_REVIEW',
+  PENDING_HR_APPROVAL = 'PENDING_HR_APPROVAL',
+  INFO_REQUIRED = 'INFO_REQUIRED',
   APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED'
 }
 
 export enum ClaimStatus {
   SUBMITTED = 'SUBMITTED',
   UNDER_REVIEW = 'UNDER_REVIEW',
+  INFO_REQUIRED = 'INFO_REQUIRED',
   APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED'
 }
 
 export enum InvoiceStatus {
@@ -40,6 +46,12 @@ export enum PaymentStatus {
 export enum BillingCycle {
   MONTHLY = 'MONTHLY',
   QUARTERLY = 'QUARTERLY'
+}
+
+export enum NotificationType {
+  INFO = 'INFO',
+  ALERT = 'ALERT',
+  SUCCESS = 'SUCCESS'
 }
 
 // DTOs
@@ -67,6 +79,16 @@ export interface CorporateRegisterDTO {
 export interface PolicyRequestDTO {
   corporateId: number;
   planId: number;
+}
+
+export interface PolicyUpdateDTO {
+  status?: string;
+  billingCycle?: string;
+  basePremium?: number;
+  customPremiumPerEmployee?: number;
+  waitingPeriodDays?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface EmployeeCreateDTO {
@@ -130,6 +152,15 @@ export interface ClaimsOfficerDashboardDTO {
   pendingClaims: number;
   approvedToday: number;
   rejectedToday: number;
+  issuesRaised: number;
+  averageProcessingTime: string;
+}
+
+export interface UnderwriterDashboardDTO {
+  totalAssigned: number;
+  pendingReviews: number;
+  approvedPolicies: number;
+  issuesRaised: number;
 }
 
 export interface AdminDashboardDTO {
@@ -140,6 +171,10 @@ export interface AdminDashboardDTO {
   activePolicies: number;
   totalEmployees: number;
   pendingClaims: number;
+  totalRevenue: number;
+  totalClaims: number;
+  claimsByStatus: { [key: string]: number };
+  policiesByStatus: { [key: string]: number };
 }
 
 // Entities
@@ -162,6 +197,7 @@ export interface InsurancePlan {
   premiumPerEmployee: number;
   description: string;
   durationMonths: number;
+  waitingPeriodDays: number;
   active: boolean;
 }
 
@@ -176,6 +212,11 @@ export interface GroupPolicy {
   corporateClient: CorporateClient;
   insurancePlan: InsurancePlan;
   assignedUnderwriter?: User;
+  basePremium?: number;
+  waitingPeriodDays?: number;
+  customPremiumPerEmployee?: number;
+  underwriterComment?: string;
+  employees?: Employee[];
 }
 
 export interface Employee {
@@ -183,6 +224,10 @@ export interface Employee {
   fullName: string;
   email: string;
   phone: string;
+  age?: number;
+  gender?: string;
+  department?: string;
+  designation?: string;
   joinDate: string;
   coverageAmount: number;
   remainingCoverage: number;
@@ -196,13 +241,24 @@ export interface User {
   username: string;
   role: Role;
   fullName: string;
-  phoneNumber: string;
-  licenseNumber: string;
-  commissionPercentage: number;
+  phoneNumber?: string;
+  licenseNumber?: string;
+  commissionPercentage?: number;
   firstLogin: boolean;
-  createdAt: string;
-  employee?: Employee;
   corporateClient?: CorporateClient;
+  active?: boolean;
+  suspended?: boolean;
+  department?: string;
+  employee?: Employee;
+  createdAt: string;
+}
+
+export interface OfficerUpdateDTO {
+  fullName: string;
+  phoneNumber: string;
+  department: string;
+  licenseNumber?: string;
+  commissionPercentage?: number;
 }
 
 export interface Claim {
@@ -233,6 +289,7 @@ export interface PremiumInvoice {
   totalAmount: number;
   status: InvoiceStatus;
   groupPolicy: GroupPolicy;
+  paymentDate?: string;
 }
 
 export interface Payment {
@@ -244,3 +301,12 @@ export interface Payment {
   status: PaymentStatus;
   invoice: PremiumInvoice;
 }
+
+export interface Notification {
+  id: number;
+  message: string;
+  type: NotificationType;
+  isRead: boolean;
+  createdAt: string;
+}
+

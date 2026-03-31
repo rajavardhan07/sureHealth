@@ -18,9 +18,16 @@ export class CODashboardComponent implements OnInit {
   constructor(private adminService: AdminService) {}
 
   ngOnInit() {
+    console.log("Claims Officer Dashboard");
     this.adminService.getClaimsOfficerDashboard().subscribe({
-      next: (d) => { this.data.set(d); this.loading.set(false); },
-      error: () => { this.loading.set(false); }
+      next: (d) => { this.data.set(d); 
+        this.loading.set(false); 
+        console.log(this.data());
+      },
+      error: () => { 
+        this.loading.set(false); 
+        console.log("Claims Officer Dashboard error");
+      }
     });
   }
 }

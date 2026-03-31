@@ -1,105 +1,116 @@
 <div class="h-screen flex overflow-hidden bg-[#F8F6F1] font-sans">
-  
-  <!-- Sidebar -->
-  <aside class="w-64 bg-white border-r border-[#E2E6EC] flex flex-col transition-all duration-300">
-    <div class="h-20 flex items-center px-6 border-b border-[#E2E6EC]">
+
+  @if (sidebarOpen) {
+    <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="closeSidebar()"></div>
+  }
+
+  <aside class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-[#E2E6EC] flex flex-col transition-transform duration-300 shadow-sm"
+         [class.-translate-x-full]="!sidebarOpen"
+         [class.translate-x-0]="sidebarOpen"
+         [class.lg:translate-x-0]="true">
+
+    <div class="h-20 flex items-center px-6 border-b border-[#E2E6EC] shrink-0">
       <div class="flex items-center gap-3">
-        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="#C8A951"/>
-          <path d="M14 34V14h6v8h8v-8h6v20h-6v-8h-8v8h-6z" fill="#1B2A4A"/>
-        </svg>
-        <div class="flex flex-col">
-          <span class="text-[#1B2A4A] font-bold text-lg leading-tight tracking-tight">SureHealth</span>
-          <span class="text-xs font-semibold text-[#C8A951] uppercase tracking-wider">Admin</span>
-        </div>
+        <img src="assets/logo.png" alt="SureHealth" class="h-10 w-auto object-contain">
+        <span class="text-xs font-semibold text-[#C8A951] uppercase tracking-wider">Admin</span>
       </div>
+      <button class="ml-auto lg:hidden p-1 text-slate-400 hover:text-slate-700" (click)="closeSidebar()">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
 
-    <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <a routerLink="/admin/dashboard" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
-         [routerLinkActiveOptions]="{exact: true}"
-         
+      <a routerLink="/admin/dashboard" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         [routerLinkActiveOptions]="{exact: true}" (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">dashboard</mat-icon>
-        <span>Overview</span>
-    </a>
-      <!-- routerLinkActiveOptions is used to specify the options for the routerLinkActive directive -->
-      <!-- {exact: true} means that the routerLinkActive directive will only be applied when the routerLink is exactly the same as the current route -->
-      
-      <a routerLink="/admin/policies" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
-         class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">policy</mat-icon>
-        <span>All Policies</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">dashboard</mat-icon><span>Overview</span>
       </a>
-      
-      <a routerLink="/admin/claims" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/policies" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">assignment</mat-icon>
-        <span>Claims</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">policy</mat-icon><span>All Policies</span>
       </a>
-      
-      <a routerLink="/admin/corporates" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/claims" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">business</mat-icon>
-        <span>Corporate Clients</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">assignment</mat-icon><span>Claims</span>
       </a>
-      
-      <a routerLink="/admin/plans" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/corporates" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">health_and_safety</mat-icon>
-        <span>Insurance Plans</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">business</mat-icon><span>Corporate Clients</span>
       </a>
-
-      <a routerLink="/admin/officers" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/plans" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">support_agent</mat-icon>
-        <span>Claims Officers</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">health_and_safety</mat-icon><span>Insurance Plans</span>
       </a>
-
-      <a routerLink="/admin/underwriters" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/officers" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">assignment_ind</mat-icon>
-        <span>Underwriters</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">support_agent</mat-icon><span>Claims Officers</span>
       </a>
-
-      <a routerLink="/admin/invoices" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951] bg-opacity-70"
+      <a routerLink="/admin/underwriters" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
          class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none group-hover:text-[#1B2A4A]">receipt_long</mat-icon>
-        <span>Invoices</span>
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">assignment_ind</mat-icon><span>Underwriters</span>
+      </a>
+      <a routerLink="/admin/invoices" routerLinkActive="bg-[#F5EDD8] text-[#9A7D2C] font-semibold border-r-4 border-[#C8A951]"
+         (click)="closeSidebar()"
+         class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1] hover:text-[#1B2A4A] transition-colors group">
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">receipt_long</mat-icon><span>Invoices</span>
       </a>
     </nav>
 
-    <div class="p-4 border-t border-[#E2E6EC]">
-      <button (click)="logout()" 
-        class="flex w-full items-center px-3 py-2.5 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors">
-        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">logout</mat-icon>
-        <span>Log Out</span>
+    <div class="p-4 border-t border-[#E2E6EC] shrink-0">
+      <button (click)="confirmLogout()" class="flex w-full items-center px-3 py-2.5 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors">
+        <mat-icon class="mr-3 h-[20px] w-[20px] leading-none">logout</mat-icon><span>Sign Out</span>
       </button>
     </div>
   </aside>
 
-  <!-- Main Content Area -->
-  <main class="flex-1 flex flex-col overflow-hidden relative">
-    <header class="h-20 bg-white border-b border-[#E2E6EC] flex items-center justify-between px-8 z-10 shadow-sm">
-      <div>
-        <h2 class="text-2xl font-bold text-[#1B2A4A]">Dashboard</h2>
+  <main class="flex-1 flex flex-col overflow-hidden min-w-0">
+    <header class="h-16 lg:h-20 bg-white border-b border-[#E2E6EC] flex items-center justify-between px-4 lg:px-8 z-20 shadow-sm shrink-0">
+      <div class="flex items-center gap-3">
+        <button class="lg:hidden p-2 rounded-lg text-[#5A6A7E] hover:bg-[#F8F6F1]" (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <h2 class="text-lg lg:text-2xl font-bold text-[#1B2A4A]">Admin Dashboard</h2>
       </div>
-      
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-3 pl-4 border-l border-[#E2E6EC]">
-          <div class="flex flex-col text-right">
+      <div class="flex items-center gap-2 lg:gap-4">
+        <app-notification-dropdown></app-notification-dropdown>
+        <div class="flex items-center gap-2 lg:gap-3 pl-2 lg:pl-4 border-l border-[#E2E6EC]">
+          <div class="hidden sm:flex flex-col text-right">
             <span class="text-sm font-bold text-[#1B2A4A]">{{ authService.getUsername() }}</span>
             <span class="text-xs text-[#5A6A7E]">System Administrator</span>
           </div>
-          <div class="h-10 w-10 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm ring-2 ring-[#F0F2F5]">
+          <button [matMenuTriggerFor]="profileMenu" class="h-9 w-9 lg:h-10 lg:w-10 rounded-full bg-[#E8EFF8] text-[#2E5C9A] flex items-center justify-center font-bold border-2 border-white shadow-sm ring-2 ring-[#F0F2F5] hover:bg-[#D0E1F4] transition-colors focus:outline-none">
             {{ getInitial() }}
-          </div>
+          </button>
+          <mat-menu #profileMenu="matMenu">
+            <div class="px-6 py-5 bg-gradient-to-br from-[#F8F9FA] to-white border-b border-[#E2E6EC] flex flex-col items-center">
+              <div class="h-16 w-16 mb-3 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-700 font-bold text-2xl flex items-center justify-center shadow-inner border border-blue-200">{{ getInitial() }}</div>
+              <p class="text-lg font-bold text-[#1B2A4A] tracking-tight">{{ authService.getUsername() }}</p>
+              <p class="text-[10px] text-blue-700 font-bold bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-full mt-2 tracking-widest uppercase shadow-sm">{{ authService.getRole()?.replace('_', ' ') }}</p>
+            </div>
+            <div class="p-2 space-y-0.5 bg-white">
+              <button mat-menu-item (click)="openChangePassword()" class="rounded-xl hover:bg-slate-50 h-12">
+                <mat-icon class="text-slate-400 mr-3 scale-90">lock_outline</mat-icon><span class="font-medium text-slate-700">Change Password</span>
+              </button>
+              <button mat-menu-item class="rounded-xl hover:bg-slate-50 h-12">
+                <mat-icon class="text-slate-400 mr-3 scale-90">tune</mat-icon><span class="font-medium text-slate-700">Preferences</span>
+              </button>
+            </div>
+            <div class="p-2 bg-slate-50 border-t border-slate-100">
+              <button mat-menu-item (click)="confirmLogout()" class="rounded-xl text-red-600 hover:bg-red-50 h-12">
+                <mat-icon class="text-red-500 mr-3 scale-90">logout</mat-icon><span class="font-bold">Sign Out Securely</span>
+              </button>
+            </div>
+          </mat-menu>
         </div>
       </div>
     </header>
-
-    <div class="flex-1 overflow-y-auto p-8">
+    <div class="flex-1 overflow-y-auto p-4 lg:p-8">
       <div class="max-w-[1400px] mx-auto">
         <router-outlet></router-outlet>
       </div>

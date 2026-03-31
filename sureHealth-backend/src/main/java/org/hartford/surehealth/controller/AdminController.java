@@ -17,6 +17,8 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final org.hartford.surehealth.service.ClaimService claimService;
+    private final org.hartford.surehealth.service.PolicyService policyService;
 
     @PostMapping("/claims-officers")
     @PreAuthorize("hasRole('ADMIN')")
@@ -40,6 +42,36 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getUnderwriters() {
         return adminService.getUsersByRole(org.hartford.surehealth.enums.Role.UNDERWRITER);
+    }
+
+    @PutMapping("/users/{id}/password")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void changePassword(@PathVariable("id") Long id, @RequestBody java.util.Map<String, String> body) {
+        adminService.changePassword(id, body.get("password"));
+    }
+
+    @PutMapping("/claims/{id}/assign")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void assignClaim(@PathVariable("id") Long id, @RequestParam("officerId") Long officerId) {
+        claimService.assignOfficer(id, officerId);
+    }
+
+    @PutMapping("/policies/{id}/assign")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void assignPolicy(@PathVariable("id") Long id, @RequestParam("underwriterId") Long underwriterId) {
+        policyService.assignUnderwriter(id, underwriterId);
+    }
+
+    @PutMapping("/officers/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateOfficer(@PathVariable("id") Long id, @Valid @RequestBody org.hartford.surehealth.dto.OfficerUpdateDTO dto) {
+        return adminService.updateOfficer(id, dto);
+    }
+
+    @PatchMapping("/officers/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void toggleOfficerStatus(@PathVariable("id") Long id, @RequestParam("action") String action, @RequestParam("state") boolean state) {
+        adminService.toggleOfficerStatus(id, action, state);
     }
 }
 

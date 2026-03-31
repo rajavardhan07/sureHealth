@@ -2,7 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ClaimService } from '../../../core/services/claim.service';
-import { Claim } from '../../../shared/models';
+import { AdminService } from '../../../core/services/admin.service';
+import { Claim, User } from '../../../shared/models';
 
 @Component({
   selector: 'app-claim-management',
@@ -16,13 +17,30 @@ import { Claim } from '../../../shared/models';
 })
 export class ClaimManagementComponent implements OnInit {
   claims = signal<Claim[]>([]);
+  officers = signal<User[]>([]);
   loading = signal(true);
   displayedColumns = ['claimNumber', 'employee', 'corporate', 'amount', 'type', 'status', 'date'];
 
-  constructor(private claimService: ClaimService) {}
+  constructor(private claimService: ClaimService, private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.loadAllClaims();
+    console.log("Claim Management Component");
+    this.adminService.getClaimsOfficers().subscribe(data => this.officers.set(data));
+  }
+
+  assignOfficer(claimId: number, event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const officerId = target.value;
+    if (!officerId) return;
+    
+    this.adminService.assignClaim(claimId, +officerId).subscribe({
+      next: () => {
+         this.loadAllClaims();
+         target.value = '';
+      },
+      error: (err) => console.error('Failed to assign officer', err)
+    });
   }
 
   loadAllClaims(): void {

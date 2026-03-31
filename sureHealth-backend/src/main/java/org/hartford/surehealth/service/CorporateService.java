@@ -20,6 +20,7 @@ public class CorporateService {
     private final CorporateRepository corporateRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     public void registerCorporate(CorporateRegisterDTO dto){
 
@@ -49,6 +50,15 @@ public class CorporateService {
         user.setCorporateClient(corp);
 
         userRepository.save(user);
+
+        // Notify Admin of new corporate registration
+        userRepository.findByRole(Role.ADMIN).forEach(admin -> {
+            notificationService.createNotification(
+                admin, 
+                "New Corporate Client Registered: " + dto.companyName, 
+                org.hartford.surehealth.enums.NotificationType.INFO
+            );
+        });
     }
 
     public User getUserByUsername(String username) {
@@ -65,6 +75,14 @@ public class CorporateService {
                 .orElseThrow(() -> new ResourceNotFoundException("Corporate Client not found with id: " + id));
         
         client.setStatus("SUSPENDED");
+        return corporateRepository.save(client);
+    }
+
+    public CorporateClient activateCorporateClient(Long id) {
+        CorporateClient client = corporateRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Corporate Client not found with id: " + id));
+        
+        client.setStatus("ACTIVE");
         return corporateRepository.save(client);
     }
 }

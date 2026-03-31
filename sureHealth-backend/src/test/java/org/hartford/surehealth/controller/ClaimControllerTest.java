@@ -3,7 +3,7 @@ package org.hartford.surehealth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hartford.surehealth.dto.ClaimApprovalDTO;
 import org.hartford.surehealth.entity.Claim;
-import org.hartford.surehealth.entity.Employee;
+
 import org.hartford.surehealth.repository.ClaimRepository;
 import org.hartford.surehealth.repository.UserRepository;
 import org.hartford.surehealth.service.ClaimService;
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Optional;
+
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -80,6 +80,7 @@ class ClaimControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
+                .andDo(org.springframework.test.web.servlet.result.MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
 

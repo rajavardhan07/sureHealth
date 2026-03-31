@@ -25,4 +25,20 @@ export class EmployeeDashboardComponent implements OnInit {
     this.employeeService.getMyProfile().subscribe(p => { this.profile.set(p); this.loading.set(false); });
     this.claimService.getMyClaims().subscribe(c => this.claims.set(c));
   }
+
+  get approvedClaimsCount(): number {
+    return this.claims().filter(c => c.status === 'APPROVED').length;
+  }
+
+  get rejectedClaimsCount(): number {
+    return this.claims().filter(c => c.status === 'REJECTED').length;
+  }
+
+  get pendingClaimsCount(): number {
+    return this.claims().filter(c => c.status === 'SUBMITTED' || c.status === 'UNDER_REVIEW').length;
+  }
+
+  get infoRequiredClaimsCount(): number {
+    return this.claims().filter(c => c.status === 'INFO_REQUIRED').length;
+  }
 }
